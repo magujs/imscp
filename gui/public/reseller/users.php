@@ -232,8 +232,15 @@ function generate_users_list($tpl, $resellerId)
 				$tpl->parse('STATUS_RELOAD_TRUE', 'status_reload_true');
 			}
 
+			$domainExpiring = $stmt->fields['domain_expires'];
 			$domainCreated = $stmt->fields['domain_created'];
 
+			if ($domainExpiring == 0) {
+				$domainExpiring = tr('N/A');
+			} else {
+				$domainExpiring = date($cfg->DATE_FORMAT, $domainExpiring);
+			}
+			
 			if ($domainCreated == 0) {
 				$domainCreated = tr('N/A');
 			} else {
@@ -242,6 +249,7 @@ function generate_users_list($tpl, $resellerId)
 
 			$tpl->assign(
 				array(
+					'EXPIRATION_DATE' => $domainExpiring,
 					'CREATION_DATE' => $domainCreated,
 					'DOMAIN_ID' => $stmt->fields['domain_id'],
 					'ACTION' => tr('Delete'),
@@ -341,6 +349,7 @@ $tpl->assign(
 		'TR_USERNAME' => tr('Username'),
 		'TR_ACTION' => tr('Actions'),
 		'TR_CREATION_DATE' => tr('Creation date'),
+		'TR_EXPIRATION_DATE' => tr('Expiration date'),
 		'TR_MESSAGE_CHANGE_STATUS' => tr('Are you sure you want to change the status of %s?', true, '%s'),
 		'TR_STAT' => tr('Stats'),
 		'VL_MONTH' => date('m'),

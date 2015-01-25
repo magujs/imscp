@@ -4,19 +4,7 @@
 Git 1.2.x
 ------------------------------------------------------------------------------------------------------------------------
 
-CONFIGS
-	Added php5-json package ( Debian Jessie )
-	Moved: Local DNS resolver parameters from the imscp.conf file to the bind.data configuration file
-
-DAEMON
-	Fixed: Messages must not be hardcoded in functions
-	Fixed: Restart of some services fail when the backend ( imscp-rqst-mngr ) is run through the daemon
-	Updated: Version to 1.2.2
-
-DISTRO
-	Changed: Dovecot packages are now installed from backports repository ( Squeeze, Wheezy )
-
-ENGINE
+BACKEND
 	Added: Checks for a2enconf/a2disconf command availability
 	Added: -h ( help ) short option ( iMSCP::Getopt module )
 	Fixed: LC_MESSAGES has not expected effect in backend's scripts
@@ -27,10 +15,24 @@ ENGINE
 	Removed: imscp-local-dns-resolver script ( The bind9 initscript invokes resolvconf itself )
 	Removed: policyd-weight and postgrey ( Postfix SMTP access policy delegation )
 
+CONFIGS
+	Added php5-json package ( Debian Jessie )
+	Moved: Local DNS resolver parameters from the imscp.conf file to the bind.data configuration file
+
+DAEMON
+	Fixed: Messages must not be hardcoded in functions
+	Fixed: Restart of some services fail when the backend ( imscp-rqst-mngr ) is run through the daemon
+	Updated: Version to 1.2.2
+
+DISTRO
+	Changed: Dovecot is now installed using packages from backports repository ( Squeeze, Wheezy )
+	Changed: Postfix is now installed using package from backports repository ( Squeeze, Wheezy )
+
 FRONTEND
 	Added: Support for eAccelerator, WinCache, XCache and ZendOptimizerPlus opcode caches
 
 INSTALLER
+	Fixed: Dovecot packages installation fail when no SSL certificate is generated
 	Fixed: Length of SQL's usernames and passwords is not validated ( they must be at least 6 characters long )
 	Fixed: Migration from Courier to Dovecot is broken ( courier-dovecot-migrate.pl is run with a wrong option )
 	Fixed: php5enmod command throws an error when a PHP module is missing ( PHP5.4 )
@@ -73,21 +75,7 @@ TICKETS
 2014-12-30: Laurent Declercq
 	RELEASE i-MSCP 1.2.0
 
-DAEMON
-	Fixed: The server traffic must be collected before any stopping attempt ( imscp_network )
-
-CONFIGS
-	Fixed: The time at which the backup script must be run is no configurable
-	Renamed: /etc/imscp/hooks.d directory to /etc/imscp/listeners.d
-	Removed: Roundcube configuration directory ( now shipped with the roundcube package )
-
-DISTROS
-	Removed: Support for obsolete Ubuntu versions ( Quantal Quetzal, Raring Ringtail, Saucy Salamander )
-
-DOCS
-	Updated: INSTALL files
-
-ENGINE
+BACKEND
 	Added: FETCH_MODE option in iMSCP::Database::mysql
 	Added: iMSCP::ProgramFinder module which allow to test whether programs are available on the executable search path
 	Added: iMSCP::Service module for service management ( start, stop, restart, reload, status )
@@ -99,6 +87,20 @@ ENGINE
 	Changed: Logfiles are now written as soon as possible ( allows to mitigate memory consumption )
 	Changed: The quota accounting script is now run every 30 minutes
 	Fixed: Backend logs which are older than 7 days are never removed
+
+CONFIGS
+	Fixed: The time at which the backup script must be run is no configurable
+	Renamed: /etc/imscp/hooks.d directory to /etc/imscp/listeners.d
+	Removed: Roundcube configuration directory ( now shipped with the roundcube package )
+
+DAEMON
+	Fixed: The server traffic must be collected before any stopping attempt ( imscp_network )
+
+DISTROS
+	Removed: Support for obsolete Ubuntu versions ( Quantal Quetzal, Raring Ringtail, Saucy Salamander )
+
+DOCS
+	Updated: INSTALL files
 
 FRONTEND
 	Changed: The frontEnd is now reachable through dedicated Web server ( Nginx )

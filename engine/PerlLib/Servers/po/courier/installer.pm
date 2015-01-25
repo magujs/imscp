@@ -107,23 +107,26 @@ sub showDialog
 
 	if(
 		$main::reconfigure ~~ ['po', 'servers', 'all', 'forced'] ||
-		$dbUser !~ /^[\x21-\x5b\x5d-\x7e]+$/ || $dbPass !~ /^[\x21-\x5b\x5d-\x7e]+$/
+		(length $dbUser < 6 || length $dbUser > 16 || $dbUser !~ /^[\x21-\x5b\x5d-\x7e]+$/) ||
+		(length $dbPass < 6 || $dbPass !~ /^[\x21-\x5b\x5d-\x7e]+$/)
 	) {
 		# Ask for the authdaemon restricted SQL username
 		do{
 			($rs, $dbUser) = $dialog->inputbox(
-				"\nPlease enter an username for the restricted authdaemon SQL user:$msg", $dbUser
+				"\nPlease enter an username for the Courier Authdaemon SQL user:$msg", $dbUser
 			);
 
-			# i-MSCP SQL user cannot be reused
-			if($dbUser eq main::setupGetQuestion('DATABASE_USER')) {
-				$msg = "\n\n\\Z1You cannot reuse the i-MSCP SQL user '$dbUser'.\\Zn\n\nPlease, try again:";
+			if($dbUser eq $main::imscpConfig{'DATABASE_USER'}) {
+				$msg = "\n\n\\Z1You cannot reuse the i-MSCP SQL user '$dbUser'.\\Zn\n\nPlease try again:";
 				$dbUser = '';
 			} elsif(length $dbUser > 16) {
-				$msg = "\n\n\\Z1SQL user names can be up to 16 characters long.\\Zn\n\nPlease, try again:";
+				$msg = "\n\n\\Username can be up to 16 characters long.\\Zn\n\nPlease try again:";
+				$dbUser = '';
+			} elsif(length $dbUser < 6) {
+				$msg = "\n\n\\Z1Username must be at least 6 characters long.\\Zn\n\nPlease try again:";
 				$dbUser = '';
 			} elsif($dbUser !~ /^[\x21-\x5b\x5d-\x7e]+$/) {
-				$msg = "\n\n\\Z1Only printable ASCII characters (excepted space and backslash) are allowed.\\Zn\n\nPlease, try again:";
+				$msg = "\n\n\\Z1Only printable ASCII characters (excepted space and backslash) are allowed.\\Zn\n\nPlease try again:";
 				$dbUser = '';
 			}
 		} while ($rs != 30 && ! $dbUser);
@@ -137,9 +140,16 @@ sub showDialog
 					"\nPlease, enter a password for the restricted authdaemon SQL user (blank for autogenerate):$msg", $dbPass
 				);
 
-				if($dbPass ne '' && $dbPass !~ /^[\x21-\x5b\x5d-\x7e]+$/) {
-					$msg = "\n\n\\Z1Only printable ASCII characters (excepted space and backslash) are allowed.\\Zn\n\nPlease, try again:";
-					$dbPass = '';
+				if($dbPass ne '') {
+					if(length $dbPass < 6) {
+						$msg = "\n\n\\Z1Password must be at least 6 characters long.\\Zn\n\nPlease try again:";
+						$dbPass = '';
+					} elsif($dbPass !~ /^[\x21-\x5b\x5d-\x7e]+$/) {
+						$msg = "\n\n\\Z1Only printable ASCII characters (excepted space and backslash) are allowed.\\Zn\n\nPlease try again:";
+						$dbPass = '';
+					} else {
+						$msg = '';
+					}
 				} else {
 					$msg = '';
 				}
@@ -217,7 +227,7 @@ sub install
 
 =item setEnginePermissions()
 
- Set engigne permissions
+ Set engine permissions
 
  Return int 0 on success, other on failure
 
@@ -532,7 +542,7 @@ sub _buildConf
 		# Load template
 
 		my $cfgTpl;
-		my $rs = $self->{'eventManager'}->trigger('onLoadTemplate', 'courier', $_, \$cfgTpl, $data);
+		$rs = $self->{'eventManager'}->trigger('onLoadTemplate', 'courier', $_, \$cfgTpl, $data);
 		return $rs if $rs;
 
 		unless(defined $cfgTpl) {
@@ -574,6 +584,44 @@ sub _buildConf
 		$rs = $file->copyFile($cfgFiles{$_}->[0]);
 		return $rs if $rs;
 	}
+
+	# Include imapd.local configuration file in main imapd configuration file
+
+	if(-f "$self->{'cfgDir'}/imapd.local") {
+		my $file = iMSCP::File->new( filename => "$self->{'config'}->{'COURIER_CONF_DIR'}/imapd" );
+
+		my $fileContent = $file->get();
+		unless(defined $fileContent) {
+			error("Unable to read $self->{'filename'}");
+			return 1;
+		}
+
+		$fileContent = replaceBloc(
+			"\n# Servers::po::courier::installer - BEGIN\n",
+			"# Servers::po::courier::installer - ENDING\n",
+			'',
+			$fileContent
+		);
+
+		$fileContent .=
+			"\n# Servers::po::courier::installer - BEGIN\n" .
+			". $self->{'cfgDir'}/imapd.local\n" .
+			"# Servers::po::courier::installer - ENDING\n";
+
+		$rs = $file->set($fileContent);
+		return $rs if $rs;
+
+		$rs = $file->save();
+		return $rs if $rs;
+
+		$rs = $file->mode(0644);
+		return $rs if $rs;
+
+		$rs = $file->owner($main::imscpConfig{'ROOT_USER'}, $main::imscpConfig{'ROOT_GROUP'});
+		return $rs if $rs;
+	}
+
+	0;
 }
 
 =item _buildAuthdaemonrcFile()

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Package::Roundcube::Uninstaller - i-MSCP Roundcube package uninstaller
+Package::Webmail::RainLoop::Uninstaller - i-MSCP RainLoop package uninstaller
 
 =cut
 
@@ -27,20 +27,22 @@ Package::Roundcube::Uninstaller - i-MSCP Roundcube package uninstaller
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package Package::Roundcube::Uninstaller;
+package Package::Webmail::RainLoop::Uninstaller;
 
 use strict;
 use warnings;
 
 use iMSCP::Debug;
+use iMSCP::Dir;
+use iMSCP::File;
 use iMSCP::Database;
-use iMSCP::Execute;
-use Package::Roundcube;
+use Package::FrontEnd;
+use Package::Webmail::RainLoop::RainLoop;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
 
- i-MSCP Roundcube package uninstaller.
+ i-MSCP RainLoop package uninstaller.
 
 =head1 PUBLIC METHODS
 
@@ -64,6 +66,9 @@ sub uninstall
 	$rs = $self->_removeSqlDatabase();
 	return $rs if $rs;
 
+	$rs = $self->_unregisterConfig();
+	return $rs if $rs;
+
 	$self->_removeFiles();
 }
 
@@ -77,7 +82,7 @@ sub uninstall
 
  Initialize instance
 
- Return Package::Roundcube::Uninstaller
+ Return Package::Webmail::RainLoop::Uninstaller
 
 =cut
 
@@ -85,13 +90,9 @@ sub _init
 {
 	my $self = $_[0];
 
-	$self->{'roundcube'} = Package::Roundcube->getInstance();
-
-	$self->{'cfgDir'} = "$main::imscpConfig{'CONF_DIR'}/roundcube";
-	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
-	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
-
-	$self->{'config'} = $self->{'roundcube'}->{'config'};
+	$self->{'rainloop'} = Package::Webmail::RainLoop::RainLoop->getInstance();
+	$self->{'frontend'} = Package::FrontEnd->getInstance();
+	$self->{'db'} = iMSCP::Database->factory();
 
 	$self;
 }
@@ -100,7 +101,7 @@ sub _init
 
  Remove SQL user
 
- Return int 0
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -108,15 +109,14 @@ sub _removeSqlUser
 {
 	my $self = $_[0];
 
-	my $database = iMSCP::Database->factory();
-
 	# We do not catch any error here - It's expected
 	for($main::imscpConfig{'DATABASE_USER_HOST'}, $main::imscpConfig{'BASE_SERVER_IP'}, 'localhost', '127.0.0.1', '%') {
 		next unless $_;
-		$database->doQuery('dummy', "DROP USER ?@?", $self->{'config'}->{'DATABASE_USER'}, $_);
+
+		$self->{'db'}->doQuery('dummy', "DROP USER ?@?", $self->{'rainloop'}->{'config'}->{'DATABASE_USER'}, $_);
 	}
 
-	$database->doQuery('dummy', 'FLUSH PRIVILEGES');
+	$self->{'db'}->doQuery('dummy', 'FLUSH PRIVILEGES');
 
 	0;
 }
@@ -133,11 +133,48 @@ sub _removeSqlDatabase
 {
 	my $self = $_[0];
 
-	my $database = iMSCP::Database->factory();
+	my $dbName = $self->{'db'}->quoteIdentifier($main::imscpConfig{'DATABASE_NAME'} . '_rainloop');
 
-	my $dbName = $database->quoteIdentifier($main::imscpConfig{'DATABASE_NAME'} . '_pma');
+	$self->{'db'}->doQuery('dummy', "DROP DATABASE IF EXISTS $dbName");
 
-	$database->doQuery('delete', "DROP DATABASE IF EXISTS $dbName");
+	0;
+}
+
+=item _unregisterConfig
+
+ Remove include directive from frontEnd vhost files
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub _unregisterConfig
+{
+	my $self = $_[0];
+
+	for my $vhostFile('00_master.conf', '00_master_ssl.conf') {
+		if(-f "$self->{'frontend'}->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$vhostFile") {
+			my $file = iMSCP::File->new(
+				filename => "$self->{'frontend'}->{'config'}->{'HTTPD_SITES_AVAILABLE_DIR'}/$vhostFile"
+			);
+
+			my $fileContent = $file->get();
+			unless(defined $fileContent) {
+				error("Unable to read file $file->{'filename'}");
+				return 1;
+			}
+
+			$fileContent =~ s/[\t ]*include imscp_rainloop.conf;\n//;
+
+			my $rs = $file->set($fileContent);
+			return $rs if $rs;
+
+			$rs = $file->save();
+			return $rs if $rs;
+		}
+	}
+
+	$self->{'frontend'}->{'reload'} = 1;
 
 	0;
 }
@@ -154,21 +191,16 @@ sub _removeFiles
 {
 	my $self = $_[0];
 
-	my ($stdout, $stderr);
+	my $rs = iMSCP::Dir->new( dirname => "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/rainloop" )->remove();
+	return $rs if $rs;
 
-	if(-d "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/webmail") {
-		my $rs = execute(
-			"$main::imscpConfig{'CMD_RM'} -fR $main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/webmail", \$stdout, \$stderr
-		);
-		debug($stdout) if $stdout;
-		error($stderr) if $stderr && $rs;
-		return $rs if $rs;
-	}
+	$rs = iMSCP::Dir->new( dirname => $self->{'rainloop'}->{'cfgDir'} )->remove();
+	return $rs if $rs;
 
-	if(-d $self->{'cfgDir'}) {
-		my $rs = execute("$main::imscpConfig{'CMD_RM'} -fR $self->{'cfgDir'}", \$stdout, \$stderr);
-		debug($stdout) if $stdout;
-		error($stderr) if $stderr && $rs;
+	if(-f "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_rainloop.conf") {
+		$rs = iMSCP::File->new(
+			filename => "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_rainloop.conf"
+		)->delFile();
 		return $rs if $rs;
 	}
 

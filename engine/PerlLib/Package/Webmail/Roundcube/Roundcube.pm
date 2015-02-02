@@ -1,6 +1,6 @@
 =head1 NAME
 
-Package::Roundcube - i-MSCP Roundcube package
+Package::Webmail::Roundcube::Roundcube - i-MSCP Roundcube package
 
 =cut
 
@@ -27,14 +27,14 @@ Package::Roundcube - i-MSCP Roundcube package
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package Package::Roundcube;
+package Package::Webmail::Roundcube::Roundcube;
 
 use strict;
 use warnings;
 
 use iMSCP::Debug;
 use iMSCP::Config;
-use iMSCP::EventManager;
+use iMSCP::Database;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -53,24 +53,70 @@ filters.
 
 =over 4
 
-=item registerSetupListeners(\%eventManager)
+=item showDialog(\%dialog)
 
- Register setup event listeners
+ Show dialog
 
- Param iMSCP::EventManager \%eventManager
+ Param iMSCP::Dialog \%dialog
+ Return int 0 or 30
+
+=cut
+
+sub showDialog
+{
+	my ($self, $dialog) = @_;
+
+	require Package::Webmail::Roundcube::Installer;
+
+	Package::Webmail::Roundcube::Installer->getInstance()->showDialog($dialog);
+}
+
+=item preinstall()
+
+ Process preinstall tasks
+
  Return int 0 on success, other on failure
 
 =cut
 
-sub registerSetupListeners
+sub preinstall
 {
-	my ($self, $eventManager) = @_;
+	require Package::Webmail::Roundcube::Installer;
 
-	require Package::Roundcube::Installer;
-	Package::Roundcube::Installer->getInstance()->registerSetupListeners($eventManager);
+	Package::Webmail::Roundcube::Installer->getInstance()->preinstall();
 }
 
-=item setPermissionsListener()
+=item install()
+
+ Process install tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub install
+{
+	require Package::Webmail::Roundcube::Installer;
+
+	Package::Webmail::Roundcube::Installer->getInstance()->install();
+}
+
+=item uninstall()
+
+ Process uninstall tasks
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub uninstall
+{
+	require Package::Webmail::Roundcube::Uninstaller;
+
+	Package::Webmail::Roundcube::Uninstaller->getInstance()->uninstall();
+}
+
+=item setGuiPermissions()
 
  Set gui permissions
 
@@ -78,10 +124,11 @@ sub registerSetupListeners
 
 =cut
 
-sub setPermissionsListener
+sub setGuiPermissions
 {
-	require Package::Roundcube::Installer;
-	Package::Roundcube::Installer->getInstance()->setGuiPermissions();
+	require Package::Webmail::Roundcube::Installer;
+
+	Package::Webmail::Roundcube::Installer->getInstance()->setGuiPermissions();
 }
 
 =item deleteMail(\%data)
@@ -135,15 +182,13 @@ sub deleteMail
 
  Initialize instance
 
- Return Package::Roundcube
+ Return Package::Webmail::Roundcube::Roundcube
 
 =cut
 
 sub _init
 {
 	my $self = $_[0];
-
-	$self->{'eventMager'} = iMSCP::EventManager->getInstance();
 
 	$self->{'cfgDir'} = "$main::imscpConfig{'CONF_DIR'}/roundcube";
 	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
@@ -154,33 +199,6 @@ sub _init
 	} else {
 		$self->{'config'} = { };
 	}
-
-	if(defined $main::execmode) {
-		if($main::execmode eq 'setup') {
-			# Roundcube pre-install tasks must be processed after frontEnd pre-nstall tasks
-			$self->{'eventMager'}->register('afterFrontEndPreInstall', sub {
-				require Package::Roundcube::Installer;
-				Package::Roundcube::Installer->getInstance()->preinstall();
-			});
-
-			# Roundcube install tasks must be processed after frontEnd install tasks
-			$self->{'eventMager'}->register('afterFrontEndInstall', sub {
-				require Package::Roundcube::Installer;
-				Package::Roundcube::Installer->getInstance()->install();
-			});
-		} elsif($main::execmode eq 'uninstall') {
-			# Roundcube uninstallation tasks must be processed after frontEnd uninstallation tasks
-			$self->{'eventMager'}->register('afterFrontEndUninstall', sub {
-				require Package::Roundcube::Uninstaller;
-				Package::Roundcube::Installer->getInstance()->uninstall();
-			});
-		}
-	}
-
-	# Roundcube permissions must be set after FrontEnd base permissions
-	iMSCP::EventManager->getInstance()->register(
-		'afterFrontendSetGuiPermissions', sub { $self->setPermissionsListener(@_); }
-	);
 
 	$self;
 }

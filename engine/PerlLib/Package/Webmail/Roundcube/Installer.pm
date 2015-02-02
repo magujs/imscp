@@ -1,6 +1,6 @@
 =head1 NAME
 
-Package::Roundcube::Installer - i-MSCP Roundcube package installer
+Package::Webmail::Roundcube::Installer - i-MSCP Roundcube package installer
 
 =cut
 
@@ -27,7 +27,7 @@ Package::Roundcube::Installer - i-MSCP Roundcube package installer
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package Package::Roundcube::Installer;
+package Package::Webmail::Roundcube::Installer;
 
 use strict;
 use warnings;
@@ -54,27 +54,11 @@ our $VERSION = '0.6.0';
 
  This is the installer for the i-MSCP Roundcube package.
 
- See Package::Roundcube for more information.
+ See Package::Webmail::Roundcube::Roundcube for more information.
 
 =head1 PUBLIC METHODS
 
 =over 4
-
-=item registerSetupListeners(\%eventManager)
-
- Register setup event listeners
-
- Param iMSCP::EventManager \%eventManager
- Return int 0 on success, other on failure
-
-=cut
-
-sub registerSetupListeners
-{
-	my ($self, $eventManager) = @_;
-
-	$eventManager->register('beforeSetupDialog', sub { push @{$_[0]}, sub { $self->showDialog(@_) }; 0; });
-}
 
 =item showDialog(\%dialog)
 
@@ -95,7 +79,7 @@ sub showDialog
 	my ($rs, $msg) = (0, '');
 
 	if(
-		$main::reconfigure ~~ ['webmail', 'all', 'forced'] ||
+		$main::reconfigure ~~ [ 'webmails', 'all', 'forced' ] ||
 		(length $dbUser < 6 || length $dbUser > 16 || $dbUser !~ /^[\x21-\x5b\x5d-\x7e]+$/) ||
 		(length $dbPass < 6 || $dbPass !~ /^[\x21-\x5b\x5d-\x7e]+$/)
 	) {
@@ -201,7 +185,7 @@ sub install
 	);
 	return $rs if $rs;
 
-	# Install Roundcube files from local packages repository
+	# Install files from local packages repository
 	$rs = $self->_installFiles();
 	return $rs if $rs;
 
@@ -209,27 +193,27 @@ sub install
 	$rs = $self->_mergeConfig();
 	return $rs if $rs;
 
-	# Setup Roundcube database (database, user)
+	# Setup database ( database, user )
 	$rs = $self->_setupDatabase();
 	return $rs if $rs;
 
-	# Build Roundcube configuration files
+	# Build configuration files
 	$rs = $self->_buildRoundcubeConfig();
 	return $rs if $rs;
 
-	# Update Roundcube database if needed (should be done after roundcube config files generation)
+	# Update database if needed (should be done after roundcube config files generation)
 	$rs = $self->_updateDatabase() unless $self->{'newInstall'};
 	return $rs if $rs;
 
-	# Build Roundcube httpd configuration file
-	$rs = $self->_buildHttpdConfig(@_);
+	# Build httpd configuration file
+	$rs = $self->_buildHttpdConfig();
 	return $rs if $rs;
 
-	# Set Roundcube version
+	# Set version
 	$rs = $self->_setVersion();
 	return $rs if $rs;
 
-	# Save Roundcube package configuration file
+	# Save package configuration file
 	$self->_saveConfig();
 }
 
@@ -243,20 +227,26 @@ sub install
 
 sub setGuiPermissions
 {
-	my $panelUName =
-	my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 	my $guiPublicDir = $main::imscpConfig{'GUI_PUBLIC_DIR'};
 
-	my $rs = setRights(
-		"$guiPublicDir/tools/webmail",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
-	);
-	return $rs if $rs;
+	if(-d "$guiPublicDir/tools/webmail") {
+		my $panelUName =
+		my $panelGName = $main::imscpConfig{'SYSTEM_USER_PREFIX'} . $main::imscpConfig{'SYSTEM_USER_MIN_UID'};
 
-	setRights(
-		"$guiPublicDir/tools/webmail/logs",
-		{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0750', 'filemode' => '0640', 'recursive' => 1 }
-	);
+		my $rs = setRights(
+			"$guiPublicDir/tools/webmail",
+			{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0550', 'filemode' => '0440', 'recursive' => 1 }
+		);
+		return $rs if $rs;
+
+		$rs = setRights(
+			"$guiPublicDir/tools/webmail/logs",
+			{ 'user' => $panelUName, 'group' => $panelGName, 'dirmode' => '0750', 'filemode' => '0640', 'recursive' => 1 }
+		);
+		return $rs if $rs;
+	}
+
+	0;
 }
 
 =back
@@ -308,7 +298,7 @@ sub afterFrontEndBuildConfFile
 
  Initialize instance
 
- Return Package::Roundcube::Installer
+ Return Package::Webmail::Roundcube::Installer
 
 =cut
 
@@ -316,7 +306,7 @@ sub _init
 {
 	my $self = $_[0];
 
-	$self->{'roundcube'} = Package::Roundcube->getInstance();
+	$self->{'roundcube'} = Package::Webmail::Roundcube::Roundcube->getInstance();
 	$self->{'eventManager'} = iMSCP::EventManager->getInstance();
 
 	$self->{'cfgDir'} = $self->{'roundcube'}->{'cfgDir'};
@@ -344,7 +334,7 @@ sub _backupConfigFile
 
 	if(-f $cfgFile) {
 		my $filename = fileparse($cfgFile);
-		my $file = iMSCP::File->new('filename' => $cfgFile);
+		my $file = iMSCP::File->new( filename => $cfgFile );
 		my $rs = $file->copyFile("$self->{'bkpDir'}/$filename" . time);
 
 		return $rs if $rs;
@@ -365,36 +355,35 @@ sub _installFiles
 {
 	my $self = $_[0];
 
-	my $repoDir = "$main::imscpConfig{'CACHE_DATA_DIR'}/packages/vendor/imscp/roundcube";
-	my $rs = 0;
+	my $packageDir = "$main::imscpConfig{'CACHE_DATA_DIR'}/packages/vendor/imscp/roundcube";
 
-	if(-d $repoDir) {
+	if(-d $packageDir) {
 		my $destDir = "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/webmail";
 
 		# Remove older production directory if any
 		my ($stdout, $stderr);
-		$rs = execute("$main::imscpConfig{'CMD_RM'} -fR $destDir", \$stdout, \$stderr);
+		my $rs = execute("$main::imscpConfig{'CMD_RM'} -fR $destDir", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
 		# Copy configuration directory
-		$rs = execute("$main::imscpConfig{'CMD_CP'} -fRT $repoDir/iMSCP/config $self->{'cfgDir'}", \$stdout, \$stderr);
+		$rs = execute("$main::imscpConfig{'CMD_CP'} -fRT $packageDir/iMSCP/config $self->{'cfgDir'}", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 
-		# Copy roundcube source
-		$rs = execute("$main::imscpConfig{'CMD_CP'} $repoDir/src -R $destDir", \$stdout, \$stderr);
+		# Copy source
+		$rs = execute("$main::imscpConfig{'CMD_CP'} -fR $packageDir/src $destDir", \$stdout, \$stderr);
 		debug($stdout) if $stdout;
 		error($stderr) if $rs && $stderr;
 		return $rs if $rs;
 	} else {
 		error("Couldn't find the imscp/roundcube package into the packages cache directory");
-		$rs = 1;
+		return 1;
 	}
 
-	$rs;
+	0;
 }
 
 =item _mergeConfig

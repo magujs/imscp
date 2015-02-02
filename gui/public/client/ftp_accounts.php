@@ -48,7 +48,7 @@ function ftp_generatePageData($tpl)
 		/** @var $cfg iMSCP_Config_Handler_File */
 		$cfg = iMSCP_Registry::get('config');
 
-		if(!(isset($cfg->FILEMANAGER_PACKAGE) && $cfg->FILEMANAGER_PACKAGE == 'AjaXplorer')) {
+		if(!(isset($cfg->FILEMANAGER_PACKAGE) && $cfg->FILEMANAGER_PACKAGE == 'Pydio')) {
 			$tpl->assign('FTP_EASY_LOGIN', '');
 		}
 
@@ -114,7 +114,6 @@ $tpl->assign(
 		'TR_EDIT' => tr('Edit'),
 		'TR_DELETE' => tr('Delete'),
 		'TR_MESSAGE_DELETE' => tr('Are you sure you want to delete the %s FTP user?', true, '%s'),
-		'FILEMANAGER_TARGET' => $cfg->FILEMANAGER_TARGET
 	)
 );
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Package::PhpMyAdmin::Uninstaller - i-MSCP PhpMyAdmin package uninstaller
+Package::Webmail::Roundcube::Uninstaller - i-MSCP Roundcube package uninstaller
 
 =cut
 
@@ -27,7 +27,7 @@ Package::PhpMyAdmin::Uninstaller - i-MSCP PhpMyAdmin package uninstaller
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package Package::PhpMyAdmin::Uninstaller;
+package Package::Webmail::Roundcube::Uninstaller;
 
 use strict;
 use warnings;
@@ -36,13 +36,13 @@ use iMSCP::Debug;
 use iMSCP::Dir;
 use iMSCP::File;
 use iMSCP::Database;
-use Package::PhpMyAdmin;
 use Package::FrontEnd;
+use Package::Webmail::Roundcube::Roundcube;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
 
- i-MSCP PhpMyAdmin package uninstaller.
+ i-MSCP Roundcube package uninstaller.
 
 =head1 PUBLIC METHODS
 
@@ -82,7 +82,7 @@ sub uninstall
 
  Initialize instance
 
- Return Package::PhpMyAdmin::Uninstaller
+ Return Package::Webmail::Roundcube::Uninstaller
 
 =cut
 
@@ -90,14 +90,15 @@ sub _init
 {
 	my $self = $_[0];
 
-	$self->{'phpmyadmin'} = Package::PhpMyAdmin->getInstance();
 	$self->{'frontend'} = Package::FrontEnd->getInstance();
+	$self->{'roundcube'} = Package::Webmail::Roundcube::Roundcube->getInstance();
+	$self->{'db'} = iMSCP::Database->factory();
 
-	$self->{'cfgDir'} = "$main::imscpConfig{'CONF_DIR'}/pma";
+	$self->{'cfgDir'} = "$main::imscpConfig{'CONF_DIR'}/roundcube";
 	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 
-	$self->{'config'} = $self->{'phpmyadmin'}->{'config'};
+	$self->{'config'} = $self->{'roundcube'}->{'config'};
 
 	$self;
 }
@@ -106,7 +107,7 @@ sub _init
 
  Remove SQL user
 
- Return int 0
+ Return int 0 on success, other on failure
 
 =cut
 
@@ -114,10 +115,13 @@ sub _removeSqlUser
 {
 	my $self = $_[0];
 
-	my $db = iMSCP::Database->factory();
+	# We do not catch any error here - It's expected
+	for($main::imscpConfig{'DATABASE_USER_HOST'}, $main::imscpConfig{'BASE_SERVER_IP'}, 'localhost', '127.0.0.1', '%') {
+		next unless $_;
+		$self->{'db'}->doQuery('dummy', "DROP USER ?@?", $self->{'config'}->{'DATABASE_USER'}, $_);
+	}
 
-	$db->doQuery('dummy', "DROP USER ?@?", $self->{'config'}->{'DATABASE_USER'}, $main::imscpConfig{'DATABASE_USER_HOST'});
-	$db->doQuery('dummy', 'FLUSH PRIVILEGES');
+	$self->{'db'}->doQuery('dummy', 'FLUSH PRIVILEGES');
 
 	0;
 }
@@ -134,11 +138,9 @@ sub _removeSqlDatabase
 {
 	my $self = $_[0];
 
-	my $database = iMSCP::Database->factory();
+	my $dbName = $self->{'db'}->quoteIdentifier($main::imscpConfig{'DATABASE_NAME'} . '_roundcube');
 
-	my $dbName = $database->quoteIdentifier($main::imscpConfig{'DATABASE_NAME'} . '_pma');
-
-	$database->doQuery('dummy', "DROP DATABASE IF EXISTS $dbName");
+	$self->{'db'}->doQuery('dummy', "DROP DATABASE IF EXISTS $dbName");
 
 	0;
 }
@@ -167,7 +169,7 @@ sub _unregisterConfig
 				return 1;
 			}
 
-			$fileContent =~ s/[\t ]*include imscp_pma.conf;\n//;
+			$fileContent =~ s/[\t ]*include imscp_roundcube.conf;\n//;
 
 			my $rs = $file->set($fileContent);
 			return $rs if $rs;
@@ -194,15 +196,15 @@ sub _removeFiles
 {
 	my $self = $_[0];
 
-	my $rs = iMSCP::Dir->new( dirname => "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/pma" )->remove();
+	my $rs = iMSCP::Dir->new( dirname => "$main::imscpConfig{'GUI_PUBLIC_DIR'}/tools/webmail" )->remove();
 	return $rs if $rs;
 
 	$rs = iMSCP::Dir->new( dirname => $self->{'cfgDir'} )->remove();
 	return $rs if $rs;
 
-	if(-f "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_pma.conf") {
+	if(-f "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_roundcube.conf") {
 		$rs = iMSCP::File->new(
-			filename => "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_pma.conf"
+			filename => "$self->{'frontend'}->{'config'}->{'HTTPD_CONF_DIR'}/imscp_roundcube.conf"
 		)->delFile();
 		return $rs if $rs;
 	}

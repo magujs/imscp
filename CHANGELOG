@@ -14,6 +14,7 @@ BACKEND
 	Fixed: Useless instantiation of servers
 	Fixed: Wrong umask when the imscp-rqst-mngr script is run through the i-MSCP Daemon
 	Moved: Local DNS resolver question into bind9 installer
+	Removed: Deprecated IMSCP_CLEAR_SCREEN environment variable
 	Removed: imscp-local-dns-resolver script ( The bind9 initscript invokes resolvconf itself )
 	Removed: policyd-weight and postgrey ( Postfix SMTP access policy delegation )
 
@@ -32,6 +33,9 @@ DISTRO
 
 FRONTEND
 	Added: Support for eAccelerator, WinCache, XCache and ZendOptimizerPlus opcode caches
+	Fixed: Usage of autoloader instead of require_once
+	Fixed: Wrong classname iMSCP_Listener ( should be iMSCP_Events_Listener )
+	Fixed: Wrong classname iMSCP_Listener_PriorityQueue ( should be iMSCP_Events_Listener_PriorityQueue )
 
 INSTALLER
 	Fixed: Dovecot packages installation fail when no SSL certificate is generated
@@ -66,6 +70,7 @@ TICKETS
 	Fixed #IP-1209: Cosmetics - Data usage bar glitches on 4k screens
 	Fixed #IP-1217: Defect - Faulty cron for removing old backend logs
 	Fixed #IP-1223: Bug - Admin log shows server IP instead of user IP
+	Fixed #IP-1225: iMSCP::Service - Dovecot take more than 5 seconds to start in some contexts
 	Fixed #IP-1226: Panel maintenance mode: text message error
 	Fixed #IP-1227: Page reseller statistics shows the same max/curr traffic/disk for all resellers
 	Fixed #IP-1228: Adding SSL-certificate causes undefined index warning
@@ -80,7 +85,9 @@ TICKETS
 	Fixed #IP-1241: Allow customers to generate self-signed SSL certificate for their domains through the frontEnd
 	Fixed #IP-1246: PHP modules - Priority order - Priority is not honored in some contexts
 	Fixed #IP-1247: Apache2 - vlogger - failed unexpectedly
+	Fixed #IP-1251: Bug - per_user/per_domain settings - wrong domains/paths in php.ini
 	Fixed #IP-1252: Unable to add SSL certificate in some contexts
+	Fixed #IP-1256: Backup script - The SQL root password is shown in processes table
 
 ------------------------------------------------------------------------------------------------------------------------
 1.2.0

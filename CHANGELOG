@@ -4,6 +4,30 @@
 Git 1.2.x
 ------------------------------------------------------------------------------------------------------------------------
 
+BACKEND:
+	Fixed: Invalid argument at /usr/share/perl5/MIME/Entity.pm line 1878 ( autoreply script )
+
+FRONTEND
+	Fixed: Wrong URL in default email templates ( Missing port )
+	Updated: Logo and CSS
+
+INSTALLER
+	Added: panel_ports item for the --reconfigure command line option
+	Fixed: Encoding issue when running installer through SSH with PuTTY
+
+PACKAGE
+	Added: Ports dialog ( FrontEnd package )
+
+TICKETS
+	Fixed #IP-1259: Layout - Text goes out of statistic bar
+
+------------------------------------------------------------------------------------------------------------------------
+1.2.1
+------------------------------------------------------------------------------------------------------------------------
+
+2015-02-06: Laurent Declercq
+	RELEASE i-MSCP 1.2.1
+
 BACKEND
 	Added: Checks for a2enconf/a2disconf command availability
 	Added: -h ( help ) short option ( iMSCP::Getopt module )

@@ -7,6 +7,7 @@ Git 1.2.x
 BACKEND
 	Fixed: Invalid argument at /usr/share/perl5/MIME/Entity.pm line 1878 ( autoreply script )
 	Fixed: Wrong sqld server name
+	Fixed: Vlogger - High CPU usage
 
 FRONTEND
 	Fixed: Wrong URL in default email templates ( Missing port )
@@ -20,6 +21,9 @@ PACKAGES
 	Added: Ports dialog ( FrontEnd package )
 	Fixed: Several event listeners are registered too late ( regression fix )
 	Fixed: Awstats section not added in vhost files
+
+PLUGINS:
+	Updated: API to version 0.2.17
 
 TICKETS
 	Fixed #IP-1259: Layout - Text goes out of statistic bar

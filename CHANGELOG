@@ -5,7 +5,32 @@ Git 1.2.x
 ------------------------------------------------------------------------------------------------------------------------
 
 BACKEND
-	Fixed: Apache access.log file are put in wrong directory (vlogger)
+	Added: Custom DNS module ( Modules::CustomDNS )
+	Fixed: Any task which belongs to the custom DNS records layer must not involve any HTTPD configuration change
+	Fixed: Apache access.log file are put in wrong directory ( vlogger )
+	Fixed: Bind9 must not be restarted each time a DNS zone is updated. A simple reload should be sufficient
+	Fixed: Some errors are not trapped
+
+DATABASE
+	Added: Status field in domain_dns table ( Custom DNS record status field )
+
+FRONTEND
+	Fixed: Html in title attribute must not be auto-escaped by jQueryUI tooltip
+	Improved: Translations strings entries can now be accessed as object properties ( i18n_getJsTranslations() )
+
+INSTALLER
+	Fixed: iMSCP::Requirements::_modules: Modules [Email::Simple] were not found on your system
+	Fixed: Use of uninitialized value $dbPass in string ( imscp/engine/setup/imscp-setup-methods.pl line 482 )
+
+PLUGINS
+	Updated: API to version 0.2.18
+
+SERVICES
+	Fixed: Log summary message on TLS handshake completion ( Postfix )
+
+TICKETS
+	Fixed #IP-1275: Apache access logs are created in /<domain.tld>
+	Fixed #IP-1279: Autoresponder - Unable to get message body
 
 ------------------------------------------------------------------------------------------------------------------------
 1.2.2

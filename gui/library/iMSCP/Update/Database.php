@@ -59,7 +59,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 	/**
 	 * @var int Last database update revision
 	 */
-	protected $lastUpdate = 198;
+	protected $lastUpdate = 199;
 
 	/**
 	 * Singleton - Make new unavailable
@@ -3134,5 +3134,19 @@ class iMSCP_Update_Database extends iMSCP_Update
 		if (isset($dbConfig['PORT_POLICYD-WEIGHT'])) {
 			$dbConfig->del('PORT_POLICYD-WEIGHT');
 		}
+	}
+
+	/**
+	 * Add domain_dns.domain_dns_status column
+	 *
+	 * @return string SQL statement to be executed
+	 */
+	protected function r199()
+	{
+		return $this->addColumn(
+			'domain_dns',
+			'domain_dns_status',
+			"VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'ok'"
+		);
 	}
 }

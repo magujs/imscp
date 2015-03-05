@@ -82,7 +82,7 @@ INSERT IGNORE INTO `config` (`name`, `value`) VALUES
 ('PREVENT_EXTERNAL_LOGIN_ADMIN', '1'),
 ('PREVENT_EXTERNAL_LOGIN_RESELLER', '1'),
 ('PREVENT_EXTERNAL_LOGIN_CLIENT', '1'),
-('DATABASE_REVISION', '199'),
+('DATABASE_REVISION', '201'),
 ('PHPINI_ALLOW_URL_FOPEN', 'off'),
 ('PHPINI_DISPLAY_ERRORS', 'off'),
 ('PHPINI_UPLOAD_MAX_FILESIZE', '10'),
@@ -190,7 +190,8 @@ CREATE TABLE IF NOT EXISTS `domain_dns` (
   `domain_class` enum('IN','CH','HS') collate utf8_unicode_ci NOT NULL DEFAULT 'IN',
   `domain_type` enum('A','AAAA','CERT','CNAME','DNAME','GPOS','KEY','KX','MX','NAPTR','NSAP','NS','NXT','PTR','PX','SIG','SRV','TXT') collate utf8_unicode_ci NOT NULL DEFAULT 'A',
   `domain_text` varchar(255) collate utf8_unicode_ci NOT NULL,
-  `owned_by` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'custom_dns_feature',
+  `owned_by` varchar(255) collate utf8_unicode_ci NOT NULL DEFAULT 'custom_dns_feature',
+  `domain_dns_status` varchar(255) collate utf8_unicode_ci NOT NULL DEFAULT 'ok',
   PRIMARY KEY (`domain_dns_id`),
   UNIQUE KEY `domain_id` (`domain_id`,`alias_id`,`domain_dns`,`domain_class`,`domain_type`,`domain_text`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -430,6 +431,7 @@ CREATE TABLE IF NOT EXISTS `plugin` (
   `plugin_type` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `plugin_info` text COLLATE utf8_unicode_ci NOT NULL,
   `plugin_config` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `plugin_config_prev` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `plugin_priority` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `plugin_status` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `plugin_error` text COLLATE utf8_unicode_ci NULL DEFAULT NULL,

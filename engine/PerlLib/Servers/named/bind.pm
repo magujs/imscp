@@ -728,11 +728,8 @@ sub addCustomDNS
 {
 	my ($self, $data) = @_;
 
-	my $rs = $self->{'eventManager'}->trigger('beforeNamedAddCustomDNS', $data);
-	return $rs if $rs;
-
 	if($self->{'config'}->{'BIND_MODE'} eq 'master') {
-		my $wrkDbFile = "$self->{'wrkDir'}/$data->{'ZONE_NAME'}.db";
+		my $wrkDbFile = "$self->{'wrkDir'}/$data->{'DOMAIN_NAME'}.db";
 
 		if(-f $wrkDbFile) {
 			$wrkDbFile = iMSCP::File->new( filename => $wrkDbFile );
@@ -755,13 +752,13 @@ sub addCustomDNS
 				return 1;
 			}
 
+			$rs = $self->{'eventManager'}->trigger('beforeNamedAddCustomDNS', \$wrkDbFileContent, $data);
+			return $rs if $rs;
+
 			my $customDnsEntries = '';
 			for (@{$data->{'DNS_RECORDS'}}) {
-				my ($name, $class, $type, $data) = @{$_};
-
-				debug("Adding custom DNS record: $name $class $type $data");
-
-				$customDnsEntries .= "$name\t$class\t$type\t$data\n";
+				my ($name, $class, $type, $rdata) = @{$_};
+				$customDnsEntries .= "$name\t$class\t$type\t$rdata\n";
 			}
 
 			$wrkDbFileContent = replaceBloc(
@@ -770,6 +767,9 @@ sub addCustomDNS
 				"; custom DNS entries BEGIN\n" . $customDnsEntries . "; custom DNS entries ENDING\n",
 				$wrkDbFileContent
 			);
+
+			$rs = $self->{'eventManager'}->trigger('afterNamedAddCustomDNS', \$wrkDbFileContent, $data);
+			return $rs if $rs;
 
 			# Updating working file content
 			$rs = $wrkDbFile->set($wrkDbFileContent);
@@ -782,16 +782,18 @@ sub addCustomDNS
 			my ($stdout, $stderr);
 			$rs = execute(
 				"$self->{'config'}->{'CMD_NAMED_COMPILEZONE'} -i none -s relative " .
-					"-o $self->{'config'}->{'BIND_DB_DIR'}/$data->{'ZONE_NAME'}.db " .
-					"$data->{'ZONE_NAME'} $wrkDbFile->{'filename'}",
+					"-o $self->{'config'}->{'BIND_DB_DIR'}/$data->{'DOMAIN_NAME'}.db " .
+					"$data->{'DOMAIN_NAME'} $wrkDbFile->{'filename'}",
 				\$stdout, \$stderr
 			);
 			debug($stdout) if $stdout;
 			error($stderr) if $stderr && $rs;
-			error("Unable to install $data->{'ZONE_NAME'}.db") if $rs && ! $stderr;
+			error("Unable to install $data->{'DOMAIN_NAME'}.db") if $rs && ! $stderr;
 			return $rs if $rs;
 
-			my $prodFile = iMSCP::File->new( filename => "$self->{'config'}->{'BIND_DB_DIR'}/$data->{'ZONE_NAME'}.db" );
+			my $prodFile = iMSCP::File->new(
+				filename => "$self->{'config'}->{'BIND_DB_DIR'}/$data->{'DOMAIN_NAME'}.db"
+			);
 
 			$rs = $prodFile->mode(0640);
 			return $rs if $rs;
@@ -803,9 +805,6 @@ sub addCustomDNS
 			return 1;
 		}
 	}
-
-	$rs = $self->{'eventManager'}->trigger('afterNamedAddCustomDNS', $data);
-	return $rs if $rs;
 
 	$self->{'reload'} = 1;
 

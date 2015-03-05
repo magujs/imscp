@@ -6,31 +6,47 @@ Git 1.2.x
 
 BACKEND
 	Added: Custom DNS module ( Modules::CustomDNS )
-	Fixed: Any task which belongs to the custom DNS records layer must not involve any HTTPD configuration change
-	Fixed: Apache access.log file are put in wrong directory ( vlogger )
+	Fixed: Any task which belongs to the custom DNS records layer must not involve HTTPD configuration change
 	Fixed: Bind9 must not be restarted each time a DNS zone is updated. A simple reload should be sufficient
 	Fixed: Some errors are not trapped
 
 DATABASE
-	Added: Status field in domain_dns table ( Custom DNS record status field )
+	Added: domain_dns_status field in domain_dns table ( Custom DNS record status field )
+	Added: plugin_config_prev column in plugin table
 
 FRONTEND
+	Changed: Stores the Github payload as json file instead of PHP file ( iMSCP_Update_Version::getUpdateInfo() )
+	Fixed: Do not fetch more data than needed from GitHub ( iMSCP_Update_Version::getUpdateInfo() )
+	Fixed: Force reload of newest mail body footprint file ( iMSCP_Exception_Writer_Mail::onUncaughtException() )
 	Fixed: Html in title attribute must not be auto-escaped by jQueryUI tooltip
+	Fixed: Translate the INADDR_ANY 0.0.0.0 IP address to 'Any' ( Services status )
 	Improved: Translations strings entries can now be accessed as object properties ( i18n_getJsTranslations() )
+	Removed: imscp_delete_opcode_file() and imscp_clear_opcode_cache() functions
 
 INSTALLER
-	Fixed: iMSCP::Requirements::_modules: Modules [Email::Simple] were not found on your system
+	Fixed: Missing Email::Simple Perl module ( no longer required )
 	Fixed: Use of uninitialized value $dbPass in string ( imscp/engine/setup/imscp-setup-methods.pl line 482 )
 
 PLUGINS
-	Updated: API to version 0.2.18
+	Added: iMSCP_Plugin::getConfigPrev() and iMSCP_Plugin::getConfigPrevParam() methods
+	Added: require_api info field ( field which allows the plugins to define the required i-MSCP plugin API )
+	Fixed: Force reload of newest plugin info file ( iMSCP_Plugin::getInfo() )
+	Fixed: Force reload of newest plugin configuration file ( iMSCP_Plugin::getConfigFromFile() )
+	Fixed: Opcode cache is not correctly reseted on plugin list update
+	Updated: API to version 1.0.0
+
+SKELETON
+	Removed: Link to the panel in default index.html files ( Panel must not be publicly exposed )
+	Fixed: Wrong link for favicon in error pages
 
 SERVICES
+	Fixed: Apache access.log file are put in wrong directory ( vlogger )
 	Fixed: Log summary message on TLS handshake completion ( Postfix )
 
-TICKETS
+YOUTRACK
 	Fixed #IP-1275: Apache access logs are created in /<domain.tld>
 	Fixed #IP-1279: Autoresponder - Unable to get message body
+	Fixed #IP-1292: Files from a previous plugin version must be kept if the new plugin version is not compatible
 
 ------------------------------------------------------------------------------------------------------------------------
 1.2.2
@@ -60,7 +76,7 @@ PACKAGES
 PLUGINS
 	Updated: API to version 0.2.17
 
-TICKETS
+YOUTRACK
 	Fixed #IP-1259: Layout - Text goes out of statistic bar
 	Fixed #IP-1263: Access to statistics ( Awstats ) is broken - 404 error
 	Fixed #IP-1267: Double-quotes in the Dovecot SQL user's password must be escaped
@@ -100,7 +116,7 @@ DISTRO
 	Changed: Postfix is now installed using package from backports repository ( Squeeze, Wheezy )
 
 FRONTEND
-	Added: Support for eAccelerator, WinCache, XCache and ZendOptimizerPlus opcode caches
+	Added: Support for eAccelerator, XCache and ZendOptimizerPlus opcode caches
 	Fixed: Usage of autoloader instead of require_once
 	Fixed: Wrong classname iMSCP_Listener ( should be iMSCP_Events_Listener )
 	Fixed: Wrong classname iMSCP_Listener_PriorityQueue ( should be iMSCP_Events_Listener_PriorityQueue )
@@ -130,7 +146,7 @@ PLUGINS
 	Fixed: Plugin uninstall() method must stay optional, even if the install() method is implemented
 	Updated: API to version 0.2.16
 
-TICKETS
+YOUTRACK
 	Fixed #IP-1205: Good practices - Use "-h" as abbrev for "--help" (instead of "-?")
 	Fixed #IP-1206: Good practices - Install resolvconf only when bind9 is also installed
 	Fixed #IP-1207: Defect - DataTable - Sorting not functional for data strings containing numeric values
@@ -209,7 +225,7 @@ PACKAGES
 UNINSTALLER
 	Added: Backend exec mode ( uninstall )
 
-TICKETS
+YOUTRACK
 	Fixed #IP-1123: Review - PHP session handling
 	Fixed #IP-1122: Defect - Network traffic passing through the loopback interface shouldn't be monitored
 	Fixed #IP-1146: Bug - Server statistics script is broken

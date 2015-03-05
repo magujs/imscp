@@ -69,7 +69,7 @@ sub process
 	(my $domainType, $domainId) = split '_', $domainId;
 
 	if($domainType && $domainId) {
-		my $typeField = ($domainType eq 'domain') ? 'domain_id' : 'alias_id';
+		my $condition = ($domainType eq 'domain') ? "domain_id = $domainId AND alias_id = 0" : "alias_id = $domainId";
 
 		my $rs = $self->_loadData($domainType, $domainId);
 		return $rs if $rs;
@@ -80,9 +80,8 @@ sub process
 			my $errorStr = scalar getMessageByType('error');
 			my $qrs = $self->{'db'}->doQuery(
 				'dummy',
-				"UPDATE domain_dns SET domain_dns_status = ? WHERE $typeField = ?",
+				"UPDATE domain_dns SET domain_dns_status = ? WHERE $condition",
 				(($errorStr) ? $errorStr : 'Unknown error'),
-				$domainId
 			);
 			unless(ref $qrs eq 'HASH') {
 				error($qrs);
@@ -95,25 +94,32 @@ sub process
 
 			eval {
 				$dbh->do(
-					"UPDATE domain_dns SET domain_dns_status = ? WHERE $typeField = ? AND domain_dns_status NOT IN(?, ?)",
-					undef,
-					'ok',
-					$domainId,
-					'todisable',
-					'todelete'
+					"
+						UPDATE
+							domain_dns
+						SET
+							domain_dns_status = 'ok'
+						WHERE
+							$condition
+						AND
+							domain_dns_status NOT IN('todisable', 'todelete')
+					"
 				);
 
 				$dbh->do(
-					"UPDATE domain_dns SET domain_dns_status = ? WHERE $typeField = ? AND domain_dns_status = ?",
-					undef,
-					'disabled',
-					$domainId,
-					'todisable'
+					"
+						UPDATE
+							domain_dns
+						SET
+							domain_dns_status = 'disabled'
+						WHERE
+							$condition
+						AND
+							domain_dns_status = 'todisable'
+					",
 				);
 
-				$dbh->do(
-					"DELETE FROM domain_dns WHERE $typeField = ? AND domain_dns_status = ?", undef, $domainId, 'todelete'
-				);
+				$dbh->do("DELETE FROM domain_dns WHERE $condition AND domain_dns_status = 'todelete'");
 
 				$dbh->commit();
 			};
@@ -174,7 +180,9 @@ sub _init
 sub _loadData
 {
 	my ($self, $domainType, $domainId) = @_;
-	my $typeField = ($domainType eq 'domain') ? 'domain_id' : 'alias_id';
+
+	my $condition = ($domainType eq 'domain')
+		? "t1.domain_id = $domainId AND t1.alias_id = 0" : "t1.alias_id = $domainId";
 
 	$self->{'db'}->set('FETCH_MODE', 'arrayref');
 
@@ -183,20 +191,18 @@ sub _loadData
 		"
 			SELECT
 				t1.domain_dns, t1.domain_class, t1.domain_type, t1.domain_text, t1.domain_dns_status,
-				IFNULL(t3.alias_name, t2.domain_name) AS zone_name
+				IFNULL(t3.alias_name, t2.domain_name) AS domain_name, t4.ip_number
 			FROM
 				domain_dns AS t1
 			LEFT JOIN
 				domain AS t2 USING(domain_id)
 			LEFT JOIN
 				domain_aliasses AS t3 USING(alias_id)
+			LEFT JOIN
+				server_ips AS t4 ON (IFNULL(t3.alias_ip_id, t2.domain_ip_id) = t4.ip_id)
 			WHERE
-				t1.$typeField = ?
-			AND
-				domain_dns_status <> ?
-		",
-		$domainId,
-		'todelete'
+				$condition
+		"
 	);
 
 	unless(ref $rows eq 'ARRAY') {
@@ -209,11 +215,12 @@ sub _loadData
 		return 1;
 	}
 
-	$self->{'zone_name'} = $rows->[0]->[5];
+	$self->{'domain_name'} = $rows->[0]->[5];
+	$self->{'domain_ip'} = $rows->[0]->[6];
 
 	# Filter DNS records which must be disabled or deleted
 	for(@{$rows}) {
-		push @{$self->{'dns_records'}}, $_ if not $_->[4] ~~ [ 'todelete', 'todisable' ];
+		push @{$self->{'dns_records'}}, $_ if not $_->[4] ~~ [ 'todisable', 'todelete' ];
 	}
 
 	0;
@@ -234,8 +241,9 @@ sub _getNamedData
 
 	unless($self->{'named'}) {
 		$self->{'named'} = {
-			ZONE_NAME => $self->{'zone_name'},
-			DNS_RECORDS => [@{$self->{'dns_records'}}]
+			DOMAIN_NAME => $self->{'domain_name'},
+			DOMAIN_IP => $self->{'domain_ip'},
+			DNS_RECORDS => [ @{$self->{'dns_records'}} ]
 		};
 	}
 

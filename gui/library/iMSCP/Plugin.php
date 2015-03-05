@@ -84,10 +84,12 @@ abstract class iMSCP_Plugin
 	 * author: Plugin author name(s)
 	 * email: Plugin author email
 	 * version: Plugin version
+	 * require_api: Required i-MSCP plugin API version
 	 * date: Last modified date of the plugin in YYYY-MM-DD format
 	 * name: Plugin name
 	 * desc: Plugin short description (text only)
-	 * url: Website in which it's possible to found more information about the plugin.
+	 * url: Website in which it's possible to found more information about the plugin
+	 * priority: OPTIONAL priority which define priority for plugin backend processing
 	 *
 	 * A plugin can provide any other info for its own needs. However, the following keywords are reserved for internal
 	 * use:
@@ -103,27 +105,26 @@ abstract class iMSCP_Plugin
 	 */
 	public function getInfo()
 	{
-		$infoFile = iMSCP_Registry::get('pluginManager')->getPluginDirectory() . '/' . $this->getName() . '/info.php';
+		$file = $this->getPluginManager()->getPluginDirectory() . '/' . $this->getName() . '/info.php';
 
 		$info = array();
 
-		if (@is_readable($infoFile)) {
-			$info = include $infoFile;
+		if (@is_readable($file)) {
+			$info = include($file);
+			iMSCP_Utility_OpcodeCache::clearAllActive($file); // Be sure to load newest version on next run
 		} else {
-			if (!file_exists($infoFile)) {
+			if (!file_exists($file)) {
 				set_page_message(
 					tr(
 						'%s::getInfo() not implemented and %s not found. This is a bug in the %s plugin which must be reported to the author(s).',
 						get_class($this),
-						$infoFile,
+						$file,
 						$this->getName()
 					),
 					'warning'
 				);
 			} else {
-				throw new iMSCP_Plugin_Exception(
-					tr("Unable to read the $%s file. Please, check file permissions", $infoFile)
-				);
+				throw new iMSCP_Plugin_Exception(tr("Unable to read the %s file.", $file));
 			}
 		}
 
@@ -132,6 +133,7 @@ abstract class iMSCP_Plugin
 				'author' => tr('Unknown'),
 				'email' => '',
 				'version' => '0.0.0',
+				'require_api' => '99.0.0',
 				'date' => '0000-00-00',
 				'name' => $this->getName(),
 				'desc' => tr('Not provided'),
@@ -208,21 +210,19 @@ abstract class iMSCP_Plugin
 		$this->isLoadedConfig = false;
 
 		$pluginName = $this->getName();
-
-		$configFile = iMSCP_Registry::get('pluginManager')->getPluginDirectory() . "/$pluginName/config.php";
+		$file = $this->getPluginManager()->getPluginDirectory() . "/$pluginName/config.php";
 		$config = array();
 
-		if (@file_exists($configFile)) {
-			if (@is_readable($configFile)) {
-				imscp_delete_opcode_file($configFile);
+		if (@file_exists($file)) {
+			if (@is_readable($file)) {
+				$config = include($file);
+				iMSCP_Utility_OpcodeCache::clearAllActive($file); // Be sure to load newest version on next run
 
-				$config = include $configFile;
-				$localConfigFile = PERSISTENT_PATH . "/plugins/$pluginName.php";
+				$file = PERSISTENT_PATH . "/plugins/$pluginName.php";
 
-				if (@is_readable($localConfigFile)) {
-					imscp_delete_opcode_file($localConfigFile);
-
-					$localConfig = include $localConfigFile;
+				if (@is_readable($file)) {
+					$localConfig = include($file);
+					iMSCP_Utility_OpcodeCache::clearAllActive($file); // Be sure to load newest version on next run
 
 					if (array_key_exists('__REMOVE__', $localConfig) && is_array($localConfig['__REMOVE__'])) {
 						$config = utils_arrayDiffRecursive($config, $localConfig['__REMOVE__']);
@@ -234,7 +234,7 @@ abstract class iMSCP_Plugin
 				}
 			} else {
 				throw new iMSCP_Plugin_Exception(
-					tr('Unable to read the plugin %s file. Please check file permissions', $configFile)
+					tr('Unable to read the plugin %s file. Please check file permissions', $file)
 				);
 			}
 		}
@@ -499,7 +499,7 @@ abstract class iMSCP_Plugin
 	protected function migrateDb($migrationMode = 'up')
 	{
 		$pluginName = $this->getName();
-		$pluginManager = $this->pluginManager;
+		$pluginManager = $this->getPluginManager();
 		$sqlDir = $pluginManager->getPluginDirectory() . '/' . $pluginName . '/sql';
 
 		if (is_dir($sqlDir)) {

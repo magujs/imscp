@@ -1,19 +1,19 @@
 #!/bin/sh
 ### BEGIN INIT INFO
 # Provides:          imscp_network
-# Required-Start:    $local_fs $remote_fs $network
-# Required-Stop:     $local_fs $remote_fs $network
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
 # Should-Start:      mysql
 # Should-Stop:       mysql
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: i-MSCP Network Manager
+# Short-Description: i-MSCP network manager
 ### END INIT INFO
 
 # Note: do not modify any of these vars here, use /etc/default/$NAME instead
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DESC="i-MSCP Network Manager"
+DESC="i-MSCP network manager"
 NAME=imscp_network
 LFILE=/var/run/$NAME
 TOOLSDIR="/var/www/imscp/engine/tools"
@@ -23,6 +23,11 @@ TOOLSDIR="/var/www/imscp/engine/tools"
 # Read config file if present.
 if [ -r /etc/default/$NAME ]; then
 	. /etc/default/$NAME
+fi
+
+# Don't run if we are running upstart
+if init_is_upstart 2>/dev/null; then
+	exit 1
 fi
 
 do_start()

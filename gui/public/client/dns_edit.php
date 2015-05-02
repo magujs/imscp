@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Client
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -245,6 +235,10 @@ function client_validate_SRV($record, &$errorString, &$dns, &$text)
 
 	if (empty($record['dns_srv_host'])) {
 		$errorString .= tr('%s host field is empty or invalid.', tr('Target host'));
+		return false;
+	}
+
+	if(!in_array($record['srv_proto'], array('udp', 'tcp', 'tls'))) {
 		return false;
 	}
 
@@ -469,7 +463,7 @@ function client_generatePage($tpl, $dnsRecordId)
 			'DNS_ADDRESS' => tohtml(client_getPost('dns_A_address', $address)),
 			'DNS_ADDRESS_V6' => tohtml(client_getPost('dns_AAAA_address', $addressv6)),
 			'SELECT_DNS_SRV_PROTOCOL' => client_create_options(
-				array('tcp', 'udp'), client_getPost('srv_proto', $srvProto)
+				array('tcp', 'udp', 'tls'), client_getPost('srv_proto', $srvProto)
 			),
 			'DNS_SRV_NAME' => tohtml(client_getPost('dns_srv_name', decode_idna($srvName))),
 			'DNS_SRV_TTL' => tohtml(client_getPost('dns_srv_ttl', $srvTTL)),
@@ -708,8 +702,6 @@ function client_saveDnsRecord($dnsRecordId)
 // Include core library
 require_once 'imscp-lib.php';
 
-require_once 'vendor/Net/DNS2.php';
-
 iMSCP_Events_Aggregator::getInstance()->dispatch(iMSCP_Events::onClientScriptStart);
 
 check_login('user');
@@ -746,7 +738,6 @@ $tpl->assign(
 		'TR_PAGE_TITLE' => (!$dnsRecordId)
 			? tr("Client / Domains / Add Custom DNS record")
 			: tr("Client / Domain / Edit Custom DNS record"),
-		'ISP_LOGO' => layout_getUserLogo(),
 		'ACTION_MODE' => (!$dnsRecordId) ? 'dns_add.php' : 'dns_edit.php?id={ID}',
 		'TR_CUSTOM_DNS_RECORD' => tr('Custom DNS record'),
 		'TR_DOMAIN' => tr('Domain'),

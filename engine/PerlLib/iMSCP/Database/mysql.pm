@@ -1,6 +1,6 @@
 =head1 NAME
 
- iMSCP::Database::mysql iMSCP MySQL database adapter
+ iMSCP::Database::mysql - iMSCP MySQL database adapter
 
 =cut
 
@@ -20,13 +20,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category     i-MSCP
-# @copyright    2010-2015 by i-MSCP | http://i-mscp.net
-# @author       Daniel Andreca <sci2tech@gmail.com>
-# @author       Laurent <l.declercq@nuxwin.com>
-# @link         http://i-mscp.net i-MSCP Home Site
-# @license      http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package iMSCP::Database::mysql;
 
@@ -42,7 +35,7 @@ use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
 
- iMSCP database adapter factory.
+ iMSCP MySQL database adapter
 
 =cut
 
@@ -50,12 +43,6 @@ use parent 'Common::SingletonClass';
 
 =over 4
 
-=item factory($adapterName)
-
- Param string $adapterName Adapter name
- Return an instance of the specified database adapter
-
-=cut
 
 =item($prop, $value)
 

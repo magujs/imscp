@@ -5,7 +5,7 @@ Package::FrontEnd - i-MSCP FrontEnd package
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,18 +20,11 @@ Package::FrontEnd - i-MSCP FrontEnd package
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Package::FrontEnd;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::Execute;
@@ -39,6 +32,7 @@ use iMSCP::EventManager;
 use iMSCP::TemplateParser;
 use iMSCP::Service;
 use File::Basename;
+use Scalar::Defer;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -296,15 +290,9 @@ sub start
 	my $rs = $self->{'eventManager'}->trigger('beforeFrontEndStart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'HTTPD_SNAME'});
-	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-
-	$rs = iMSCP::Service->getInstance()->start($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
-	error("Unable to start imscp_panel (FCGI manager) service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->start($self->{'config'}->{'HTTPD_SNAME'});
+	$serviceMngr->start('imscp_panel');
 
 	$self->{'eventManager'}->trigger('afterFrontEndStart');
 }
@@ -324,15 +312,9 @@ sub stop
 	my $rs = $self->{'eventManager'}->trigger('beforeFrontEndStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop("$self->{'config'}->{'HTTPD_SNAME'}");
-	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-
-	$rs = iMSCP::Service->getInstance()->stop($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
-	error("Unable to stop imscp_panel (FCGI manager) service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->stop("$self->{'config'}->{'HTTPD_SNAME'}");
+	$serviceMngr->stop('imscp_panel');
 
 	$self->{'eventManager'}->trigger('afterFrontEndStop');
 }
@@ -352,9 +334,7 @@ sub reload
 	my $rs = $self->{'eventManager'}->trigger('beforeFrontEndReload');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'});
-	error("Unable to reload $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterFrontEndReload');
 }
@@ -374,15 +354,9 @@ sub restart
 	my $rs = $self->{'eventManager'}->trigger('beforeFrontEndRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'});
-	error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	my $panelUName = $main::imscpConfig{'SYSTEM_USER_PREFIX'}.$main::imscpConfig{'SYSTEM_USER_MIN_UID'};
-
-	$rs = iMSCP::Service->getInstance()->restart($main::imscpConfig{'IMSCP_PANEL_SNAME'}, "-u $panelUName php5-cgi");
-	error("Unable to restart imscp_panel (FCGI manager) service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->restart($self->{'config'}->{'HTTPD_SNAME'});
+	$serviceMngr->restart('imscp_panel');
 
 	$self->{'eventManager'}->trigger('afterFrontEndRestart');
 }
@@ -476,7 +450,7 @@ sub _init
 	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/nginx.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'cfgDir'}/nginx.data"; \%c; };
 
 	$self->{'eventManager'} = iMSCP::EventManager->getInstance();
 

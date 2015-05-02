@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Admin
- * @copyright   2010-2015 by i-MSCP team
- * @author      Sacha Bay <sascha.bay@i-mscp.net>
- * @author      iMSCP Team
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 // Include core library
@@ -152,7 +143,6 @@ if (isset($_GET['id']) || isset($_POST['id'])) {
 		$tpl->assign(
 			array(
 				'TR_MANAGE_SOFTWARE_PAGE_TITLE' => tr('i-MSCP - Software Management'),
-				'ISP_LOGO' => layout_getUserLogo(),
 				'TR_DELETE_SEND_TO' => tr('Send message to'),
 				'TR_DELETE_MESSAGE_TEXT' => tr('Message'),
 				'TR_DELETE_SOFTWARE' => tr('Message to reseller before deleting the software'),

@@ -16,23 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Update
- * @subpackage  Database
- * @copyright   2010-2015 by i-MSCP team
- * @author      Daniel Andreca <sci2tech@gmail.com>
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /**
- * Update Database class
- *
- * @category    iMSCP
- * @package     iMSCP_Update
- * @subpackage  Database
+ * Class iMSCP_Update_Database
  */
 class iMSCP_Update_Database extends iMSCP_Update
 {
@@ -59,7 +46,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 	/**
 	 * @var int Last database update revision
 	 */
-	protected $lastUpdate = 201;
+	protected $lastUpdate = 202;
 
 	/**
 	 * Singleton - Make new unavailable
@@ -863,10 +850,15 @@ class iMSCP_Update_Database extends iMSCP_Update
 	 */
 	protected function r76()
 	{
-		$sqlUpd = $this->dropIndexByColumn('user_gui_props', 'user_id');
-		array_push($sqlUpd, $this->addIndex('user_gui_props', 'user_id', 'unique'));
+		$queries = $this->dropIndexByColumn('user_gui_props', 'user_id');
 
-		return $sqlUpd;
+		if(!empty($queries)) {
+			foreach($queries as $query) {
+				execute_query($query);
+			}
+		}
+
+		return $this->addIndex('user_gui_props', 'user_id', 'unique');
 	}
 
 	/**
@@ -973,7 +965,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 		$dbConfig['PHPINI_REGISTER_GLOBALS'] = 'off';
 		$dbConfig['PHPINI_UPLOAD_MAX_FILESIZE'] = '2';
 		$dbConfig['PHPINI_POST_MAX_SIZE'] = '8';
-		$dbConfig['PHPINI_MEMORY_LIMIT'] = '128';
+		$dbConfig['PHPINI_MEMORY_LIMIT'] = '64';
 		$dbConfig['PHPINI_MAX_INPUT_TIME'] = '60';
 		$dbConfig['PHPINI_MAX_EXECUTION_TIME'] = '30';
 		$dbConfig['PHPINI_ERROR_REPORTING'] = 'E_ALL & ~E_NOTICE';
@@ -1042,7 +1034,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 			$this->addColumn(
 				'reseller_props',
 				'php_ini_max_memory_limit',
-				"int(11) NOT NULL DEFAULT '128' AFTER php_ini_max_max_input_time"
+				"int(11) NOT NULL DEFAULT '64' AFTER php_ini_max_max_input_time"
 			),
 
 			// Domain permissions columns for PHP directives
@@ -1096,7 +1088,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 				upload_max_filesize INT(11) NOT NULL DEFAULT '2',
 				max_execution_time INT(11) NOT NULL DEFAULT '30',
 				max_input_time INT(11) NOT NULL DEFAULT '60',
-				memory_limit INT(11) NOT NULL DEFAULT '128',
+				memory_limit INT(11) NOT NULL DEFAULT '64',
 				PRIMARY KEY (ID)
 			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 		";
@@ -1122,7 +1114,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 						UPDATE
 							hosting_plans
 						SET
-							props = ';no;no;no;no;no;8;2;30;60;128'
+							props = ';no;no;no;no;no;8;2;30;60;64'
 						WHERE
 							id = {$data['id']}
 					";
@@ -1161,7 +1153,7 @@ class iMSCP_Update_Database extends iMSCP_Update
 				'upload_max_filesize' => '2',
 				'max_execution_time' => '30',
 				'max_input_time' => '60',
-				'memory_limit' => '128'
+				'memory_limit' => '64'
 			) as $directive => $defaultValue
 		) {
 			$sqlUpd[] = "UPDATE reseller_props SET php_ini_max_{$directive} = '$defaultValue'";
@@ -2288,17 +2280,21 @@ class iMSCP_Update_Database extends iMSCP_Update
 	}
 
 	/**
-	 * Adds unique index for sqld_name columns
+	 * Adds unique index for sql_user.sqld_name columns
 	 *
 	 * @return array SQL statements to be executed
 	 */
 	protected function r149()
 	{
-		$sqlUdp = $this->dropIndexByColumn('sql_user', 'sqlu_name');
+		$queries = $this->dropIndexByColumn('sql_user', 'sqlu_name');
 
-		array_unshift($sqlUdp, $this->addIndex('sql_database', 'sqld_name', 'unique'));
+		if(!empty($queries)) {
+			foreach($queries as $query) {
+				execute_query($query);
+			}
+		}
 
-		return $sqlUdp;
+		return $this->addIndex('sql_database', 'sqld_name', 'unique');
 	}
 
 	/**
@@ -3184,5 +3180,19 @@ class iMSCP_Update_Database extends iMSCP_Update
 			),
 			'UPDATE plugin SET plugin_config_prev = plugin_config'
 		);
+	}
+
+	/**
+	 * Adds unique constraint for mail user entities
+	 *
+	 * @return array SQL statements to be executed
+	 */
+	protected function r202()
+	{
+		if (($q = $this->dropIndexByName('mail_users', 'mail_addr')) != '') {
+			execute_query($q);
+		}
+
+		return $this->addIndex('mail_users', 'mail_addr', 'UNIQUE');
 	}
 }

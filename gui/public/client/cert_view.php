@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Client
- * @copyright   2010-2015 by i-MSCP team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @author      iMSCP Team
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /***********************************************************************************************************************
@@ -201,7 +192,7 @@ function client_addSslCert($domainId, $domainType)
 	if($domainName !== false) {
 		if(isset($_POST['selfsigned'])) {
 			if(!client_generateSelfSignedCert($domainName)) {
-				set_page_message(tr('An unexpected error occured. Please contact your reseller.'), 'error');
+				set_page_message(tr('An unexpected error occurred. Please contact your reseller.'), 'error');
 				redirectTo("cert_view.php?domain_id=$domainId&domain_type=$domainType");
 			}
 		}
@@ -235,7 +226,7 @@ function client_addSslCert($domainId, $domainType)
 				$tmpfname = @tempnam(sys_get_temp_dir(), 'ssl-ca');
 				if(!@file_put_contents($tmpfname, $caBundle)) {
 					write_log(sprintf('Unable to export customer CA bundle in tmp file'), E_USER_ERROR);
-					set_page_message(tr('An unexpected error occured. Please contact your reseller.'), 'error');
+					set_page_message(tr('An unexpected error occurred. Please contact your reseller.'), 'error');
 				}
 
 				// Note: Here we also are the ca bundle in the trusted chain to support self-signed certificates
@@ -267,14 +258,14 @@ function client_addSslCert($domainId, $domainType)
 
 				if(@openssl_pkey_export($privateKey, $privateKeyStr) !== true) {
 					write_log(sprintf('Unable to export private key'), E_USER_ERROR);
-					set_page_message(tr('An unexpected error occured. Please contact your reseller.'), 'error');
+					set_page_message(tr('An unexpected error occurred. Please contact your reseller.'), 'error');
 				}
 
 				@openssl_pkey_free($privateKey);
 
 				if(@openssl_x509_export($certificate, $certificateStr) !== true) {
 					write_log(sprintf('Unable to export certificate'), E_USER_ERROR);
-					set_page_message(tr('An unexpected error occured. Please contact your reseller.'), 'error');
+					set_page_message(tr('An unexpected error occurred. Please contact your reseller.'), 'error');
 				}
 
 				@openssl_x509_free($certificate);
@@ -351,7 +342,7 @@ function client_addSslCert($domainId, $domainType)
 					} catch(iMSCP_Exception_Database $e) {
 						$db->rollBack();
 						write_log('Unable to add/update SSL certificate in database', E_USER_ERROR);
-						set_page_message('An unexpected error occured. Please contact your reseller.');
+						set_page_message('An unexpected error occurred. Please contact your reseller.');
 					}
 				}
 			}
@@ -531,7 +522,6 @@ if(
 
 	$tpl->assign(
 		array(
-			'ISP_LOGO' => layout_getUserLogo(),
 			'TR_PAGE_TITLE' => tr('Client / Domains / SSL Certificate'),
 			'TR_CERTIFICATE_DATA' => tr('Certificate data'),
 			'TR_CERT_FOR' => tr('Common name'),

@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Admin
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -285,7 +275,6 @@ function admin_generateCustomerAcountDeletionValidationPage($userId)
 	$tpl->assign(
 		array(
 			'TR_PAGE_TITLE' => tr('Admin / Users / Overview / Delete Customer'),
-			'ISP_LOGO' => layout_getUserLogo(),
 			'TR_ACCOUNT_SUMMARY' => tr('Customer account summary'),
 			'TR_EMAILS' => tr('Emails'),
 			'TR_FTP_ACCOUNTS' => tr('Ftp accounts'),

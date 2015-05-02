@@ -5,7 +5,7 @@ Package::Webstats::Awstats::Awstats - i-MSCP AWStats package
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,18 +20,11 @@ Package::Webstats::Awstats::Awstats - i-MSCP AWStats package
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Package::Webstats::Awstats::Awstats;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Execute;
@@ -357,6 +350,8 @@ sub _addAwstatsSection
 		require Servers::httpd;
 		my $httpd = Servers::httpd->factory();
 
+		my $version = $httpd->{'config'}->{'HTTPD_VERSION'};
+
 		$$cfgTpl = replaceBloc(
 			"# SECTION addons BEGIN.\n",
 			"# SECTION addons END.\n",
@@ -369,7 +364,7 @@ sub _addAwstatsSection
 			) .
 			process(
 				{
-					AUTHZ_ALLOW_ALL => (qv("v$httpd->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
+					AUTHZ_ALLOW_ALL => (version->parse($version) >= version->parse('2.4.0'))
 						? 'Require all granted' : 'Allow from all',
 					AWSTATS_WEB_DIR => $main::imscpConfig{'AWSTATS_WEB_DIR'},
 					DOMAIN_NAME => $data->{'DOMAIN_NAME'},

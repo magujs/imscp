@@ -20,19 +20,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::named::bind;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::EventManager;
@@ -42,7 +34,7 @@ use iMSCP::TemplateParser;
 use iMSCP::Net;
 use iMSCP::Service;
 use File::Basename;
-
+use Scalar::Defer;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -826,9 +818,7 @@ sub restart
 	my $rs = $self->{'eventManager'}->trigger('beforeNamedRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'NAMED_SNAME'}, 'named');
-	error("Unable to restart $self->{'config'}->{'NAMED_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->restart($self->{'config'}->{'NAMED_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterNamedRestart');
 }
@@ -848,9 +838,7 @@ sub reload
 	my $rs = $self->{'eventManager'}->trigger('beforeNamedReload');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'NAMED_SNAME'}, 'named');
-	error("Unable to reload $self->{'config'}->{'NAMED_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->reload($self->{'config'}->{'NAMED_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterNamedReload');
 }
@@ -887,7 +875,7 @@ sub _init
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 	$self->{'tplDir'} = "$self->{'cfgDir'}/parts";
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/bind.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'cfgDir'}/bind.data"; \%c; };
 
 	$self->{'eventManager'}->trigger(
 		'afterNamedInit', $self, 'bind'

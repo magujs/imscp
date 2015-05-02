@@ -1,7 +1,7 @@
 <?php
 /**
  * i-MSCP - internet Multi Server Control Panel
- * Copyright (C) 2010-2015 by i-MSCP Team
+ * Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,13 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @copyright   2010-2015 by i-MSCP Team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
  */
 
 /**
@@ -349,7 +342,7 @@ class iMSCP_Initializer
 	 *
 	 * This function retrieves all the parameters from the database and merge them with the basis configuration object.
 	 *
-	 * Parameters that exists in the basis configuration object will be replaced by them that come from the database.
+	 * Parameters that exists in the basis configuration object will be replaced by those that come from the database.
 	 * The basis configuration object contains parameters that come from the i-mscp.conf configuration file or any
 	 * parameter defined in the {@link environment.php} file.
 	 *
@@ -583,11 +576,11 @@ class iMSCP_Initializer
 	protected function initializePlugins()
 	{
 		/** @var iMSCP_Plugin_Manager $pluginManager */
-		$pluginManager = iMSCP_Registry::set('pluginManager', new iMSCP_Plugin_Manager(PLUGINS_PATH));
+		$pluginManager = iMSCP_Registry::set('pluginManager', new iMSCP_Plugin_Manager(GUI_ROOT_DIR . '/plugins'));
 
-		foreach($pluginManager->getPluginList() as $pluginName) {
-			if(!$pluginManager->hasPluginError($pluginName)) {
-				if(!$pluginManager->loadPlugin($pluginName)) {
+		foreach($pluginManager->pluginGetList() as $pluginName) {
+			if(!$pluginManager->pluginHasError($pluginName)) {
+				if(!$pluginManager->pluginLoad($pluginName)) {
 					throw new iMSCP_Exception(sprintf('Unable to load plugin: %s', $pluginName));
 				}
 			}

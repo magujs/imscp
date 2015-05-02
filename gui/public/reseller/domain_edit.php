@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Reseller
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 // Note to developers: When editing this script, don't forget to also
@@ -947,6 +937,8 @@ function reseller_checkAndUpdateData($domainId, $recoveryMode = false)
 					exec_query($query, array('tochange', $domainId, 'ordered'));
 				}
 
+				// This is now done by the backend modules ( domain and alias modules )
+				/*
 				if($data['domain_subd_limit'] != '-1') {
 					$query = "UPDATE `subdomain` SET `subdomain_status` = ? WHERE `domain_id` = ?";
 					exec_query($query, array('tochange', $domainId));
@@ -961,13 +953,14 @@ function reseller_checkAndUpdateData($domainId, $recoveryMode = false)
 					";
 					exec_query($query, array('tochange', $domainId));
 				}
+				*/
 
 				$daemonRequest = true;
 			}
 
-			// Support for custom DNS records is now disabled - We must delete all custom DNS entries
-			// (except those that are protected), and update the DNS zone file
 			if ($data['domain_dns'] != $data['fallback_domain_dns'] && $data['domain_dns'] == 'no') {
+				// Support for custom DNS records is now disabled - We must delete all custom DNS entries
+				// (except those that are protected), and update the DNS zone file
 				$query = 'DELETE FROM `domain_dns` WHERE `domain_id` = ? AND `owned_by` = ?';
 				exec_query($query, array($domainId, 'custom_dns_feature'));
 
@@ -1178,7 +1171,6 @@ $tpl->define_dynamic(
 $tpl->assign(
 	array(
 		 'TR_PAGE_TITLE' => tr('Reseller / Customers / Overview / Edit Domain'),
-		 'ISP_LOGO' => layout_getUserLogo(),
 		 'EDIT_ID' => tohtml($domainId),
 		 'TR_DOMAIN_OVERVIEW' => tr('Domain overview'),
 		 'TR_DOMAIN_NAME' => tr('Domain name'),

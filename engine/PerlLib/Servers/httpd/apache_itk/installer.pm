@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l;declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::httpd::apache_itk::installer;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -184,7 +175,7 @@ sub _init
 	# Merge old config file with new config file
 	my $oldConf = "$self->{'apacheCfgDir'}/apache.old.data";
 	if(-f $oldConf) {
-		tie my %oldConfig, 'iMSCP::Config', 'fileName' => $oldConf;
+		tie my %oldConfig, 'iMSCP::Config', fileName => $oldConf;
 
 		for(keys %oldConfig) {
 			if(exists $self->{'config'}->{$_}) {
@@ -357,9 +348,12 @@ sub _buildPhpConfFiles
 	my @toDisableModules = (
 		'fastcgi', 'fcgid', 'fastcgi_imscp', 'fcgid_imscp', 'php_fpm_imscp', 'php4', 'php5_cgi', 'suexec'
 	);
+
 	my @toEnableModules = ('php5');
 
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0')) {
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
+	if(version->parse($version) >= version->parse('2.4.0')) {
 		# MPM management is a mess in Jessie. We so disable all and re-enable only needed MPM
 		push (@toDisableModules, ('mpm_itk', 'mpm_prefork', 'mpm_event', 'mpm_prefork', 'mpm_worker'));
 		push(@toEnableModules, 'mpm_itk', 'authz_groupfile');
@@ -377,7 +371,10 @@ sub _buildPhpConfFiles
 
 	# Make sure that PHP modules are enabled
 	if(iMSCP::ProgramFinder::find('php5enmod')) {
-		for ('curl', 'gd', 'imap', 'intl', 'json', 'mcrypt', 'mysqlnd/10', 'mysqli', 'mysql', 'pdo/10', 'pdo_mysql') {
+		for (
+			'apc', 'curl', 'gd', 'imap', 'intl', 'json', 'mcrypt', 'mysqlnd/10', 'mysqli', 'mysql', 'opcache', 'pdo/10',
+			'pdo_mysql'
+		) {
 			my($stdout, $stderr);
 			$rs = execute("php5enmod $_", \$stdout, \$stderr);
 			debug($stdout) if $stdout;
@@ -473,23 +470,24 @@ sub _buildApacheConfFiles
 		return $rs if $rs;
 	}
 
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
 	# Using alternative syntax for piped logs scripts when possible
 	# The alternative syntax does not involve the shell (from Apache 2.2.12)
 	my $pipeSyntax = '|';
-
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.2.12')) {
+	if(version->parse($version) >= version->parse('2.2.12')) {
 		$pipeSyntax .= '|';
 	}
 
-	my $apache24 = (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
+	my $apache24 = (version->parse($version) >= version->parse('2.4.0'));
 
 	# Set needed data
 	$self->{'httpd'}->setData(
 		{
 			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			HTTPD_ROOT_DIR => $self->{'config'}->{'HTTPD_ROOT_DIR'},
-			AUTHZ_DENY_ALL => $apache24 ? 'Require all denied' : 'Deny from all',
-			AUTHZ_ALLOW_ALL => $apache24 ? 'Require all granted' : 'Allow from all',
+			AUTHZ_DENY_ALL => ($apache24) ? 'Require all denied' : 'Deny from all',
+			AUTHZ_ALLOW_ALL => ($apache24) ? 'Require all granted' : 'Allow from all',
 			CMD_VLOGGER => $self->{'config'}->{'CMD_VLOGGER'},
 			PIPE => $pipeSyntax,
 			VLOGGER_CONF => "$self->{'apacheWrkDir'}/vlogger.conf"

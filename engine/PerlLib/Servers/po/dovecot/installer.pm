@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::po::dovecot::installer;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -259,7 +250,7 @@ EOF
 				MTA_MAILBOX_UID_NAME => $self->{'mta'}->{'config'}-> {'MTA_MAILBOX_UID_NAME'},
 				MTA_MAILBOX_GID_NAME => $self->{'mta'}->{'config'}-> {'MTA_MAILBOX_GID_NAME'},
 				DOVECOT_DELIVER_PATH => $self->{'config'}->{'DOVECOT_DELIVER_PATH'},
-				SFLAG => (qv("v$self->{'version'}") < qv('v2.0.0') ? '-s' : '')
+				SFLAG => (version->parse($self->{'version'}) < version->parse('2.0.0') ? '-s' : '')
 			},
 			$configSnippet
 		);
@@ -304,7 +295,7 @@ sub _init
 	# Merge old config file with new config file
 	my $oldConf = "$self->{'cfgDir'}/dovecot.old.data";
 	if(-f $oldConf) {
-		tie my %oldConfig, 'iMSCP::Config', 'fileName' => $oldConf;
+		tie my %oldConfig, 'iMSCP::Config', fileName => $oldConf;
 
 		for(keys %oldConfig) {
 			if(exists $self->{'config'}->{$_}) {
@@ -499,9 +490,10 @@ sub _buildConf
 
 	my %cfgFiles = (
 		(
-			(qv("v$self->{'version'}") < qv('v2.0.0'))
+			(version->parse($self->{'version'}) < version->parse('2.0.0'))
 				? 'dovecot.conf.1.x'
-				: (qv("v$self->{'version'}") < qv('v2.1.0')) ? 'dovecot.conf.2.0' : 'dovecot.conf.2.1'
+				: (version->parse($self->{'version'}) < version->parse('2.1.0'))
+					? 'dovecot.conf.2.0' : 'dovecot.conf.2.1'
 		) => [
 			"$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot.conf", # Destpath
 			$main::imscpConfig{'ROOT_USER'}, # Owner
@@ -514,7 +506,7 @@ sub _buildConf
 			$self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'}, # Group
 			0640 # Permissions
 		],
-		((qv("v$self->{'version'}") < qv('v2.0.0')) ? 'quota-warning.1' : 'quota-warning.2') => [
+		((version->parse($self->{'version'}) < version->parse('2.0.0')) ? 'quota-warning.1' : 'quota-warning.2') => [
 			"$main::imscpConfig{'ENGINE_ROOT_DIR'}/quota/imscp-dovecot-quota.sh", # Destpath
 			$self->{'mta'}->{'config'}->{'MTA_MAILBOX_UID_NAME'}, # Owner
 			$self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'}, # Group

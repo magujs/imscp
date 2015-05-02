@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category	i-MSCP
- * @package		iMSCP_Core
- * @subpackage	Client
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 // Include core library
@@ -96,8 +86,9 @@ $domain = "http://www." . $domain;
 $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Client / Webtools / Custom Error Pages'),
-		'ISP_LOGO' => layout_getUserLogo(),
-		'DOMAIN' => $domain));
+		'DOMAIN' => $domain
+	)
+);
 
 update_error_page($_SESSION['user_id']);
 generateNavigation($tpl);

@@ -16,13 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Reseller
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -241,7 +234,6 @@ $tpl->define_dynamic(
 $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Reseller / Customers / Domain Aliases'),
-		'ISP_LOGO' => layout_getUserLogo(),
 		'TR_ALIAS_NAME' => tr('Domain alias name'),
 		'TR_MOUNT_POINT' => tr('Mount point'),
 		'TR_FORWARD_URL' => tr('Forward URL'),

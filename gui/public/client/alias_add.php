@@ -16,13 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     Client_Domains_Aliases
- * @copyright   2010-2015 by i-MSCP team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
  */
 
 /***********************************************************************************************************************
@@ -318,7 +311,6 @@ if ($mainDmnProps['domain_alias_limit'] != 0 && $domainAliasesCount >= $mainDmnP
 	$tpl->assign(
 		array(
 			'TR_PAGE_TITLE' => tr('Client / Domains / Add Domain Alias'),
-			'ISP_LOGO' => layout_getUserLogo(),
 			'TR_DOMAIN_ALIAS' => tr('Domain alias'),
 			'TR_DOMAIN_ALIAS_NAME' => tr('Domain alias name'),
 			'TR_DOMAIN_ALIAS_NAME_TOOLTIP' => tr("You must omit 'www'. It will be added automatically."),

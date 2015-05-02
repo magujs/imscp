@@ -20,20 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package iMSCP::Execute;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
-
 use File::Basename ();
 use Cwd ();
 
@@ -42,9 +34,7 @@ my $vendorLibDir;
 BEGIN { $vendorLibDir = Cwd::realpath(File::Basename::dirname(__FILE__) . '/../../PerlVendor'); }
 
 use lib $vendorLibDir;
-
 use Capture::Tiny ':all';
-
 use parent 'Exporter';
 
 our @EXPORT = qw/execute escapeShell getExitCode/;
@@ -64,7 +54,7 @@ our @EXPORT = qw/execute escapeShell getExitCode/;
  Param string $command Ccommand to execute
  Param string \$stdout OPTIONAL Command stdout
  Param string \$stderr OPTIONAL Command stderr
- Return int External command exit code
+ Return int External command exit code or die on failure
 
 =cut
 
@@ -95,8 +85,7 @@ sub execute($;$$)
 		$$stderr = capture_stderr { system($command); };
 		chomp($stderr);
 	} else {
-		fatal("Unable to execute command: $!") if system($command) == -1;
-		return getExitCode($?);
+		die("Unable to execute command: $!") if system($command) == -1;
 	}
 
 	getExitCode();
@@ -125,7 +114,7 @@ sub escapeShell($)
  Return human exit code
 
  Param int $exitValue Raw exit code (default to $?)
- Return int exit code
+ Return int exit code or die on failure
 
 =cut
 
@@ -134,12 +123,11 @@ sub getExitCode(;$)
 	my $exitValue = $_[0] // $?;
 
 	if ($exitValue == -1) {
-		error("Failed to execute external command: $!");
+		die("Failed to execute external command: $!");
 	} elsif ($exitValue & 127) {
-		error(''.
-			(
-				sprintf "External command died with signal %d, %s coredump",
-				($exitValue & 127), ($? & 128) ? 'with' : 'without'
+		die(
+			sprintf(
+				"External command died with signal %d, %s coredump", ($exitValue & 127), ($? & 128) ? 'with' : 'without'
 			)
 		);
 	} else {

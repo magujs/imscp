@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Modules::Subdomain;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Database;
 use iMSCP::Execute;
@@ -87,7 +78,7 @@ sub process
 
 		@sql = (
 			'UPDATE subdomain SET subdomain_status = ? WHERE subdomain_id = ?',
-			($rs ? scalar getMessageByType('error') : 'ok'), $subdomainId
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'), $subdomainId
 		);
 	} elsif($self->{'subdomain_status'} eq 'todelete') {
 		$rs = $self->delete();
@@ -95,7 +86,7 @@ sub process
 		if($rs) {
 			@sql = (
 				'UPDATE subdomain SET subdomain_status = ? WHERE subdomain_id = ?',
-				scalar getMessageByType('error'), $subdomainId
+				scalar getMessageByType('error') || 'Unknown error', $subdomainId
 			);
 		} else {
 			@sql = ('DELETE FROM subdomain WHERE subdomain_id = ?', $subdomainId);
@@ -105,14 +96,14 @@ sub process
 
 		@sql = (
 			'UPDATE subdomain SET subdomain_status = ? WHERE subdomain_id = ?',
-			($rs ? scalar getMessageByType('error') : 'disabled'), $subdomainId
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'disabled'), $subdomainId
 		);
 	} elsif($self->{'subdomain_status'} eq 'torestore') {
 		$rs = $self->restore();
 
 		@sql = (
 			'UPDATE subdomain SET subdomain_status = ? WHERE subdomain_id = ?',
-			($rs ? scalar getMessageByType('error') : 'ok'), $subdomainId
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'), $subdomainId
 		);
 	}
 

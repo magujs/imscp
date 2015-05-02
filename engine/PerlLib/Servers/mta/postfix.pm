@@ -20,19 +20,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::mta::postfix;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -41,6 +33,8 @@ use iMSCP::File;
 use iMSCP::Dir;
 use iMSCP::Service;
 use File::Basename;
+use Tie::File;
+use Scalar::Defer;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -172,9 +166,7 @@ sub restart
 	my $rs = $self->{'eventManager'}->trigger('beforeMtaRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'MTA_SNAME'}, '-f postfix/master');
-	error("Unable to restart $self->{'config'}->{'MTA_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->restart($self->{'config'}->{'MTA_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterMtaRestart');
 }
@@ -599,7 +591,7 @@ sub getTraffic
 	my $trafficDbPath = "$variableDataDir/smtp_traffic.db";
 
 	# Load traffic database
-	tie my %trafficDb, 'iMSCP::Config', 'fileName' => $trafficDbPath, 'nowarn' => 1;
+	tie my %trafficDb, 'iMSCP::Config', fileName => $trafficDbPath, nowarn => 1;
 
 	# Data source file
 	my $trafficDataSrc = "$main::imscpConfig{'TRAFF_LOG_DIR'}/$main::imscpConfig{'MAIL_TRAFF_LOG'}";
@@ -608,7 +600,7 @@ sub getTraffic
 		my $wrkLogFile = "$main::imscpConfig{'LOG_DIR'}/mail.smtp.log";
 
 		# We are using a small file to memorize the number of the last line that has been read and his content
-		tie my %indexDb, 'iMSCP::Config', 'fileName' => "$variableDataDir/traffic_index.db", 'nowarn' => 1;
+		tie my %indexDb, 'iMSCP::Config', fileName => "$variableDataDir/traffic_index.db", nowarn => 1;
 
 		$indexDb{'smtp_lineNo'} = 0 unless $indexDb{'smtp_lineNo'};
 		$indexDb{'smtp_lineContent'} = '' unless $indexDb{'smtp_lineContent'};
@@ -620,7 +612,6 @@ sub getTraffic
 		my $rs = iMSCP::File->new( filename => $trafficDataSrc )->copyFile( $wrkLogFile, { 'preserve' => 'no' } );
 		die(iMSCP::Debug::getLastError()) if $rs;
 
-		require Tie::File;
 		tie my @content, 'Tie::File', $wrkLogFile or die("Unable to tie file $wrkLogFile");
 
 		# Saving last line number and line date content from the current working file
@@ -629,7 +620,7 @@ sub getTraffic
 
 		# Test for logrotation
 		if($content[$lastLineNo] && $content[$lastLineNo] eq $lastlineContent) {
-			# No logrotation occured. We want parse only new lines so we skip those already processed
+			# No logrotation occurred. We want parse only new lines so we skip those already processed
 			(tied @content)->defer;
 			@content = @content[$lastLineNo + 1 .. $#content];
 			(tied @content)->flush;
@@ -704,7 +695,7 @@ sub _init
 
 	$self->{'commentChar'} = '#';
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/postfix.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'cfgDir'}/postfix.data"; \%c; };
 
 	$self->{'eventManager'}->trigger(
 		'afterMtaInit', $self, 'postfix'

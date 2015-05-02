@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Modules::SubAlias;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Database;
 use iMSCP::Execute;
@@ -68,12 +59,12 @@ sub process
 
 	my @sql;
 
-	if($self->{'subdomain_alias_status'} ~~ ['toadd', 'tochange', 'toenable']) {
+	if($self->{'subdomain_alias_status'} ~~ [ 'toadd', 'tochange', 'toenable' ]) {
 		$rs = $self->add();
 
 		@sql = (
 			'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE subdomain_alias_id = ?',
-			($rs ? scalar getMessageByType('error') : 'ok'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'),
 			$subAliasId
 		);
 	} elsif($self->{'subdomain_alias_status'} eq 'todelete') {
@@ -82,7 +73,7 @@ sub process
 		if($rs) {
 			@sql = (
 				'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE subdomain_alias_id = ?',
-				scalar getMessageByType('error'),
+				scalar getMessageByType('error') || 'Unknown error',
 				$subAliasId
 			);
 		} else {
@@ -93,7 +84,7 @@ sub process
 
 		@sql = (
 			'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE subdomain_alias_id = ?',
-			($rs ? scalar getMessageByType('error') : 'disabled'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'disabled'),
 			$subAliasId
 		);
 	} elsif($self->{'subdomain_alias_status'} eq 'torestore') {
@@ -101,7 +92,7 @@ sub process
 
 		@sql = (
 			'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE subdomain_alias_id = ?',
-			($rs ? scalar getMessageByType('error') : 'ok'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'),
 			$subAliasId
 		);
 	}

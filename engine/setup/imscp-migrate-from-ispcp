@@ -16,20 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 use strict;
 use warnings;
-
 use FindBin;
 use lib "$FindBin::Bin/..", "$FindBin::Bin/../PerlLib", "$FindBin::Bin/../PerlVendor";
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::Bootstrapper;
@@ -43,12 +34,12 @@ use iMSCP::SystemUser;
 use iMSCP::SystemGroup;
 use iMSCP::Execute;
 use iMSCP::TemplateParser;
+use iMSCP::Service;
 use File::Basename;
 use Data::Dumper;
 use version;
 
-$ENV{'LC_MESSAGES'} = 'C';
-use open ':locale';
+$ENV{'LANG'} = 'C.UTF-8';
 
 # Re-encrypt the given password with i-MSCP database key
 sub _reencryptPassword($$$$$)
@@ -134,38 +125,13 @@ sub removeIspcpFiles
 			@errors, "Unable to delete $main::ispcpConfig{'HTTPD_SITES_AVAILABLE_DIR'}/ispcp.conf file: $!";
 	}
 
-	# Remove ispCP daemons
-	for ($main::ispcpConfig{'CMD_ISPCPD'}, $main::ispcpConfig{'CMD_ISPCPN'}) {
-		if(-f $_) {
-			# Stopping daemon using init script
-			$rs = execute("$_ stop", \$stdout, \$stderr);
-			debug($stdout) if $stdout;
-			push @errors, $stderr if $stderr && $rs;
+	# Remove ispCP services
+	my $serviceMngr = iMSCP::Service->getInstance();
 
-			# The service wasn't stopped for unknown reason, we try to kill it using pkill
-			if($rs) {
-				# Getting daemon name
-				my $daemonName = fileparse($_);
-
-				$rs = execute("$main::imscpConfig{'CMD_PKILL'} -KILL $daemonName", \$stdout, \$stderr);
-				debug($stdout) if $stdout;
-				push @errors, $stderr if $stderr && $rs > 1; # See man pkill for exit status list
-
-				# In such case, we must delete the pidfile manually if any
-				if(-f "/var/run/$daemonName") {
-					unlink "/var/run/$daemonName" or push @errors, "Unable to delete /var/run/$daemonName file: $!";
-            	}
-			}
-
-			# Remove init script links
-			if($main::imscpConfig{'SERVICE_INSTALLER'} ne 'no') {
-				$rs = execute("$main::imscpConfig{'SERVICE_INSTALLER'} -f $_ remove", \$stdout, \$stderr);
-				debug($stdout) if $stdout;
-				push @errors, $stderr if $stderr && $rs;
-			}
-
-			# Remove daemon init script
-			unlink $_ or push @errors, "Unable to delete $_ file: $!";
+	for my $service('imscp_daemon', 'imscp_network') {
+			local $@;
+			eval { $serviceMngr->remove(); };
+			push @errors, "Unable to remove the $service service" if $@;
 		}
 	}
 
@@ -209,7 +175,7 @@ sub removeIspcpFiles
 
 \\Z1\\ZuErrors were detected\\Zn
 
-The following errors occured:
+The following errors occurred:
 
 $errors
 
@@ -257,7 +223,7 @@ sub saveIspLogo
 
 \\Z1\\ZuErrors were detected\\Zn
 
-The following errors occured:
+The following errors occurred:
 
 $errors
 
@@ -306,7 +272,7 @@ sub dbUpgrade
 
 \\Z1\\ZuErrors were detected\\Zn
 
-The following errors occured while database upgrade:
+The following errors occurred while database upgrade:
 
 $errors
 
@@ -764,7 +730,7 @@ EOF
 sub checkIspcpVersion
 {
 	if($main::ispcpConfig{'Version'} =~ /([\d.]+)/) {
-		if(qv("v$1") < qv('v1.0.7')) {
+		if(version->parse($1) < version->parse('1.0.7')) {
 			iMSCP::Dialog->getInstance()->set('defaultno', '');
 
 			if(iMSCP::Dialog->getInstance()->yesno(<<EOF)) {
@@ -773,7 +739,7 @@ sub checkIspcpVersion
 
 \\Z1WARNING:\\Zu
 
-Only migration from ispCP 1.0.7 or a newest is supported.
+Only migration from ispCP 1.0.7 or newest is supported.
 
 By pressing the 'continue' button you can ignore this warning. Be warned that if you continue, your data might be corrupted.
 EOF
@@ -827,7 +793,7 @@ sub processMigration
 	}
 
 	# Load ispCP configuration file
-	tie %main::ispcpConfig, 'iMSCP::Config', 'fileName' => "$configDir/ispcp/ispcp.conf";
+	tie %main::ispcpConfig, 'iMSCP::Config', fileName => "$configDir/ispcp/ispcp.conf";
 
 	my @steps = (
 		[\&welcomeMessage, 'Welcome message'],

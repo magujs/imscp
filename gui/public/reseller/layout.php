@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category	i-MSCP
- * @package		iMSCP_Core
- * @subpackage	Reseller
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /************************************************************************************
@@ -155,13 +145,12 @@ if (layout_isUserLogo($ispLogo)) {
 $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Reseller / Profile / Layout'),
-		'ISP_LOGO' => layout_getUserLogo(),
 		'OWN_LOGO' => $ispLogo,
 		'TR_LAYOUT_SETTINGS' => tr('Layout'),
 		'TR_UPLOAD_LOGO' => tr('Upload logo'),
 		'TR_LOGO_FILE' => tr('Logo file'),
-        'TR_ENABLED' => tr('Enabled'),
-        'TR_DISABLED' => tr('Disabled'),
+		'TR_ENABLED' => tr('Enabled'),
+		'TR_DISABLED' => tr('Disabled'),
 		'TR_UPLOAD' => tr('Upload'),
 		'TR_REMOVE' => tr('Remove'),
 		'TR_LAYOUT_COLOR' => tr('Layout color'),

@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Admin
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -624,7 +614,6 @@ switch ($cfg['LOG_LEVEL']) {
 $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Admin / Settings'),
-		'ISP_LOGO' => layout_getUserLogo(),
 		'TR_UPDATES' => tr('Updates'),
 		'LOSTPASSWORD_TIMEOUT_VALUE' => $cfg['LOSTPASSWORD_TIMEOUT'],
 		'PASSWD_CHARS' => $cfg['PASSWD_CHARS'],
@@ -699,7 +688,7 @@ $tpl->assign(
 		'TR_PHPINI_MAX_INPUT_TIME' => tr('Value for the %s directive', true, '<b>max_input_time</b>'),
 		'TR_PHPINI_MEMORY_LIMIT' => tr('Value for the %s directive', true, '<b>memory_limit</b>'),
 		'TR_PHPINI_OPEN_BASEDIR' => tr('Value for the %s directive', true, '<b>open_basedir</b>'),
-		'TR_PHPINI_OPEN_BASEDIR_TOOLTIP' => json_encode(tr('Paths are appended to the default PHP open_basedir directive of customers. Each of them must be separated by PATH_SEPARATOR. See the PHP documentation for more information.')),
+		'TR_PHPINI_OPEN_BASEDIR_TOOLTIP' => tohtml(tr('Paths are appended to the default PHP open_basedir directive of customers. Each of them must be separated by PATH_SEPARATOR. See the PHP documentation for more information.', true), 'htmlAttr'),
 		'TR_PHPINI_DISABLE_FUNCTIONS' => tr('Value for the %s directive', true, '<b>disable_functions</b>'),
 		'TR_MIB' => tr('MiB'),
 		'TR_SEC' => tr('Sec.')

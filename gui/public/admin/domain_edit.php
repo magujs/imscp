@@ -16,14 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Admin
- * @copyright   2010-2015 by i-MSCP team
- * @author      Laurent Declercq <laurent.declercq@i-mscp.net>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
  */
 
 // Note to developers: When editing this script, don't forget to also
@@ -938,7 +930,8 @@ function admin_checkAndUpdateData($domainId)
 					exec_query($query, array('tochange', $domainId, 'ordered'));
 				}
 
-				if($data['domain_subd_limit'] != '-1') {
+				// This is now done by the backend modules ( domain and alias modules )
+				/*if($data['domain_subd_limit'] != '-1') {
 					$query = "UPDATE `subdomain` SET `subdomain_status` = ? WHERE `domain_id` = ?";
 					exec_query($query, array('tochange', $domainId));
 
@@ -951,14 +944,14 @@ function admin_checkAndUpdateData($domainId)
 							`alias_id` IN (SELECT `alias_id` FROM `domain_aliasses` WHERE `domain_id` = ?)
 					";
 					exec_query($query, array('tochange', $domainId));
-				}
+				}*/
 
 				$daemonRequest = true;
 			}
 
-			// Support for custom DNS records is now disabled - We must delete all custom DNS entries
-			// (except those that are protected), and update the DNS zone file
 			if ($data['domain_dns'] != $data['fallback_domain_dns'] && $data['domain_dns'] == 'no') {
+				// Support for custom DNS records is now disabled - We must delete all custom DNS entries
+				// (except those that are protected), and update the DNS zone file
 				$query = 'DELETE FROM `domain_dns` WHERE `domain_id` = ? AND `owned_by` = ?';
 				exec_query($query, array($domainId, 'custom_dns_feature'));
 
@@ -1166,7 +1159,6 @@ $tpl->define_dynamic(
 $tpl->assign(
 	array(
 		 'TR_PAGE_TITLE' => tr('Admin / User / Overview / Domain Edit'),
-		 'ISP_LOGO' => layout_getUserLogo(),
 		 'TR_EDIT_DOMAIN' => tr('Edit domain'),
 		 'EDIT_ID' => tohtml($domainId),
 		 'TR_DOMAIN_OVERVIEW' => tr('Domain overview'),

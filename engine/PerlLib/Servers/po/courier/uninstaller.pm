@@ -14,13 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category     i-MSCP
-# @copyright    2010-2015 by i-MSCP | http://i-mscp.net
-# @author       Daniel Andreca <sci2tech@gmail.com>
-# @author       Laurent Declercq <l.declercq@nuxwin.com>
-# @link         http://i-mscp.net i-MSCP Home Site
-# @license      http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::po::courier::uninstaller;
 
@@ -98,10 +91,10 @@ sub _restoreConfFile
 	if(-f "$self->{'bkpDir'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}.system") {
 		my $file = iMSCP::File->new('filename' => "$self->{'bkpDir'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}.system");
 
-		my $rs = $file->copyFile("$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}");
+		my $rs = $file->copyFile("/etc/init.d/$self->{'config'}->{'AUTHDAEMON_SNAME'}");
 		return $rs if $rs;
 
-		$file->{'filename'} = "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}";
+		$file->{'filename'} = "/etc/init.d/$self->{'config'}->{'AUTHDAEMON_SNAME'}";
 
 		$rs = $file->mode(0755);
 		return $rs if $rs;

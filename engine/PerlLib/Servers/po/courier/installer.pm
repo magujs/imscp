@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::po::courier::installer;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -191,7 +182,7 @@ sub install
 	return $rs if $rs;
 
 	for(
-		"$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}",
+		"/etc/init.d/$self->{'config'}->{'AUTHDAEMON_SNAME'}",
 		"$self->{'config'}->{'AUTHLIB_CONF_DIR'}/authdaemonrc",
 		"$self->{'config'}->{'AUTHLIB_CONF_DIR'}/authmysqlrc",
 		"$self->{'config'}->{'AUTHLIB_CONF_DIR'}/self->{'config'}->{'COURIER_IMAP_SSL'}",
@@ -342,7 +333,7 @@ sub _init
 	# Merge old config file with new config file
 	my $oldConf = "$self->{'cfgDir'}/courier.old.data";
 	if(-f $oldConf) {
-		tie my %oldConfig, 'iMSCP::Config', 'fileName' => $oldConf;
+		tie my %oldConfig, 'iMSCP::Config', fileName => $oldConf;
 
 		for(keys %oldConfig) {
 			if(exists $self->{'config'}->{$_}) {
@@ -463,9 +454,7 @@ sub _overrideAuthdaemonInitScript
 {
 	my $self = $_[0];
 
-	my $file = iMSCP::File->new(
-		'filename' => "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$self->{'config'}->{'AUTHDAEMON_SNAME'}"
-	);
+	my $file = iMSCP::File->new( filename => "/etc/init.d/$self->{'config'}->{'AUTHDAEMON_SNAME'}");
 
 	my $fileContent = $file->get();
 	unless(defined $fileContent) {

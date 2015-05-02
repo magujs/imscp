@@ -20,22 +20,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package iMSCP::Config;
 
 use strict;
 use warnings;
-
-use Tie::File;
 use iMSCP::Debug;
 use Fcntl 'O_RDWR', 'O_CREAT', 'O_RDONLY';
+use Tie::File;
 use parent 'Common::Object';
 
 =head1 DESCRIPTION
@@ -47,18 +39,19 @@ use parent 'Common::Object';
 
 =over 4
 
-=item
+=item TIEHASH()
 
- Constructor. Called by the tie command
+ Constructor. Called by the tie function
 
- The required arguments for the tie command are:
+ The required arguments for the tie function are:
   - fileName: Filename of the configuration file (including path)
 
- Optional arguments for the tie command are:
+ Optional arguments for the tie function are:
   - nowarn: Do not warn when trying to access to an inexistent configuration parameter
   - nocreate: Do not create file if it doesn't already exist (throws a fatal error instead)
   - nofail: Do not throws fatal error in case configuration file doesn't exist
   - readonly: Sets a read-only access on the tied configuration file
+  - temporary: Enable temporary overriding of configuration values ( changes are not persistent )
 
 =cut
 
@@ -67,9 +60,9 @@ sub TIEHASH
 	(shift)->new(@_);
 }
 
-=item
+=item _init()
 
- Initialize tied hash variable
+ Initialization
 
  Return iMSCP::Config
 
@@ -97,7 +90,7 @@ sub _init
 	$self;
 }
 
-=item
+=item _loadConfig()
 
  Load i-MSCP configuration file
 
@@ -125,7 +118,7 @@ sub _loadConfig
 		$mode = O_RDWR | O_CREAT;
 	}
 
-	if(! tie @{$self->{'confFile'}}, 'Tie::File', $self->{'confFileName'}, 'mode' => $mode) {
+	unless(tie @{$self->{'confFile'}}, 'Tie::File', $self->{'confFileName'}, 'mode' => $mode) {
 		if($self->{'nofail'}) {
 			require Tie::Array;
 			tie @{$self->{'confFile'}}, 'Tie::StdArray';
@@ -137,7 +130,7 @@ sub _loadConfig
 	undef;
 }
 
-=item
+=item _parseConfig()
 
  Parse configuration file
 
@@ -165,26 +158,27 @@ sub _parseConfig
 	undef;
 }
 
-=item
+=item FETCH($paramName)
 
  Return value of the given configuration parameter
 
- Return scalar|undef - Configuration parameter value or undef if config parameter is not defined
+ Param string $paramName Configuration parameter name
+ Return scalar|undef Configuration parameter value or undef if config parameter is not defined
 
 =cut
 
 sub FETCH
 {
-	my ($self, $config) = @_;
+	my ($self, $paramName) = @_;
 
-	unless (exists $self->{'configValues'}->{$config}) {
+	unless (exists $self->{'configValues'}->{$paramName}) {
 		unless($self->{'nowarn'}) {
 			my (undef, $file, $line) = caller;
 
 			warning(
 				sprintf(
 					'Accessing non existing config value %s from the %s file (see file %s at line %s)',
-					$config,
+					$paramName,
 					$self->{'fileName'},
 					$file,
 					$line
@@ -194,27 +188,29 @@ sub FETCH
 
 		undef;
 	} else {
-		$self->{'configValues'}->{$config};
+		$self->{'configValues'}->{$paramName};
 	}
 }
 
-=item
+=item STORE($paramName, $value)
 
- Store the given configuration parameters
+ Store the given configuration parameter
 
- Return stored value
+ Param string $paramName Configuration parameter name
+ Param string $value Configuration parameter value
+ Return string Stored value
 
 =cut
 
 sub STORE
 {
-	my ($self, $config, $value) = @_;
+	my ($self, $paramName, $value) = @_;
 
-	if(! $self->{'readonly'}) {
-		if(! exists $self->{'configValues'}->{$config}) {
-			$self->_insertConfig($config, $value);
+	if(! $self->{'readonly'} || $self->{'temporary'}) {
+		unless(exists $self->{'configValues'}->{$paramName}) {
+			$self->_insertConfig($paramName, $value);
 		} else {
-			$self->_replaceConfig($config, $value);
+			$self->_replaceConfig($paramName, $value);
 		}
 	} else {
 		fatal('Config object is readonly');
@@ -223,7 +219,7 @@ sub STORE
 	$value;
 }
 
-=item
+=item FIRSTKEY()
 
  Return the first configuration parameter
 
@@ -240,7 +236,7 @@ sub FIRSTKEY
 	$self->NEXTKEY;
 }
 
-=item
+=item NEXTKEY()
 
  Return the next configuration parameters
 
@@ -253,23 +249,23 @@ sub NEXTKEY
 	shift @{$_[0]->{'_list'}};
 }
 
-=item
+=item EXISTS($paramName)
 
- Verify that the given configuration parameter exists.
+ Verify that the given configuration parameter exists
 
+ Param string $paramName configuration parameter name
  Return true if the given configuration parameter exists, false otherwise
 
 =cut
 
 sub EXISTS
 {
-	my ($self, $config) = @_;
+	my ($self, $paramName) = @_;
 
-	exists $self->{'configValues'}->{$config};
+	exists $self->{'configValues'}->{$paramName};
 }
 
-
-=item
+=item CLEAR()
 
  Clear all configuration parameters
 
@@ -286,45 +282,48 @@ sub CLEAR
 	$self;
 }
 
-=item _insertConfig($config, $value)
+=item _replaceConfig($paramName, $value)
 
  Replace the given configuration parameter value
 
- Param string $config Configuration parameter name
- Param string $config Configuration parameter value
+ Param string $paramName Configuration parameter name
+ Param string $value Configuration parameter value
  Return string Configuration parameter value
 
 =cut
 
 sub _replaceConfig
 {
-	my ($self, $config, $value) = @_;
+	my ($self, $paramName, $value) = @_;
 
 	$value = '' unless defined $value;
 
-	@{$self->{'confFile'}}[$self->{'lineMap'}->{$config}] = "$config = $value";
-	$self->{'configValues'}->{$config} = $value;
+	unless($self->{'temporary'}) {
+		@{$self->{'confFile'}}[$self->{'lineMap'}->{$paramName}] = "$paramName = $value";
+	}
+
+	$self->{'configValues'}->{$paramName} = $value;
 }
 
-=item _insertConfig($config, $value)
+=item _insertConfig($paramName, $value)
 
- Insert the given configuration parameter.
+ Insert the given configuration parameter
 
- Param string $config Configuration parameter name
+ Param string $paramName Configuration parameter name
  Param string $config Configuration parameter value
- Return string Configuration parameter value
+ Return string $value Configuration parameter value
 
 =cut
 
 sub _insertConfig
 {
-	my ($self, $config, $value) = @_;
+	my ($self, $paramName, $value) = @_;
 
-	$value = '' unless defined $value;
+	$value ||= '' unless defined $value;
 
-	push (@{$self->{'confFile'}}, "$config = $value");
-	$self->{'lineMap'}->{$config} = $#{$self->{confFile}};
-	$self->{'configValues'}->{$config} = $value;
+	push (@{$self->{'confFile'}}, "$paramName = $value");
+	$self->{'lineMap'}->{$paramName} = $#{$self->{confFile}};
+	$self->{'configValues'}->{$paramName} = $value;
 }
 
 =head1 AUTHORS

@@ -1,7 +1,7 @@
 <?php
 /**
  * i-MSCP - internet Multi Server Control Panel
- * Copyright (C) 2010-2015 by i-MSCP Team
+ * Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,13 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @copyright   2010-2015 by i-MSCP Team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
  */
 
 /**
@@ -128,7 +121,7 @@ class iMSCP_Exception_Writer_Browser extends iMSCP_Exception_Writer_Abstract
 		<div class="wrapper">
 			<div id="content">
 				<div id="message_container">
-					<h1>An unexpected error occured</h1>
+					<h1>An unexpected error occurred</h1>
 					<pre>{$this->message}</pre>
 					<div class="buttons">
 						<a class="link_as_button" href="javascript:history.go(-1)" target="_self">Back</a>
@@ -174,7 +167,7 @@ HTML;
 			array(
 				'TR_PAGE_TITLE' => 'i-MSCP - internet Multi Server Control Panel - Fatal Error',
 				'HEADER_BLOCK' => '',
-				'BOX_MESSAGE_TITLE' => 'An unexpected error occured',
+				'BOX_MESSAGE_TITLE' => 'An unexpected error occurred',
 				'PAGE_MESSAGE' => '',
 				'BOX_MESSAGE' => $this->message,
 				'BACK_BUTTON_DESTINATION' => $backButtonDestination,

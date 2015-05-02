@@ -20,15 +20,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Database
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://i-mscp.net i-MSCP Home Site
- * @license     http://www.mozilla.org/MPL/ MPL 1.1
  */
 
 /**
@@ -302,7 +293,7 @@ class iMSCP_Database
 			} else {
 				$rs = $stmt->execute((array)$parameters);
 			}
-		} else {
+		} elseif(is_string($stmt)) {
 			$this->events()->dispatch(
 				new iMSCP_Database_Events_Database(
 					iMSCP_Events::onBeforeQueryExecute, array('context' => $this, 'query' => $stmt)
@@ -315,6 +306,8 @@ class iMSCP_Database
 				$parameters = func_get_args();
 				$rs = call_user_func_array(array($this->_db, 'query'), $parameters);
 			}
+		} else {
+			throw new iMSCP_Exception_Database('Wrong parameter. Expects either a string or PDOStatement object');
 		}
 
 		if ($rs) {

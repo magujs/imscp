@@ -5,7 +5,7 @@ Package::Webstats::Awstats::Installer - i-MSCP AWStats package installer
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,20 +20,12 @@ Package::Webstats::Awstats::Installer - i-MSCP AWStats package installer
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Package::Webstats::Awstats::Installer;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::TemplateParser;
 use iMSCP::Dir;
@@ -207,15 +199,16 @@ sub _createGlobalAwstatsVhost
 {
 	my $self = $_[0];
 
-	my $apache24 = (qv("v$self->{'httpd'}->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
+	my $version = $self->{'httpd'}->{'config'}->{'HTTPD_VERSION'};;
+	my $apache24 = (version->parse($version) >= version->parse('2.4.0'));
 
 	$self->{'httpd'}->setData(
 		{
-			NAMEVIRTUALHOST => $apache24 ? '' : 'NameVirtualHost 127.0.0.1:80',
+			NAMEVIRTUALHOST => ($apache24) ? '' : 'NameVirtualHost 127.0.0.1:80',
 			AWSTATS_ENGINE_DIR => $main::imscpConfig{'AWSTATS_ENGINE_DIR'},
 			AWSTATS_WEB_DIR => $main::imscpConfig{'AWSTATS_WEB_DIR'},
 			WEBSTATS_RPATH => $main::imscpConfig{'WEBSTATS_RPATH'},
-			AUTHZ_ALLOW_ALL => $apache24 ? 'Require all granted' : 'Allow from all'
+			AUTHZ_ALLOW_ALL => ($apache24) ? 'Require all granted' : 'Allow from all'
 		}
 	);
 

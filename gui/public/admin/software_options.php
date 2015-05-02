@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Admin
- * @copyright   2010-2015 by i-MSCP team
- * @author      Sacha Bay <sascha.bay@i-mscp.net>
- * @author      iMSCP Team
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 // Include core library
@@ -43,10 +34,7 @@ $tpl->define_dynamic(
 		'page' => 'admin/software_options.tpl',
 		'page_message' => 'layout'));
 
-$tpl->assign(
-	array(
-		'TR_PAGE_TITLE' => tr('Admin / Settings / Software Options'),
-		'ISP_LOGO' => layout_getUserLogo()));
+$tpl->assign('TR_PAGE_TITLE', tr('Admin / Settings / Software Options'));
 
 if(isset($_POST['uaction']) && $_POST['uaction'] == 'apply') {
     $error = "";

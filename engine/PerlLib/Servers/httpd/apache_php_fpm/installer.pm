@@ -5,7 +5,7 @@
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,20 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCPuse iMSCP::Execute;332
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::httpd::apache_php_fpm::installer;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::EventManager;
@@ -232,7 +224,7 @@ sub _init
 	# Merge old config file with new config file
 	my $oldConf = "$self->{'apacheCfgDir'}/apache.old.data";
 	if(-f $oldConf) {
-		tie my %oldConfig, 'iMSCP::Config', 'fileName' => $oldConf;
+		tie my %oldConfig, 'iMSCP::Config', fileName => $oldConf;
 
 		for(keys %oldConfig) {
 			if(exists $self->{'config'}->{$_}) {
@@ -250,7 +242,7 @@ sub _init
 	# Merge old config file with new config file
 	$oldConf = "$self->{'phpfpmCfgDir'}/phpfpm.old.data";
 	if(-f $oldConf) {
-		tie my %oldConfig, 'iMSCP::Config', 'fileName' => $oldConf;
+		tie my %oldConfig, 'iMSCP::Config', fileName => $oldConf;
 
 		for(keys %oldConfig) {
 			if(exists $self->{'phpfpmConfig'}->{$_}) {
@@ -345,7 +337,9 @@ sub _buildHttpdModules
 	my $rs = $self->{'eventManager'}->trigger('beforeHttpdBuildModules');
 	return $rs if $rs;
 
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") == qv('v2.4.9')) {
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
+	if(version->parse($version) == version->parse('2.4.9')) {
 		my $prevDir = getcwd();
 		my $buildDir = File::Temp->newdir();
 
@@ -395,10 +389,12 @@ sub _buildFastCgiConfFiles
 
 	# Backup, build, store and install the php_fpm_imscp.conf file
 
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
 	# Set needed data
 	$self->{'httpd'}->setData(
 		{
-			AUTHZ_ALLOW_ALL => (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
+			AUTHZ_ALLOW_ALL => (version->parse($version) >= version->parse('2.4.0'))
 				? 'Require env REDIRECT_STATUS' : "Order allow,deny\n        Allow from env=REDIRECT_STATUS"
 		}
 	);
@@ -443,14 +439,15 @@ sub _buildFastCgiConfFiles
 	my @toDisableModules = (
 		'fastcgi', 'fcgid', 'fastcgi_imscp', 'fcgid_imscp', 'php4', 'php5', 'php5_cgi', 'php5filter'
 	);
+
 	my @toEnableModules = ('actions', 'suexec', 'version');
 
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0')) {
+	if(version->parse($version) >= version->parse('2.4.0')) {
 		push @toDisableModules, ('mpm_event', 'mpm_itk', 'mpm_prefork');
 		push @toEnableModules, ('mpm_worker', 'authz_groupfile');
 	}
 
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.9')) {
+	if(version->parse($version) >= version->parse('2.4.9')) {
 		push @toDisableModules, ('php_fpm_imscp');
 		push @toEnableModules, ('setenvif', 'proxy_fcgi', 'proxy_handler');
 	} else {
@@ -470,7 +467,10 @@ sub _buildFastCgiConfFiles
 
 	# Make sure that PHP modules are enabled
 	if(iMSCP::ProgramFinder::find('php5enmod')) {
-		for ('curl', 'gd', 'imap', 'intl', 'json', 'mcrypt', 'mysqlnd/10', 'mysqli', 'mysql', 'pdo/10', 'pdo_mysql') {
+		for (
+			'apc', 'curl', 'gd', 'imap', 'intl', 'json', 'mcrypt', 'mysqlnd/10', 'mysqli', 'mysql', 'opcache', 'pdo/10',
+			'pdo_mysql'
+		) {
 			my($stdout, $stderr);
 			$rs = execute("php5enmod $_", \$stdout, \$stderr);
 			debug($stdout) if $stdout;
@@ -636,23 +636,24 @@ sub _buildApacheConfFiles
 	$rs = $self->{'httpd'}->apacheBkpConfFile("$self->{'apacheWrkDir'}/00_nameserver.conf");
 	return $rs if $rs;
 
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
 	# Using alternative syntax for piped logs scripts when possible
 	# The alternative syntax does not involve the shell (from Apache 2.2.12)
 	my $pipeSyntax = '|';
-
-	if(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.2.12')) {
+	if(version->parse($version) >= version->parse('2.2.12')) {
 		$pipeSyntax .= '|';
 	}
 
-	my $apache24 = (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
+	my $apache24 = (version->parse($version) >= version->parse('2.4.0'));
 
 	# Set needed data
 	$self->{'httpd'}->setData(
 		{
 			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			HTTPD_ROOT_DIR => $self->{'config'}->{'HTTPD_ROOT_DIR'},
-			AUTHZ_DENY_ALL => $apache24 ? 'Require all denied' : 'Deny from all',
-			AUTHZ_ALLOW_ALL => $apache24 ? 'Require all granted' : 'Allow from all',
+			AUTHZ_DENY_ALL => ($apache24) ? 'Require all denied' : 'Deny from all',
+			AUTHZ_ALLOW_ALL => ($apache24) ? 'Require all granted' : 'Allow from all',
 			CMD_VLOGGER => $self->{'config'}->{'CMD_VLOGGER'},
 			PIPE => $pipeSyntax,
 			VLOGGER_CONF => "$self->{'apacheWrkDir'}/vlogger.conf"

@@ -2,14 +2,6 @@
 /**
  * i-MSCP - internet Multi Server Control Panel
  *
- * @copyright 	2001-2006 by moleSoftware GmbH
- * @copyright 	2006-2010 by ispCP | http://isp-control.net
- * @copyright 	2010 by i-msCP | http://i-mscp.net
- * @link 		http://i-mscp.net
- * @author 		ispCP Team
- * @author 		i-MSCP Team
- *
- * @license
  * The contents of this file are subject to the Mozilla Public License
  * Version 1.1 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -47,10 +39,7 @@ $tpl->define_dynamic(
 		'page' => 'reseller/personal_change.tpl',
 		'page_message' => 'layout'));
 
-$tpl->assign(
-	array(
-		 'TR_PAGE_TITLE' => tr('Reseller / Profile / Personal Data'),
-		 'ISP_LOGO' => layout_getUserLogo()));
+$tpl->assign('TR_PAGE_TITLE',  tr('Reseller / Profile / Personal Data'));
 
 if (isset($_POST['uaction']) && $_POST['uaction'] === 'updt_data') {
 	update_reseller_personal_data($_SESSION['user_id']);

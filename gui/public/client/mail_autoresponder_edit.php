@@ -23,15 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    iMSCP
- * @package     Client_Mail
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -164,7 +155,6 @@ if (customerHasFeature('mail') && (isset($_REQUEST['mail_account_id']) && is_num
 			$tpl->assign(
 				array(
 					'TR_PAGE_TITLE' => tr('Client / Email / Overview / Edit Auto Responder'),
-					'ISP_LOGO' => layout_getUserLogo(),
 					'TR_AUTORESPONDER_MESSAGE' => tr('Please enter your auto-responder message below'),
 					'TR_ACTION' => tr('Update'),
 					'TR_CANCEL' => tr('Cancel'),

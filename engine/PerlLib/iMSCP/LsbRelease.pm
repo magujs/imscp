@@ -5,7 +5,7 @@
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,24 +14,17 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package iMSCP::LsbRelease;
 
 use strict;
 use warnings;
-
 use IPC::Open3;
 use POSIX;
 use Symbol;
@@ -52,7 +45,9 @@ my %RELEASE_CODENAME_LOOKUP = (
 	'5.0' => 'lenny',
 	'6.0' => 'squeeze',
 	'7' => 'wheezy',
-	'8' => 'jessie'
+	'8' => 'jessie',
+	'9' => 'stretch',
+	'10' => 'buster'
 );
 
 my @RELEASES_ORDER = (
@@ -90,7 +85,6 @@ sub getInstance
 
 	unless(defined $$instance) {
 		$$instance = bless { }, $self;
-
 		%{$$instance->{'lsbInfo'}} = $$instance->getDistroInformation();
 	}
 
@@ -220,20 +214,18 @@ sub getDistroInformation
 {
 	my $self = $_[0];
 
-	unless($self->{'lsbInfo'}) {
-		# Try to retrieve information from /etc/lsb-release first
-		%{$self->{'lsbInfo'}} = $self->_getLsbInformation();
+	# Try to retrieve information from /etc/lsb-release first
+	my %lsbInfo = $self->_getLsbInformation();
 
-		for ('ID', 'RELEASE', 'CODENAME', 'DESCRIPTION') {
-			unless(exists $self->{'lsbInfo'}->{$_}) {
-				my %distInfo = $self->_guessDebianRelease();
-				%{$self->{'lsbInfo'}} = (%distInfo, %{$self->{'lsbInfo'}});
-				last;
-			}
+	for ('ID', 'RELEASE', 'CODENAME', 'DESCRIPTION') {
+		unless(exists $lsbInfo{$_}) {
+			my %distInfo = $self->_guessDebianRelease();
+			%lsbInfo = (%distInfo, %lsbInfo);
+			last;
 		}
 	}
 
-	%{$self->{'lsbInfo'}};
+	%lsbInfo;
 }
 
 =back

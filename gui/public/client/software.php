@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Client
- * @copyright   2010-2015 by i-MSCP team
- * @author      Sacha Bay <sascha.bay@i-mscp.net>
- * @author      iMSCP Team
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /************************************************************************************
@@ -86,7 +77,6 @@ $tpl->define_dynamic(
 $tpl->assign(
 	array(
 		 'TR_PAGE_TITLE' => tr('Client / Webtools / Software'),
-		 'ISP_LOGO' => layout_getUserLogo(),
 		 'TR_SOFTWARE' => tr('Software'),
 		 'TR_VERSION' => tr('Version'),
 		 'TR_LANGUAGE' => tr('Language'),

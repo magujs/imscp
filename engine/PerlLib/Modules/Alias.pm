@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Modules::Alias;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Database;
 use iMSCP::Execute;
@@ -68,12 +59,12 @@ sub process
 
 	my @sql;
 
-	if($self->{'alias_status'} ~~ ['toadd', 'tochange', 'toenable']) {
+	if($self->{'alias_status'} ~~ [ 'toadd', 'tochange', 'toenable' ]) {
 		$rs = $self->add();
 
 		@sql = (
 			"UPDATE domain_aliasses SET alias_status = ? WHERE alias_id = ?",
-			($rs ? scalar getMessageByType('error') : 'ok'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'),
 			$aliasId
 		);
 	} elsif($self->{'alias_status'} eq 'todelete') {
@@ -82,7 +73,7 @@ sub process
 		if($rs) {
 			@sql = (
 				"UPDATE domain_aliasses SET alias_status = ? WHERE alias_id = ?",
-				scalar getMessageByType('error'),
+				scalar getMessageByType('error') || 'Unknown error',
 				$aliasId
 			);
 		} else {
@@ -93,7 +84,7 @@ sub process
 
 		@sql = (
 			"UPDATE domain_aliasses SET alias_status = ? WHERE alias_id = ?",
-			($rs ? scalar getMessageByType('error') : 'disabled'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'disabled'),
 			$aliasId
 		);
 	} elsif($self->{'alias_status'} eq 'torestore') {
@@ -101,7 +92,7 @@ sub process
 
 		@sql = (
 			"UPDATE domain_aliasses SET alias_status = ? WHERE alias_id = ?",
-			($rs ? scalar getMessageByType('error') : 'ok'),
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'),
 			$aliasId
 		);
 	}
@@ -113,6 +104,39 @@ sub process
 	}
 
 	$rs;
+}
+
+=item add()
+
+ Add domain
+
+ Return int 0 on success, other on failure
+
+=cut
+
+sub add
+{
+	my $self = $_[0];
+
+	if($self->{'alias_status'} eq 'tochange') {
+		# Sets the status of any subdomain that belongs to this domain alias to 'tochange'.
+		# This is needed, else, the DNS resource records for the subdomains are not re-added in DNS zone files.
+		# FIXME: This reflect a bad implementation in the way that entities are managed. This will be solved
+		# in version 2.0.0.
+		my $rs = iMSCP::Database->factory()->doQuery(
+			'dummy',
+			'UPDATE subdomain_alias SET subdomain_alias_status = ? WHERE alias_id = ? AND subdomain_alias_status <> ?',
+			'tochange',
+			$self->{'alias_id'},
+			'todelete'
+		);
+		unless(ref $rs eq 'HASH') {
+			error($rs);
+			return 1;
+		}
+	}
+
+	$self->SUPER::add();
 }
 
 =item restore()

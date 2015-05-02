@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     iMSCP_Core
- * @subpackage  Client
- * @copyright   2010-2015 by i-MSCP team
- * @author      Sacha Bay <sascha.bay@i-mscp.net>
- * @author      iMSCP Team
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.txt GPL v2
  */
 
 /***********************************************************************************************************************
@@ -51,7 +42,7 @@ function client_generatePage($tpl, $softwareId)
 			$tpl, $domainProperties['domain_id'], $softwareId, $row['created_by'], $domainProperties['domain_sqld_limit']
 		);
 	} else {
-		throw new iMSCP_Exception('An unexpected error occured. Please contact your reseller.');
+		throw new iMSCP_Exception('An unexpected error occurred. Please contact your reseller.');
 	}
 }
 
@@ -389,7 +380,6 @@ if (isset($_GET['id']) && is_number($_GET['id'])) {
 	$tpl->assign(
 		array(
 			'TR_PAGE_TITLE' => tr('Client / Webtools / Software / Software Installation'),
-			'ISP_LOGO' => layout_getUserLogo(),
 			'SOFTWARE_ID' => tohtml($softwareId),
 			'TR_NAME' => tr('Software'),
 			'TR_TYPE' => tr('Type'),

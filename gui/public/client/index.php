@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category	i-MSCP
- * @package		iMSCP_Core
- * @subpackage	Client
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /************************************************************************************
@@ -189,16 +179,17 @@ function client_generateFeatureStatus($tpl)
 
 	$tpl->assign(
 		array(
-			 'DOMAIN_FEATURE_STATUS' =>  customerHasFeature('domain') ? $trYes : $trNo,
-			 'PHP_FEATURE_STATUS' => customerHasFeature('php') ? $trYes : $trNo,
-			 'PHP_DIRECTIVES_EDITOR_STATUS' => customerHasFeature('php_editor') ? $trYes : $trNo,
-			 'CGI_FEATURE_STATUS' => customerHasFeature('cgi') ? $trYes : $trNo,
-			 'CUSTOM_DNS_RECORDS_FEATURE_STATUS' => customerHasFeature('custom_dns_records') ? $trYes : $trNo,
-             'EXTERNAL_MAIL_SERVERS_FEATURE_STATUS' => customerHasFeature('external_mail') ? $trYes : $trNo,
-			 'APP_INSTALLER_FEATURE_STATUS' => customerHasFeature('aps') ? $trYes : $trNo,
-             'WEBSTATS_FEATURE_STATUS' => customerHasFeature('webstats') ? $trYes : $trNo
-        )
-    );
+			//'DOMAIN_FEATURE_STATUS' =>  customerHasFeature('domain') ? $trYes : $trNo,
+			'DOMAIN_FEATURE_STATUS' => $trYes,
+			'PHP_FEATURE_STATUS' => customerHasFeature('php') ? $trYes : $trNo,
+			'PHP_DIRECTIVES_EDITOR_STATUS' => customerHasFeature('php_editor') ? $trYes : $trNo,
+			'CGI_FEATURE_STATUS' => customerHasFeature('cgi') ? $trYes : $trNo,
+			'CUSTOM_DNS_RECORDS_FEATURE_STATUS' => customerHasFeature('custom_dns_records') ? $trYes : $trNo,
+			'EXTERNAL_MAIL_SERVERS_FEATURE_STATUS' => customerHasFeature('external_mail') ? $trYes : $trNo,
+			'APP_INSTALLER_FEATURE_STATUS' => customerHasFeature('aps') ? $trYes : $trNo,
+			'WEBSTATS_FEATURE_STATUS' => customerHasFeature('webstats') ? $trYes : $trNo
+		)
+	);
 
 	if (customerHasFeature('backup')) {
 		$domainProperties = get_domain_default_props($_SESSION['user_id']);
@@ -357,12 +348,7 @@ $tpl->define_dynamic(
 		 'traffic_warning' => 'page',
 		 'disk_warning' => 'page'));
 
-$tpl->assign(
-	array(
-		 'TR_PAGE_TITLE' => tr('Client / General / Overview'),
-		 'ISP_LOGO' => layout_getUserLogo()
-	)
-);
+$tpl->assign( 'TR_PAGE_TITLE', tr('Client / General / Overview'));
 
 generateNavigation($tpl);
 

@@ -5,7 +5,7 @@
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,26 +14,18 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category     i-MSCP
-# @copyright    2010-2015 by i-MSCP | http://i-mscp.net
-# @author       Laurent Declercq <l.declercq@nuxwin.com>
-# @link         http://i-mscp.net i-MSCP Home Site
-# @license      http://www.gnu.org/licenses/gpl-2.0.html GPL v2
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package Servers::httpd::apache_php_fpm;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -47,6 +39,7 @@ use iMSCP::Net;
 use iMSCP::Service;
 use File::Temp;
 use File::Basename;
+use Scalar::Defer;
 use version;
 use parent 'Common::SingletonClass';
 
@@ -291,9 +284,11 @@ sub disableDmn
 
 	my $ipMngr = iMSCP::Net->getInstance();
 
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
 	$self->setData(
 		{
-			AUTHZ_ALLOW_ALL => (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'))
+			AUTHZ_ALLOW_ALL => (version->parse($version) >= version->parse('2.4.0'))
 				? 'Require all granted' : 'Allow from all',
 			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			DOMAIN_IP => ($ipMngr->getAddrVersion($data->{'DOMAIN_IP'}) eq 'ipv4')
@@ -372,16 +367,31 @@ sub deleteDmn
 	# Remove Web folder directory ( only if it is not shared with another domain )
 	if(-d $data->{'WEB_DIR'}) {
 		if($data->{'DOMAIN_TYPE'} eq 'dmn' || ($data->{'MOUNT_POINT'} ne '/' && ! @{$data->{'SHARED_MOUNT_POINTS'}})) {
+			(my $userWebDir = $main::imscpConfig{'USER_WEB_DIR'}) =~ s%/+$%%;
 			my $parentDir = dirname($data->{'WEB_DIR'});
-			my $isProtectedParentDir = isImmutable($parentDir);
 
-			clearImmutable($parentDir) if $isProtectedParentDir;
+			clearImmutable($parentDir);
 			clearImmutable($data->{'WEB_DIR'}, 'recursive');
 
-			$rs = iMSCP::Dir->new('dirname' => $data->{'WEB_DIR'})->remove();
+			$rs = iMSCP::Dir->new( dirname => $data->{'WEB_DIR'} )->remove();
 			return $rs if $rs;
 
-			setImmutable($parentDir) if $isProtectedParentDir;
+			if($parentDir ne $userWebDir) {
+				my $dir = iMSCP::Dir->new( dirname => $parentDir );
+
+				if($dir->isEmpty()) {
+					clearImmutable(dirname($parentDir));
+
+					$rs = $dir->remove();
+					return $rs if $rs;
+				}
+			}
+
+			if($data->{'WEB_FOLDER_PROTECTION'} eq 'yes' && $parentDir ne $userWebDir) {
+				do {
+					setImmutable($parentDir) if -d $parentDir;
+				} while (($parentDir = dirname($parentDir)) ne $userWebDir);
+			}
 		}
 	}
 
@@ -835,7 +845,9 @@ sub addIps
 {
 	my ($self, $data) = @_;
 
-	unless(qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0')) {
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+
+	unless(version->parse($version) >= version->parse('2.4.0')) {
 		my $file = "$self->{'apacheWrkDir'}/00_nameserver.conf";
 
 		if(-f $file) {
@@ -901,8 +913,8 @@ sub addIps
 		$rs = $self->installConfFile('00_nameserver.conf');
 		return $rs if $rs;
 
-		$rs = $self->enableSites('00_nameserver.conf');
-		return $rs if $rs;
+		#$rs = $self->enableSites('00_nameserver.conf');
+		#return $rs if $rs;
 
 		$self->{'restart'} = 1;
 	}
@@ -1111,7 +1123,7 @@ sub getTraffic
 	my $trafficDbPath = "$main::imscpConfig{'VARIABLE_DATA_DIR'}/http_traffic.db";
 
 	# Load traffic database
-	tie my %trafficDb, 'iMSCP::Config', 'fileName' => $trafficDbPath, 'nowarn' => 1;
+	tie my %trafficDb, 'iMSCP::Config', fileName => $trafficDbPath, nowarn => 1;
 
 	require Date::Format;
 	Date::Format->import();
@@ -1396,17 +1408,9 @@ sub start
 		'dirname' => $self->{'phpfpmConfig'}->{'PHP_FPM_POOLS_CONF_DIR'}, 'fileType' => '.conf'
 	)->getFiles();
 
-	if(@poolFiles) {
-		undef @poolFiles;
-
-		$rs = iMSCP::Service->getInstance()->start($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
-		error("Unable to start $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
-		return $rs if $rs;
-	}
-
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'HTTPD_SNAME'}, '-f apache2');
-	error("Unable to start $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->start($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}) if @poolFiles;
+	$serviceMngr->start($self->{'config'}->{'HTTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterHttpdStart');
 }
@@ -1426,13 +1430,9 @@ sub stop
 	my $rs = $self->{'eventManager'}->trigger('beforeHttpdStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
-	error("Unable to stop $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'HTTPD_SNAME'}, '-f apache2');
-	error("Unable to stop $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->stop($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
+	$serviceMngr->stop($self->{'config'}->{'HTTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterHttpdStop');
 }
@@ -1473,30 +1473,14 @@ sub restart
 		'dirname' => $self->{'phpfpmConfig'}->{'PHP_FPM_POOLS_CONF_DIR'}, 'fileType' => '.conf'
 	)->getFiles();
 
+	my $serviceMngr = iMSCP::Service->getInstance();
+
 	if($self->{'forceRestart'}) {
-		if(@poolFiles) {
-			undef @poolFiles;
-
-			$rs = iMSCP::Service->getInstance()->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
-			error("Unable to restart $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}") if $rs;
-			return $rs if $rs;
-		}
-
-		$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'HTTPD_SNAME'}, '-f apache2');
-		error("Unable to restart $self->{'config'}->{'HTTPD_SNAME'}") if $rs;
-		return $rs if $rs;
+		$serviceMngr->restart($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}) if @poolFiles;
+		$serviceMngr->restart($self->{'config'}->{'HTTPD_SNAME'});
 	} else {
-		if(@poolFiles) {
-			undef @poolFiles;
-
-			$rs = iMSCP::Service->getInstance()->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'});
-			error("Unable to reload $self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'} service") if $rs;
-			return $rs if $rs;
-		}
-
-		$rs = iMSCP::Service->getInstance()->reload($self->{'config'}->{'HTTPD_SNAME'}, '-f apache2');
-		error("Unable to reload $self->{'config'}->{'HTTPD_SNAME'} service") if $rs;
-		return $rs if $rs;
+		$serviceMngr->reload($self->{'phpfpmConfig'}->{'PHP_FPM_SNAME'}) if @poolFiles;
+		$serviceMngr->reload($self->{'config'}->{'HTTPD_SNAME'});
 	}
 
 	$self->{'eventManager'}->trigger('afterHttpdRestart');
@@ -1608,14 +1592,14 @@ sub _init
 	$self->{'apacheWrkDir'} = "$self->{'apacheCfgDir'}/working";
 	$self->{'apacheTplDir'} = "$self->{'apacheCfgDir'}/parts";
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'apacheCfgDir'}/apache.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'apacheCfgDir'}/apache.data"; \%c; };
 
 	$self->{'phpfpmCfgDir'} = "$main::imscpConfig{'CONF_DIR'}/php-fpm";
 	$self->{'phpfpmBkpDir'} = "$self->{'phpfpmCfgDir'}/backup";
 	$self->{'phpfpmWrkDir'} = "$self->{'phpfpmCfgDir'}/working";
 	$self->{'phpfpmTplDir'} = "$self->{'phpfpmCfgDir'}/parts";
 
-	tie %{$self->{'phpfpmConfig'}}, 'iMSCP::Config', 'fileName' => "$self->{'phpfpmCfgDir'}/phpfpm.data";
+	$self->{'phpfpmConfig'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'phpfpmCfgDir'}/phpfpm.data"; \%c; };
 
 	$self->{'eventManager'}->trigger(
 		'afterHttpdInit', $self, 'apache_php_fpm'
@@ -1699,7 +1683,8 @@ sub _addCfg
 		}
 	}
 
-	my $apache24 = (qv("v$self->{'config'}->{'HTTPD_VERSION'}") >= qv('v2.4.0'));
+	my $version = $self->{'config'}->{'HTTPD_VERSION'};
+	my $apache24 = (version->parse($version) >= version->parse('2.4.0'));
 
 	my $ipMngr = iMSCP::Net->getInstance();
 
@@ -1707,8 +1692,8 @@ sub _addCfg
 		{
 			HTTPD_LOG_DIR => $self->{'config'}->{'HTTPD_LOG_DIR'},
 			HTTPD_CUSTOM_SITES_DIR => $self->{'config'}->{'HTTPD_CUSTOM_SITES_DIR'},
-			AUTHZ_ALLOW_ALL => $apache24 ? 'Require all granted' : 'Allow from all',
-			AUTHZ_DENY_ALL => $apache24 ? 'Require all denied' : 'Deny from all',
+			AUTHZ_ALLOW_ALL => ($apache24) ? 'Require all granted' : 'Allow from all',
+			AUTHZ_DENY_ALL => ($apache24) ? 'Require all denied' : 'Deny from all',
 			DOMAIN_IP => ($ipMngr->getAddrVersion($data->{'DOMAIN_IP'}) eq 'ipv4')
 				? $data->{'DOMAIN_IP'} : "[$data->{'DOMAIN_IP'}]",
 			POOL_NAME => $poolName
@@ -1805,7 +1790,7 @@ sub _addFiles
 		return $rs if $rs;
 	}
 
-	# Create Web folder tree only if th domain is not forwarded
+	# Create Web folder tree only if the domain is not forwarded
 	if($data->{'FORWARD'} eq 'no') {
 		# Build Web directory tree using skeleton from /etc/imscp/apache/skel - BEGIN
 
@@ -1868,12 +1853,25 @@ sub _addFiles
 
 		my $parentDir = dirname($webDir);
 
-		clearImmutable($parentDir);
+		# Fix #1327 - Ensure that parent Web folder exists
+		unless(-d $parentDir) {
+			clearImmutable(dirname($parentDir));
+
+			# Create parent Web folder
+			$rs = iMSCP::Dir->new(
+				dirname => $parentDir
+			)->make(
+				{ 'user' => $data->{'USER'}, 'group' => $data->{'GROUP'}, 'mode' => 0750 }
+			);
+			return $rs if $rs;
+		} else {
+			clearImmutable($parentDir);
+		}
 
 		if(-d $webDir) {
 			clearImmutable($webDir);
 		} else {
-			# Create Web directory
+			# Create Web folder
 			$rs = iMSCP::Dir->new(
 				'dirname' => $webDir
 			)->make(
@@ -1933,8 +1931,8 @@ sub _addFiles
 		}
 
 		if($data->{'WEB_FOLDER_PROTECTION'} eq 'yes') {
-			setImmutable($webDir);
-			setImmutable($parentDir) if $parentDir ne $main::imscpConfig{'USER_WEB_DIR'};
+			(my $userWebDir = $main::imscpConfig{'USER_WEB_DIR'}) =~ s%/+$%%;
+			do { setImmutable($webDir); } while (($webDir = dirname($webDir)) ne $userWebDir);
 		}
 
 		# Permissions, owner and group - Ending

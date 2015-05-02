@@ -6,30 +6,49 @@ Git 1.2.x
 
 BACKEND
 	Added: Custom DNS module ( Modules::CustomDNS )
+	Added: New 'temporary' attribute which allow to override configuration values temporarily ( iMSCP::Config )
+	Added: onBeforeSetPluginStatus event ( Modules::Plugin )
+	Added: PHP_FCGI_CHILDREN, PHP_FCGI_MAX_REQUESTS and PHP_VERSION configuration parameters ( apache_fcgid )
+	Added: Service providers ( Sysvinit, Upstart and Systemd )
+	Changed: Perl version >= 5.14.2 is now required
+	Changed: Service configuration files are now lazy-loaded
 	Fixed: Any task which belongs to the custom DNS records layer must not involve HTTPD configuration change
-	Fixed: Bind9 must not be restarted each time a DNS zone is updated. A simple reload should be sufficient
+	Fixed: Bind9 must not be restarted each time a DNS zone is updated. A simple reload is sufficient
+	Fixed: In some contexts, configuration files which belongs to subdomains are not regenerated
 	Fixed: Some errors are not trapped
 
 CONFIGS
-	Added imscp_daemon, imscp_network and imscp_panel upstart jobs
+	Added: imscp_daemon, imscp_network and imscp_panel upstart jobs
+	Added: libbit-vector-perl package in list of pre-required packages ( Debian / Ubuntu )
+	Added: libclass-insideout-perl and libscalar-defer-perl in list of pre-required packages ( Debian / Ubuntu )
+	Added: php-apc package ( Debian < Jessie / Ubuntu < Trusty Thar )
+	Added: Support for Debian Strech ( testing )
+	Changed: Install nginx-light package instead of nginx package when possible
+	Fixed: Wrong TMPDIR path ( php5-fpm )
+	Removed: INIT_SCRIPTS_DIR, SERVICE_INSTALLER, SERVICE_MNGR, IMSCP_DAEMON_SNAME, IMSCP_NETWORK_SNAME and
+		IMSCP_PANEL_SNAME configuration parameters
+	Removed: mariadb 5.5 from Debian Jessie package file ( replaced by mariadb 10.0 )
+	Renamed: FCGI starter template to php-fcgi-starter ( apache_fcgid server impl. )
 
 DAEMON
 	Added: End child syslog message
 	Fixed: warning: ignoring return value of ‘chdir’... ( daemon_init.c )
-	Fixed: Avoid useless fork and wait by using execl() instead of system() ( lr_syntax.c )
+	Fixed: Avoid useless 'fork' and 'wait' by using execl() instead of system() ( lr_syntax.c )
 	Updated: Version to 1.2.3
 
 DATABASE
 	Added: domain_dns_status field in domain_dns table ( Custom DNS record status field )
 	Added: plugin_config_prev field in plugin table ( Plugin previous configuration field )
+	Fixed: Missing unique constraint for mail_users entities ( added unique constraint on mail_users.mail_addr )
 
 DISTRIBUTIONS
-	Removed: Support for Debian Squeeze ( 6.x )
-	Removed: Support for Ubuntu Lucid Lynx ( 10.04 LTS )
+	Removed: Support for Debian Squeeze ( 6.x ) - Do not fit with new i-MSCP requirements ( Perl version is too old )
+	Removed: Support for Ubuntu Lucid Lynx ( 10.04 LTS ) - EOL as per April 30, 2015 ( Server version )
 
 FRONTEND
 	Added Custom DNS items in debugger interface ( admin level )
 	Changed: Stores the Github payload as json file instead of PHP file ( iMSCP_Update_Version::getUpdateInfo() )
+	Fixed: Client domain management page must not be hidden even if customer cannot add domain aliases and subdomains
 	Fixed: Do not fetch more data than needed from GitHub ( iMSCP_Update_Version::getUpdateInfo() )
 	Fixed: Force reload of newest mail body footprint file ( iMSCP_Exception_Writer_Mail::onUncaughtException() )
 	Fixed: Html in title attribute must not be auto-escaped by jQueryUI tooltip
@@ -38,12 +57,20 @@ FRONTEND
 	Removed: imscp_delete_opcode_file() and imscp_clear_opcode_cache() functions
 
 INSTALLER
+	Added: Debug output when installer is run with --noprompt and --debug options
+	Added: package_conflict field which allows to declare conflicting package that must be pre-removed
+	Added: repository_conflict attribute which allows to declare a conflicting repository that must be removed
+	Added: Update notices
 	Fixed: Missing Email::Simple Perl module ( no longer required )
 	Fixed: Use of uninitialized value $dbPass in string ( imscp/engine/setup/imscp-setup-methods.pl line 482 )
+	Fixed: Wrong package name in preseed file ( RainLoop )
+
+PACKAGES
+	Renamed: Fcgid starter template to php-fcgi-starter ( FrontEnd )
 
 PLUGINS
 	Added: iMSCP_Plugin::getConfigPrev() and iMSCP_Plugin::getConfigPrevParam() methods
-	Added: require_api info field ( field which allows the plugins to define the required i-MSCP plugin API )
+	Added: require_api info field ( field which allows the plugins to define the required i-MSCP plugin API version )
 	Changed: info, config and config_prev fields are now automatically decoded and set as plugin properties ( backend )
 	Fixed: Force reload of newest plugin info file ( iMSCP_Plugin::getInfo() )
 	Fixed: Force reload of newest plugin configuration file ( iMSCP_Plugin::getConfigFromFile() )
@@ -51,19 +78,23 @@ PLUGINS
 	Updated: API to version 1.0.0
 
 SKELETON
-	Removed: Link to the panel in default index.html files ( Panel must not be publicly exposed )
+	Removed: Link to the panel in default index.html files ( panel must not be publicly exposed )
 	Fixed: Wrong link for favicon in error pages
 
 SERVICES
 	Added: Log summary message on TLS handshake completion ( Postfix )
 	Fixed: Apache access.log files are put in wrong directory ( vlogger )
-	Fixed: Disable warnings about missing SPF DNS record ( As per RFC 7208, SPF DNS record is deprecated ) ( Bind9 )
+	Fixed: Disable warnings about missing SPF DNS record ( As per RFC 7208, SPF DNS record is deprecated - Bind9 )
 
 YOUTRACK
 	Fixed #IP-1275: Apache access logs are created in /<domain.tld>
 	Fixed #IP-1279: Autoresponder - Unable to get message body
 	Fixed #IP-1286: IP attachment fails on reboot ( Ubuntu )
 	Fixed #IP-1292: Files from a previous plugin version must be kept if the new plugin version is not compatible
+	Fixed #IP-1314: Custom DNS SRV record - Missing TLS protocol
+	Fixed #IP-1315: Defect - Statistics overview with special characters breaks view
+	Fixed #IP-1323: Invalid query result column used in change_domain_status() function
+	Fixed #IP-1327: Unable to add subdomain (subals) - An error occurred while reading flags on ...
 
 ------------------------------------------------------------------------------------------------------------------------
 1.2.2
@@ -205,7 +236,7 @@ BACKEND
 	Added: pigz ( Parallel Implementation of GZip ) algorithm for backups compression
 	Added: Standard directory which allow to load apache conffiles prior any other vhost file ( Apache )
 	Added: --verbose command line options for all scripts
-	Changed: i-MSCP is now run through a dedicated httpd instance by using the nginx Web server
+	Changed: i-MSCP frontEnd is now run through a dedicated httpd instance by using the nginx Web server
 	Changed: Logfiles are now written as soon as possible ( allows to mitigate memory consumption )
 	Changed: The quota accounting script is now run every 30 minutes
 	Fixed: Backend logs which are older than 7 days are never removed

@@ -5,7 +5,7 @@
 =cut
 
 # i-MSCP - internet Multi Server Control Panel
-# Copyright (C) 2010-2015 by internet Multi Server Control Panel
+# Copyright (C) 2010-2015 by Laurent Declercq <l.declercq@nuxwin.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,37 +14,23 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package iMSCP::Ext2Attributes::Ext2Fs64;
 
 use strict;
 use warnings;
-
 use parent qw( Exporter );
 use vars qw( @EXPORT );
+
 @EXPORT = qw(
-	EXT2_IOC_GETFLAGS
-	EXT2_IOC_SETFLAGS
-	EXT2_SECRM_FL
-	EXT2_UNRM_FL
-	EXT2_COMPR_FL
-	EXT2_SYNC_FL
-	EXT2_IMMUTABLE_FL
-	EXT2_APPEND_FL
-	EXT2_NODUMP_FL
-	EXT2_NOATIME_FL
+	EXT2_IOC_GETFLAGS EXT2_IOC_SETFLAGS EXT2_SECRM_FL EXT2_UNRM_FL EXT2_COMPR_FL EXT2_SYNC_FL EXT2_IMMUTABLE_FL
+	EXT2_APPEND_FL EXT2_NODUMP_FL EXT2_NOATIME_FL
 );
 
 =head1 DESCRIPTION

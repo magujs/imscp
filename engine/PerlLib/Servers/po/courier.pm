@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::po::courier;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Config;
@@ -42,6 +33,8 @@ use iMSCP::File;
 use iMSCP::Dir;
 use iMSCP::Execute;
 use iMSCP::Service;
+use Tie::File;
+use Scalar::Defer;
 use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
@@ -278,25 +271,12 @@ sub start
 	my $rs = $self->{'eventManager'}->trigger('beforePoStart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'AUTHDAEMON_SNAME'}, 'authdaemon');
-	error("Unable to start $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
-	error("Unable to start $self->{'config'}->{'POPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
-	error("Unable to start $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
-	error("Unable to start $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->start($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
-	error("Unable to start $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->start($self->{'config'}->{'AUTHDAEMON_SNAME'});
+	$serviceMngr->start($self->{'config'}->{'POPD_SNAME'});
+	$serviceMngr->start($self->{'config'}->{'POPD_SSL_SNAME'});
+	$serviceMngr->start($self->{'config'}->{'IMAPD_SNAME'});
+	$serviceMngr->start($self->{'config'}->{'IMAPD_SSL_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterPoStart');
 }
@@ -316,25 +296,12 @@ sub stop
 	my $rs = $self->{'eventManager'}->trigger('beforePoStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'AUTHDAEMON_SNAME'}, 'authdaemon');
-	error("Unable to stop $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
-	error("Unable to stop $self->{'config'}->{'POPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
-	error("Unable to stop $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
-	error("Unable to stop $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
-	error("Unable to stop $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
+	$serviceMngr->stop($self->{'config'}->{'AUTHDAEMON_SNAME'});
+	$serviceMngr->stop($self->{'config'}->{'POPD_SNAME'});
+	$serviceMngr->stop($self->{'config'}->{'POPD_SSL_SNAME'});
+	$serviceMngr->stop($self->{'config'}->{'IMAPD_SNAME'});
+	$serviceMngr->stop($self->{'config'}->{'IMAPD_SSL_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterPoStop');
 }
@@ -354,25 +321,13 @@ sub restart
 	my $rs = $self->{'eventManager'}->trigger('beforePoRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'AUTHDAEMON_SNAME'}, 'authdaemon');
-	error("Unable to restart $self->{'config'}->{'AUTHDAEMON_SNAME'} service") if $rs;
-	return $rs if $rs;
+	my $serviceMngr = iMSCP::Service->getInstance();
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SNAME'}, '-f pop3d.pid');
-	error("Unable to restart $self->{'config'}->{'POPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'POPD_SSL_SNAME'}, '-f pop3d-ssl.pid');
-	error("Unable to restart $self->{'config'}->{'POPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SNAME'}, '-f imapd.pid');
-	error("Unable to restart $self->{'config'}->{'IMAPD_SNAME'} service") if $rs;
-	return $rs if $rs;
-
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'IMAPD_SSL_SNAME'}, '-f imapd-ssl.pid');
-	error("Unable to restart $self->{'config'}->{'IMAPD_SSL_SNAME'} service") if $rs;
-	return $rs if $rs;
+	$serviceMngr->restart($self->{'config'}->{'AUTHDAEMON_SNAME'});
+	$serviceMngr->restart($self->{'config'}->{'POPD_SNAME'});
+	$serviceMngr->restart($self->{'config'}->{'POPD_SSL_SNAME'});
+	$serviceMngr->restart($self->{'config'}->{'IMAPD_SNAME'});
+	$serviceMngr->restart($self->{'config'}->{'IMAPD_SSL_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterPoRestart');
 }
@@ -393,7 +348,7 @@ sub getTraffic
 	my $trafficDbPath = "$variableDataDir/po_traffic.db";
 
 	# Load traffic database
-	tie my %trafficDb, 'iMSCP::Config', 'fileName' => $trafficDbPath, 'nowarn' => 1;
+	tie my %trafficDb, 'iMSCP::Config', fileName => $trafficDbPath, nowarn => 1;
 
 	# Data source file
 	my $trafficDataSrc = "$main::imscpConfig{'TRAFF_LOG_DIR'}/$main::imscpConfig{'MAIL_TRAFF_LOG'}";
@@ -402,7 +357,7 @@ sub getTraffic
 		my $wrkLogFile = "$main::imscpConfig{'LOG_DIR'}/mail.po.log";
 
 		# We are using a small file to memorize the number of the last line that has been read and his content
-		tie my %indexDb, 'iMSCP::Config', 'fileName' => "$variableDataDir/traffic_index.db", 'nowarn' => 1;
+		tie my %indexDb, 'iMSCP::Config', fileName => "$variableDataDir/traffic_index.db", nowarn => 1;
 
 		$indexDb{'po_lineNo'} = 0 unless $indexDb{'po_lineNo'};
 		$indexDb{'po_lineContent'} = '' unless $indexDb{'po_lineContent'};
@@ -414,7 +369,6 @@ sub getTraffic
 		my $rs = iMSCP::File->new( filename => $trafficDataSrc )->copyFile( $wrkLogFile, { 'preserve' => 'no' } );
 		die(iMSCP::Debug::getLastError()) if $rs;
 
-		require Tie::File;
 		tie my @content, 'Tie::File', $wrkLogFile or die("Unable to tie file $wrkLogFile");
 
 		# Saving last line number and line date content from the current working file
@@ -423,7 +377,7 @@ sub getTraffic
 
 		# Test for logrotation
 		if($content[$lastLineNo] && $content[$lastLineNo] eq $lastlineContent) {
-			# No logrotation occured. We want parse only new lines so we skip those already processed
+			# No logrotation occurred. We want parse only new lines so we skip those already processed
 			(tied @content)->defer;
 			@content = @content[$lastLineNo + 1 .. $#content];
 			(tied @content)->flush;
@@ -511,7 +465,7 @@ sub _init
 	$self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
 	$self->{'wrkDir'} = "$self->{'cfgDir'}/working";
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/courier.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'cfgDir'}/courier.data"; \%c; };
 
 	$self->{'eventManager'}->trigger(
 		'afterPoInit', $self, 'courier'

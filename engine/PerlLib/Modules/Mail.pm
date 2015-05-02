@@ -20,21 +20,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# @category     i-MSCP
-# @copyright    2010-2015 by i-MSCP | http://i-mscp.net
-# @author       Daniel Andreca <sci2tech@gmail.com>
-# @author       Laurent Declercq <l.declercq@nuxwin.com>
-# @link         http://i-mscp.net i-MSCP Home Site
-# @license      http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Modules::Mail;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Database;
 use parent 'Modules::Abstract';
@@ -83,14 +74,16 @@ sub process
 
 		@sql = (
 			'UPDATE mail_users SET status = ? WHERE mail_id = ?',
-			($rs ? scalar getMessageByType('error') : 'ok'), $mailId
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'ok'), $mailId
 		);
 	} elsif($self->{'status'} eq 'todelete') {
 		$rs = $self->delete();
 
 		if($rs){
 			@sql = (
-				'UPDATE mail_users SET status = ? WHERE mail_id = ?', scalar getMessageByType('error'), $mailId
+				'UPDATE mail_users SET status = ? WHERE mail_id = ?',
+				scalar getMessageByType('error') || 'Unknown error',
+				$mailId
 			);
 		} else {
 			@sql = ('DELETE FROM mail_users WHERE mail_id = ?', $self->{'mail_id'});
@@ -100,7 +93,7 @@ sub process
 
 		@sql = (
 			'UPDATE mail_users SET status = ? WHERE mail_id = ?',
-			($rs ? scalar getMessageByType('error') : 'disabled'), $mailId
+			($rs ? scalar getMessageByType('error') || 'Unknown error' : 'disabled'), $mailId
 		);
 	}
 

@@ -23,16 +23,6 @@
  *
  * Portions created by the i-MSCP Team are Copyright (C) 2010-2015 by
  * i-MSCP - internet Multi Server Control Panel. All Rights Reserved.
- *
- * @category    i-MSCP
- * @package     iMSCP_Core
- * @subpackage  Reseller
- * @copyright   2001-2006 by moleSoftware GmbH
- * @copyright   2006-2010 by ispCP | http://isp-control.net
- * @copyright   2010-2015 by i-MSCP | http://i-mscp.net
- * @author      ispCP Team
- * @author      i-MSCP Team
- * @link        http://i-mscp.net
  */
 
 /***********************************************************************************************************************
@@ -199,7 +189,7 @@ function generate_users_list($tpl, $resellerId)
 				$statusDomain = translate_dmn_status(
 					($row['admin_status'] != 'ok')  ? $row['admin_status'] : $row['domain_status']
 				);
-				$domainStatusTooltip = tr('An unexpected error occured. Please contact your administrator.');
+				$domainStatusTooltip = tr('An unexpected error occurred. Please contact your administrator.');
 				$statusBool = false;
 				$canChange = false;
 			}
@@ -346,7 +336,6 @@ $tpl->define_dynamic(
 $tpl->assign(
 	array(
 		'TR_PAGE_TITLE' => tr('Reseller / Customers / Overview'),
-		'ISP_LOGO' => layout_getUserLogo(),
 		'TR_USER_STATUS' => tr('Status'),
 		'TR_DETAILS' => tr('Details'),
 		'TR_SEARCH' => tr('Search'),

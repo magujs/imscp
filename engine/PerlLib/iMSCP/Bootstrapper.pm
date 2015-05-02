@@ -1,6 +1,6 @@
 =head1 NAME
 
- iMSCP::Bootstrapper - Boot i-MSCP
+ iMSCP::Bootstrapper - i-MSCP Bootstrapper
 
 =cut
 
@@ -20,19 +20,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package iMSCP::Bootstrapper;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::Requirements;
@@ -44,7 +36,7 @@ use parent 'Common::SingletonClass';
 
 =head1 DESCRIPTION
 
- Bootstrap class for i-MSCP.
+ Bootstrap class for i-MSCP
 
 =head1 PUBLIC METHODS
 
@@ -52,7 +44,7 @@ use parent 'Common::SingletonClass';
 
 =item boot()
 
- Boot i-MSCP
+ i-MSCP Bootstrapper
 
  Return iMSCP::Bootstrapper
 
@@ -68,10 +60,10 @@ sub boot
 	tie
 		%main::imscpConfig,
 		'iMSCP::Config',
-		'fileName' => ($^O =~ /bsd$/ ? '/usr/local/etc/' : '/etc/') . 'imscp/imscp.conf',
-		'nocreate' => 1, # Do not create file if it doesn't exist (raise error instead)
-		'nofail' => $options->{'nofail'} && $options->{'nofail'} eq 'yes' ? 1 : 0,
-		'readonly' => $options->{'config_readonly'} && $options->{'config_readonly'} eq 'yes' ? 1 : 0;
+		fileName => ($^O =~ /bsd$/ ? '/usr/local/etc/' : '/etc/') . 'imscp/imscp.conf',
+		nocreate => 1, # Do not create file if it doesn't exist (raise error instead)
+		nofail => $options->{'nofail'} && $options->{'nofail'} eq 'yes' ? 1 : 0,
+		readonly => $options->{'config_readonly'} && $options->{'config_readonly'} eq 'yes' ? 1 : 0;
 
 	# Set debug mode
 	setDebug(iMSCP::Getopt->debug || $main::imscpConfig{'DEBUG'} || 0);

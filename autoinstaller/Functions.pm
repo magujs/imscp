@@ -32,9 +32,7 @@ package autoinstaller::Functions;
 
 use strict;
 use warnings;
-
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
-
 use iMSCP::Debug;
 use iMSCP::Config;
 use iMSCP::Bootstrapper;
@@ -48,10 +46,10 @@ use iMSCP::File;
 use iMSCP::Stepper;
 use File::Find;
 use Cwd;
-
+use version;
 use iMSCP::Getopt;
-
 use parent 'Exporter';
+
 our @EXPORT_OK = qw/loadConfig build install/;
 
 my $autoinstallerAdapterInstance;
@@ -83,7 +81,7 @@ sub loadConfig
 	my $defaultConffile = "$FindBin::Bin/configs/debian/imscp.conf";
 
 	# Load new imscp.conf conffile from i-MSCP upstream source
-	tie my %imscpNewConfig, 'iMSCP::Config', 'fileName' => (-f $distroConffile) ? $distroConffile : $defaultConffile;
+	tie my %imscpNewConfig, 'iMSCP::Config', fileName => (-f $distroConffile) ? $distroConffile : $defaultConffile;
 
 	%main::imscpConfig = %imscpNewConfig;
 
@@ -91,9 +89,9 @@ sub loadConfig
 	if (-f "$imscpNewConfig{'CONF_DIR'}/imscp.conf") {
 		tie %main::imscpOldConfig,
 			'iMSCP::Config',
-			'fileName' => "$imscpNewConfig{'CONF_DIR'}/imscp.conf",
-			'readonly' => 1,
-			'nowarn' => 1;
+			fileName => "$imscpNewConfig{'CONF_DIR'}/imscp.conf",
+			readonly => 1,
+			nowarn => 1;
 
 		# Merge old config with the new but do not write anything yet.
 		for(keys %main::imscpOldConfig) {
@@ -143,10 +141,15 @@ sub build
 	$dialog->set('cancel-label', 'Back');
 
 	unless($main::noprompt || $main::reconfigure ne 'none') {
-		$rs = _showReadmeFile($dialog);
+		$rs = _showWelcomeMsg($dialog);
 		return $rs if $rs;
 
-		$rs = _askDistro($dialog);
+		if(%main::imscpOldConfig) {
+			$rs = _showUpdateNotices($dialog);
+			return $rs if $rs;
+		}
+
+		$rs = _confirmDistro($dialog);
 		return $rs if $rs;
 	}
 
@@ -178,7 +181,7 @@ sub build
 
 	for (@steps) {
 		$rs = step($_->[0], $_->[1], $nbSteps, $step);
-		error('An error occured while performing build steps') if $rs;
+		error('An error occurred while performing build steps') if $rs;
 		return $rs if $rs;
 		$step++;
 	}
@@ -209,7 +212,7 @@ sub build
 
 	# Write new config file
 	my %imscpConf = %main::imscpConfig;
-	tie %main::imscpConfig, 'iMSCP::Config', 'fileName' => "$main::{'SYSTEM_CONF'}/imscp.conf";
+	tie %main::imscpConfig, 'iMSCP::Config', fileName => "$main::{'SYSTEM_CONF'}/imscp.conf";
 	$main::imscpConfig{$_} = $imscpConf{$_} for keys %imscpConf;
 
 	# Clean build directory (remove any .gitignore|empty-file)
@@ -276,7 +279,7 @@ EOF
 
 	for (@steps) {
 		$rs = step($_->[0], $_->[1], $nbSteps, $step);
-		error('An error occured while performing installation steps') if $rs;
+		error('An error occurred while performing installation steps') if $rs;
 		return $rs if $rs;
 
 		$step++;
@@ -324,38 +327,121 @@ sub _installPreRequiredPackages
 	_getDistroAdapter()->installPreRequiredPackages();
 }
 
-=item showReadmeFile(\%dialog)
+=item _showWelcomeMsg(\%dialog)
 
- Show readme file
+ Show welcome message
 
  Param iMSCP::Dialog \%dialog
  Return int 0 on success, other otherwise
 
 =cut
 
-sub _showReadmeFile
+sub _showWelcomeMsg
 {
 	my $dialog = $_[0];
 
-	my $file = iMSCP::File->new( filename => $FindBin::Bin . '/README');
-	my $content = $file->get() or fatal("Unable to read $FindBin::Bin/README");
-
 	$dialog->msgbox(<<EOF);
 
-$content
+\\Zb\\Z4i-MSCP - internet Multi Server Control Panel
+============================================\\Zn\\ZB
+
+Welcome to the i-MSCP setup dialog.
+
+i-MSCP ( internet Multi Server Control Panel ) is an open-source software which allows to manage shared hosting environments on Linux servers.
+
+i-MSCP aims to provide an easy-to-use Web interface for end-users, and to manage servers without any manual intervention on the filesystem.
+
+i-MSCP was designed for professional Hosting Service Providers (HSPs), Internet Service Providers (ISPs) and IT professionals.
+
+\\Zb\\Z4License\\Zn\\ZB
+
+Unless otherwise stated all code is licensed under GPL 2.0 and has the following copyright:
+
+        \\ZbCopyright 2010-2015 by i-MSCP Team - All rights reserved\\ZB
+
+\\Zb\\Z4Credits\\Zn\\ZB
+
+i-MSCP is a project of i-MSCP | internet Multi Server Control Panel.
+i-MSCP and the i-MSCP logo are trademarks of the i-MSCP | internet Multi Server Control Panel project team.
 EOF
 }
 
-=item _askDistro(\%dialog)
+=item _showUpdateNotices(\%dialog)
 
- Ask for distribution
+ Show update notices
 
- Param iMSCP::Dialog \%dialog
- Return int 0 on success, 50 otherwise
+ Return 0 on success, other on failure on when user is aborting
 
 =cut
 
-sub _askDistro()
+sub _showUpdateNotices
+{
+	my $dialog = $_[0];
+
+	my $noticesDir = "$FindBin::Bin/autoinstaller/UpdateNotices";
+	my $imscpVersion = $main::imscpOldConfig{'Version'};
+	my $notices = '';
+
+	unless($imscpVersion =~ /git/i) {
+		my @noticeFiles = iMSCP::Dir->new( dirname => $noticesDir )->getFiles();
+
+		if(@noticeFiles) {
+			@noticeFiles = reverse sort @noticeFiles;
+
+			for my $noticeFile(@noticeFiles) {
+				(my $noticeVersion = $noticeFile) =~ s/\.txt$//;
+
+				if(version->parse($imscpVersion) < version->parse($noticeVersion)) {
+					my $noticeBody = iMSCP::File->new( filename => "$noticesDir/$noticeFile" )->get();
+					unless(defined $noticeBody) {
+						error("Unable to read $noticesDir/$noticeFile file");
+						return 1;
+					}
+
+					$notices .= "\n$noticeBody";
+				}
+			}
+		}
+	} else {
+		$notices = <<EOF;
+
+The installer detected that you're using the \\ZbGit\\ZB version of i-MSCP. Before continue, be sure to have read the errata file:
+
+    \\Zbhttps://github.com/i-MSCP/imscp/blob/1.2.x/docs/1.2.x_errata.md\\ZB
+
+We would remind you that the Git version can be highly unstable and that the i-MSCP team do not provides any support for it.
+EOF
+	}
+
+	unless($notices eq '') {
+		$dialog->set('yes-label', 'Continue');
+		$dialog->set('no-label', 'Abort');
+		my $rs = $dialog->yesno(<<EOF);
+
+Please read carefully before continue.
+
+\\ZbNote:\\ZB Use the \\ZbPage Down\\ZB key from your keyboard to scroll down.
+$notices
+You can now either continue or abort if needed.
+EOF
+
+		$dialog->resetLabels();
+		return 50 if $rs;
+	}
+
+	0;
+}
+
+=item _confirmDistro(\%dialog)
+
+ Distribution confirmation dialog
+
+ Param iMSCP::Dialog \%dialog
+ Return 0 on success, other on failure on when user is aborting
+
+=cut
+
+sub _confirmDistro
 {
 	my $dialog = $_[0];
 
@@ -373,7 +459,7 @@ sub _askDistro()
 		$codename ne 'n/a'
 	) {
 		unless(-f $packagesFile) {
-			iMSCP::Dialog->getInstance()->msgbox(<<EOF);
+			$dialog->msgbox(<<EOF);
 
 \\Z1$distribution $release ($codename) not supported yet\\Zn
 
@@ -392,7 +478,7 @@ EOF
 $distribution $release ($codename) has been detected. Is this ok?
 EOF
 
-		iMSCP::Dialog->getInstance()->msgbox(<<EOF) if $rs;
+		$dialog->msgbox(<<EOF) if $rs;
 
 \\Z1Distribution not supported\\Zn
 
@@ -439,8 +525,6 @@ sub _askInstallMode
 
 	my ($rs, $mode) = $dialog->radiolist(<<EOF, [ 'Install', 'Build' ], 'Install');
 
-\\Z4\\Zb\\ZuInstaller Options\\Zn
-
 Please, choose an option:
 
 \\Z4Install:\\Zn Choose this option if you want install or update i-MSCP.
@@ -467,7 +551,10 @@ EOF
 
 sub _processDistroPackages
 {
-	_getDistroAdapter()->installPackages() || _getDistroAdapter()->uninstallPackages();
+	my $rs = _getDistroAdapter()->installPackages();
+	$rs ||= _getDistroAdapter()->uninstallPackages();
+
+	$rs;
 }
 
 =item _testRequirements()
@@ -876,11 +963,11 @@ EOF
 
 sub _installFiles
 {
+	my $serviceMngr = iMSCP::Service->getInstance();
+
 	# i-MSCP daemon must be stopped before changing any file on the files system
-	if(-x "$main::imscpConfig{'INIT_SCRIPTS_DIR'}/$main::imscpConfig{'IMSCP_DAEMON_SNAME'}") {
-		my $rs = iMSCP::Service->getInstance()->stop($main::imscpConfig{'IMSCP_DAEMON_SNAME'});
-		error("Unable to stop $main::imscpConfig{'IMSCP_DAEMON_SNAME'} service") if $rs;
-		return $rs if $rs ;
+	if($serviceMngr->isRunning('imscp_daemon')) {
+		$serviceMngr->stop('imscp_daemon');
 	}
 
 	# Process cleanup to avoid any security risks and conflicts

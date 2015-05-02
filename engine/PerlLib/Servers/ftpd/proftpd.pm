@@ -20,27 +20,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Daniel Andreca <sci2tech@gmail.com>
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package Servers::ftpd::proftpd;
 
 use strict;
 use warnings;
-
 use iMSCP::Debug;
 use iMSCP::EventManager;
 use iMSCP::Execute;
 use iMSCP::File;
 use iMSCP::Service;
 use File::Basename;
+use Scalar::Defer;
 use parent 'Common::SingletonClass';
-
 
 =head1 DESCRIPTION
 
@@ -212,9 +204,7 @@ sub start
 	my $rs = $self->{'eventManager'}->trigger('beforeFtpdStart');
 	return $rs if $rs;
 
-	$rs =  iMSCP::Service->getInstance()->start($self->{'config'}->{'FTPD_SNAME'});
-	error("Unable to start $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->start($self->{'config'}->{'FTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterFtpdStart');
 }
@@ -234,9 +224,7 @@ sub stop
 	my $rs = $self->{'eventManager'}->trigger('beforeFtpdStop');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->stop($self->{'config'}->{'FTPD_SNAME'});
-	error("Unable to stop $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->stop($self->{'config'}->{'FTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterFtpdStop');
 }
@@ -256,9 +244,7 @@ sub restart
 	my $rs = $self->{'eventManager'}->trigger('beforeFtpdRestart');
 	return $rs if $rs;
 
-	$rs = iMSCP::Service->getInstance()->restart($self->{'config'}->{'FTPD_SNAME'});
-	error("Unable to restart $self->{'config'}->{'FTPD_SNAME'} service") if $rs;
-	return $rs if $rs;
+	iMSCP::Service->getInstance()->restart($self->{'config'}->{'FTPD_SNAME'});
 
 	$self->{'eventManager'}->trigger('afterFtpdRestart');
 }
@@ -278,7 +264,7 @@ sub getTraffic
 	my $trafficDbPath = "$main::imscpConfig{'VARIABLE_DATA_DIR'}/ftp_traffic.db";
 
 	# Load traffic database
-	tie my %trafficDb, 'iMSCP::Config', 'fileName' => $trafficDbPath, 'nowarn' => 1;
+	tie my %trafficDb, 'iMSCP::Config', fileName => $trafficDbPath, nowarn => 1;
 
 	# Data source file
 	my $trafficDataSrc = "$main::imscpConfig{'TRAFF_LOG_DIR'}/$self->{'config'}->{'FTP_TRAFF_LOG_PATH'}";
@@ -341,7 +327,7 @@ sub _init
 
 	$self->{'commentChar'} = '#';
 
-	tie %{$self->{'config'}}, 'iMSCP::Config', 'fileName' => "$self->{'cfgDir'}/proftpd.data";
+	$self->{'config'} = lazy { tie my %c, 'iMSCP::Config', fileName => "$self->{'cfgDir'}/proftpd.data"; \%c; };
 
 	$self->{'eventManager'}->trigger(
 		'afterFtpdInit', $self, 'proftpd'

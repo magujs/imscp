@@ -16,13 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @category    iMSCP
- * @package     Client_Mail
- * @copyright   2010-2015 by i-MSCP Team
- * @author      Laurent Declercq <l.declercq@nuxwin.com>
- * @link        http://www.i-mscp.net i-MSCP Home Site
- * @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
  */
 
 // TODO (nuxwin): DataTables server-side processing
@@ -324,7 +317,6 @@ if (customerHasMailOrExtMailFeatures()) {
 	$tpl->assign(
 		array(
 			'TR_PAGE_TITLE' => tr('Client / Email / Overview'),
-			'ISP_LOGO' => layout_getUserLogo(),
 			'DATATABLE_TRANSLATIONS' => getDataTablesPluginTranslations(),
 			'TR_MAIL' => tr('Mail'),
 			'TR_TYPE' => tr('Type'),

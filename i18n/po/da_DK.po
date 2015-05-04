@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-02-12 12:11+0100\n"
-"PO-Revision-Date: 2015-02-12 11:14+0000\n"
+"POT-Creation-Date: 2015-05-04 23:43+0200\n"
+"PO-Revision-Date: 2015-05-04 21:45+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Danish (Denmark) (http://www.transifex.com/projects/p/i-MSCP/language/da_DK/)\n"
 "MIME-Version: 1.0\n"
@@ -239,6 +239,14 @@ msgstr "%s / %s af %s"
 #, php-format
 msgid "%s / unlimited"
 msgstr "%s / ubegrænset"
+
+#, php-format
+msgid "%s IP address is blocked for %s minutes."
+msgstr ""
+
+#, php-format
+msgid "%s IP address is waiting %s seconds."
+msgstr ""
 
 #, php-format
 msgid "%s account successfully deleted."
@@ -960,33 +968,26 @@ msgstr "Alternativ URL til at nå dit website"
 msgid "An email addresse is not valid in mail forward list."
 msgstr ""
 
-msgid "An entry is defined twice below."
-msgstr "En post er defineret to gange nedenfor."
+msgid "An entry is defined twice."
+msgstr ""
 
 msgid "An error occurred during authentication."
 msgstr "Der opstod en fejl i forbindelse med godkendelse."
 
-msgid "An unexpected error occured"
-msgstr ""
-
-msgid ""
-"An unexpected error occured. Go to the debugger interface for more details."
-msgstr ""
-
-msgid "An unexpected error occured. Please contact your administrator."
-msgstr ""
-
-msgid "An unexpected error occured. Please contact your reseller."
-msgstr "En uventet fejl opstod. Kontakt din forhandler."
-
-#, php-format
-msgid "An unexpected error occured: %s"
+msgid "An unexpected error occurred"
 msgstr ""
 
 msgid "An unexpected error occurred."
 msgstr ""
 
+msgid ""
+"An unexpected error occurred. Go to the debugger interface for more details."
+msgstr ""
+
 msgid "An unexpected error occurred. Please contact your administrator."
+msgstr ""
+
+msgid "An unexpected error occurred. Please contact your reseller."
 msgstr ""
 
 #, php-format
@@ -999,6 +1000,9 @@ msgstr "En ukendt fejl opstod under fil upload: %s"
 
 msgid "Anti-Rootkits Logs"
 msgstr "Anti-Rootkits Logs"
+
+msgid "Any"
+msgstr ""
 
 msgid "Application installer"
 msgstr "Application installer"
@@ -1235,9 +1239,6 @@ msgstr "Kan ikke validere record: %s"
 msgid "Canonical name"
 msgstr "Canonical navn"
 
-msgid "Captcha fontfile not found."
-msgstr "Captcha fontfilen ikke fundet."
-
 msgid "Catch all"
 msgstr "FangAlle"
 
@@ -1258,9 +1259,6 @@ msgstr "Certifikat data"
 
 msgid "Change"
 msgstr "Ændre"
-
-msgid "Change in progress..."
-msgstr "Ændring igangsat..."
 
 msgid "Change personal data"
 msgstr "Ændre personlig data"
@@ -1565,6 +1563,9 @@ msgstr "Nuværende adgangskode"
 msgid "Current password is invalid."
 msgstr "Nuværende adgangskode er ugyldig."
 
+msgid "Custom DNS errors"
+msgstr ""
+
 msgid "Custom DNS record"
 msgstr "Brugerdefineret DNS record"
 
@@ -1860,7 +1861,7 @@ msgid "Deletion in progress"
 msgstr "Sletning i gang"
 
 msgid "Deletion in progress..."
-msgstr "Sletning i gang..."
+msgstr ""
 
 msgid "Depot import"
 msgstr "Depot import"
@@ -2083,6 +2084,9 @@ msgid ""
 "Domain: Setup a DNS MX record to relay mail of your entire domain, including"
 " subdomains."
 msgstr "Domæne: Opsætning af en MX-record til relay mail på hele domænet, herunder underdomæner."
+
+msgid "Domain: Setup an external MX host to relay mail of your entire domain."
+msgstr ""
 
 msgid "Domains"
 msgstr "Domæner"
@@ -2313,6 +2317,9 @@ msgstr "Ekskl. standard mails"
 msgid "Execute requests"
 msgstr "Kør forespørgsel"
 
+msgid "Expiration date"
+msgstr ""
+
 msgid "Expire date"
 msgstr "Udløbsdato"
 
@@ -2391,10 +2398,6 @@ msgstr "Fil %s eksisterer ikke eller kan ikke nås!"
 
 #, php-format
 msgid "File %s doesn't look like a migration file."
-msgstr ""
-
-#, php-format
-msgid "File %s has not been found in plugin archive."
 msgstr ""
 
 #, php-format
@@ -2835,7 +2838,7 @@ msgid "Invalid URL."
 msgstr "Ugyldig URL."
 
 msgid "Invalid certificate."
-msgstr "Ugyldig certifikat"
+msgstr ""
 
 msgid "Invalid domain name."
 msgstr "Ugyldig domæne navn."
@@ -2864,6 +2867,9 @@ msgstr "Ugyldig menu rækkefølge."
 msgid "Invalid name."
 msgstr "Ugyldig navn."
 
+msgid "Invalid payload received from GitHub"
+msgstr ""
+
 msgid "Invalid private key or passphrase."
 msgstr ""
 
@@ -2875,14 +2881,6 @@ msgstr "Ugyldig type indtastet. Streng forventet"
 
 msgid "Invalid username."
 msgstr ""
-
-#, php-format
-msgid "Ip %s is blocked for %s minutes."
-msgstr "Ip %s er blokeret i %s minutter."
-
-#, php-format
-msgid "Ip %s is waiting %s seconds."
-msgstr "Ip %s venter i %s sekunder."
 
 msgid "Kernel Version"
 msgstr "Kernel Version"
@@ -3000,7 +2998,7 @@ msgid "Logo successfully updated."
 msgstr "Logo succesfuldt opdateret."
 
 msgid "Logout"
-msgstr "Log ud"
+msgstr ""
 
 msgid "Lost password"
 msgstr "Glemt Adgangskode"
@@ -3319,9 +3317,6 @@ msgstr "Ingen tildelte brugere blev fundet i databasen."
 msgid "No update available"
 msgstr "Ingen opdatering til rådighed"
 
-msgid "No update info available"
-msgstr "Ingen opdaterings info tilgængelig"
-
 msgid "No used yet"
 msgstr "Ikke brugt"
 
@@ -3363,6 +3358,9 @@ msgstr "Ikke opgivet"
 
 msgid "Not used"
 msgstr "Ikke brugt"
+
+msgid "Note: You cannot mix 'Spam Filter' and 'Domain' options"
+msgstr ""
 
 msgid "Note: You cannot mix Spam filter and domain options"
 msgstr "Bemærk: Du kan ikke blande spamfilter og domæne valgmuligheder"
@@ -3717,10 +3715,6 @@ msgid "Plugin %s cannot be activated."
 msgstr ""
 
 #, php-format
-msgid "Plugin %s cannot be changed."
-msgstr "Plugin %s kan ikke ændres."
-
-#, php-format
 msgid "Plugin %s cannot be deactivated."
 msgstr ""
 
@@ -3737,16 +3731,16 @@ msgid "Plugin %s cannot be protected."
 msgstr ""
 
 #, php-format
+msgid "Plugin %s cannot be reconfigured."
+msgstr ""
+
+#, php-format
 msgid "Plugin %s cannot be uninstalled."
 msgstr ""
 
 #, php-format
 msgid "Plugin %s cannot be updated."
 msgstr "Plugin %s kan ikke blive opdateret."
-
-#, php-format
-msgid "Plugin %s changed."
-msgstr "Plugin %s ændret."
 
 #, php-format
 msgid "Plugin %s deactivated."
@@ -3767,6 +3761,10 @@ msgstr "Plugin %s er beskyttet."
 #, php-format
 msgid "Plugin %s protected."
 msgstr "Plugin %s beskyttet."
+
+#, php-format
+msgid "Plugin %s reconfigured."
+msgstr ""
 
 #, php-format
 msgid "Plugin %s scheduled for activation."
@@ -3801,10 +3799,8 @@ msgid "Plugin %s updated."
 msgstr "Plugin %s opdateret."
 
 #, php-format
-msgid ""
-"Plugin Manager: Downgrade of plugin is not supported. You must update the %s"
-" plugin."
-msgstr "Plugin Manager: Nedgradering af plugin er ikke understøttet. Du skal opdatere %s plugin."
+msgid "Plugin Manager: Downgrade of %s plugin is not allowed."
+msgstr ""
 
 #, php-format
 msgid "Plugin Manager: Unable to change the %s plugin: %s"
@@ -3812,9 +3808,9 @@ msgstr "Plugin Manager: Kan ikke ændre %s plugin: %s"
 
 #, php-format
 msgid ""
-"Plugin Manager: Unable to delete the %s plugin files. Please, remove them "
-"manually."
-msgstr "Plugin Manager: Kunne ikke slette %s plugin filer. Venligst fjern dem manuelt."
+"Plugin Manager: Unable to delete %s plugin files. You should run the set-"
+"gui-permissions.pl script and try again."
+msgstr ""
 
 #, php-format
 msgid ""
@@ -3845,8 +3841,8 @@ msgstr "Plugin arkiv overstiger den maksimale upload størrelse (%s). Max upload
 msgid "Plugin errors"
 msgstr "Plugin fejl"
 
-msgid "Plugin has been uploaded."
-msgstr "Plugin er blevet uploadet."
+msgid "Plugin has been successfully uploaded."
+msgstr ""
 
 msgid "Plugin item errors"
 msgstr "Plugin element fejl"
@@ -3871,8 +3867,8 @@ msgstr "Plugins hooks ind i I-MSCP for at udvide dens funktionalitet med custom 
 #, php-format
 msgid ""
 "Plugins list has been updated: %s new plugin(s) found, %s plugin(s) updated,"
-" %s plugin(s) changed, and %s plugin(s) deleted."
-msgstr "Plugins liste er blevet opdateret: %s ny plugin(s) fundet, %s plugin(s) opdateret, %s plugin(s) ændret, og %s plugin(s) slettet."
+" %s plugin(s) reconfigured, and %s plugin(s) deleted."
+msgstr ""
 
 msgid "Port"
 msgstr "Port"
@@ -3975,6 +3971,9 @@ msgstr "Læs ticket"
 
 msgid "Rebuild languages index"
 msgstr "Genopbyg sprog index"
+
+msgid "Reconfiguration in progress..."
+msgstr ""
 
 msgid "Record data"
 msgstr "Record Data"
@@ -4598,6 +4597,11 @@ msgid ""
 "including subdomains, but retains our server as final mailhost."
 msgstr "Spam Filter: Setup en DNS MX-record til relay mail af hele dit domæne, herunder underdomæner, men bevarer vores server som endelig mailhost."
 
+msgid ""
+"Spam Filter: Setup an external MX host to relay mail of your entire domain "
+"but retains our server as final mailhost."
+msgstr ""
+
 msgid "Sql user successfully deleted."
 msgstr "SQL bruger blev slettet med succes."
 
@@ -4819,6 +4823,10 @@ msgid ""
 "The %s limit for this customer cannot be unlimited because your are limited "
 "for this service."
 msgstr "Grænsen %s for denne kunde kan ikke være ubegrænset, fordi din er begrænsede for denne service."
+
+#, php-format
+msgid "The %s plugin version %s is not compatible with your i-MSCP version."
+msgstr ""
 
 #, php-format
 msgid "The %s translation file has been ignored: Translation table is empty."
@@ -5075,16 +5083,12 @@ msgid "URL to this admin panel"
 msgstr "URL til dette admin panel"
 
 #, php-format
-msgid "Unable to activate the %s plugin: %s"
-msgstr "Kan ikke aktivere %s plugin: %s"
+msgid "Unable to %s the %s plugin: %s"
+msgstr ""
 
 #, php-format
 msgid "Unable to backup %s plugin directory."
 msgstr "Kan ikke sikkerhedskopiere %s plugin mappe."
-
-#, php-format
-msgid "Unable to change the %s plugin: %s"
-msgstr "Kan ikke ændre %s plugin: %s"
 
 #, php-format
 msgid "Unable to close the ticket with Id '%s'."
@@ -5101,13 +5105,11 @@ msgstr "Kunne ikke oprette '%s' mappe for sprog-fil."
 msgid "Unable to create 'LC_MESSAGES' directory for language file."
 msgstr "Kan ikke skabe 'LC_MESSAGES' mappe for sprog-fil."
 
-#, php-format
-msgid "Unable to deactivate the %s plugin: %s"
-msgstr "Kunne ikke deaktivere %s plugin: %s"
+msgid "Unable to delete i-MSCP info file."
+msgstr ""
 
-#, php-format
-msgid "Unable to delete the %s plugin: %s"
-msgstr "Kan ikke slette %s plugin: %s"
+msgid "Unable to extract info.php file"
+msgstr ""
 
 msgid "Unable to extract plugin archive."
 msgstr "Kan ikke udpakke plugin arkiv."
@@ -5132,9 +5134,8 @@ msgstr "Kan ikke hente IP adresse listen. Venligst løs dette problem."
 msgid "Unable to get update info from Github"
 msgstr "Kunne ikke få update info fra Github"
 
-#, php-format
-msgid "Unable to install the %s plugin: %s"
-msgstr "Kan ikke installere %s plugin: %s"
+msgid "Unable to load i-MSCP info file."
+msgstr ""
 
 msgid "Unable to move file."
 msgstr "Kan ikke flytte fil."
@@ -5142,15 +5143,11 @@ msgstr "Kan ikke flytte fil."
 msgid "Unable to open plugin archive."
 msgstr ""
 
-#, php-format
-msgid "Unable to protect the %s plugin: %s"
-msgstr "Ikke i stand til at beskytte %s plugin: %s"
-
 msgid "Unable to read Web software repository index file."
 msgstr "Kan ikke læse web softwarearkiv index-fil."
 
 #, php-format
-msgid "Unable to read the $%s file. Please, check file permissions"
+msgid "Unable to read the %s file."
 msgstr ""
 
 #, php-format
@@ -5191,14 +5188,6 @@ msgstr "Kunne ikke indstille sslallowselfsigned option"
 
 msgid "Unable to set sslverifypeer option"
 msgstr "Kan ikke indstille sslverifypeer option"
-
-#, php-format
-msgid "Unable to uninstall the %s plugin: %s"
-msgstr "Kunne ikke afinstallere %s plugin: %s"
-
-#, php-format
-msgid "Unable to update the %s plugin: %s"
-msgstr "Kan ikke opdatere %s plugin: %s"
 
 #, php-format
 msgid "Unable to upload file. Max. upload filesize (%1$d MB) reached?"
@@ -5243,6 +5232,10 @@ msgstr "Ukendt action anmodet."
 #, php-format
 msgid "Unknown action: %s"
 msgstr "Ukendt action: %s"
+
+#, php-format
+msgid "Unknown bruteforce detection type: %s"
+msgstr ""
 
 msgid "Unknown language name."
 msgstr "Ukendt sprog navn."
@@ -5449,7 +5442,7 @@ msgid "View"
 msgstr "Se"
 
 msgid "View SSL certificate"
-msgstr "Se SSL certifikat"
+msgstr ""
 
 msgid "View Support Ticket"
 msgstr "Se Support Ticket"
@@ -5527,9 +5520,16 @@ msgid ""
 "needed by many applications but can cause some security issues"
 msgstr "Når tilladt, kan scripts kalde PHP exec() funktion. Denne funktion er nødvendig for mange programmer, men kan medføre nogle sikkerhedsproblemer"
 
+msgid "Wildcard"
+msgstr ""
+
 msgid ""
 "Wildcard: Setup a DNS MX record to relay mail for inexistent subdomains."
 msgstr "Wildcard: Setup en DNS MX-record til at videresende post til ikke-eksisterende underdomæner."
+
+msgid ""
+"Wildcard: Setup an external MX host to relay mail for inexistent subdomains."
+msgstr ""
 
 #, php-format
 msgid "Wildcards such as '%s' and '%s' are not allowed in username."
@@ -5940,6 +5940,9 @@ msgstr "aktiveret"
 msgid "activated (Softwaredepot)"
 msgstr "aktiveret (Softwaredepot)"
 
+msgid "addition"
+msgstr ""
+
 msgid "and"
 msgstr "og"
 
@@ -6123,6 +6126,9 @@ msgstr "udp"
 
 msgid "unlimited"
 msgstr "ubegrænset"
+
+msgid "update"
+msgstr ""
 
 msgid "view aliases"
 msgstr "Se Aliaser"

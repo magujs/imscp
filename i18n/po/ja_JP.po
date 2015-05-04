@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# kazuo <kazu.nito@gmail.com>, 2014-2015
+# kazuo <kazu.nito@gmail.com>, 2014
 # kazuo <kazu.nito@gmail.com>, 2013
 # Laurent Declercq <l.declercq@nuxwin.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-02-12 12:11+0100\n"
-"PO-Revision-Date: 2015-02-12 11:14+0000\n"
+"POT-Creation-Date: 2015-05-04 23:43+0200\n"
+"PO-Revision-Date: 2015-05-04 21:45+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Japanese (Japan) (http://www.transifex.com/projects/p/i-MSCP/language/ja_JP/)\n"
 "MIME-Version: 1.0\n"
@@ -241,6 +241,14 @@ msgid "%s / unlimited"
 msgstr "%s / 無制限"
 
 #, php-format
+msgid "%s IP address is blocked for %s minutes."
+msgstr ""
+
+#, php-format
+msgid "%s IP address is waiting %s seconds."
+msgstr ""
+
+#, php-format
 msgid "%s account successfully deleted."
 msgstr "%s のアカウントは削除されました。"
 
@@ -290,7 +298,7 @@ msgstr "%s レコード"
 
 #, php-format
 msgid "%s webmail"
-msgstr "%s webメール"
+msgstr ""
 
 #, php-format
 msgid ""
@@ -670,7 +678,7 @@ msgid "Added by"
 msgstr "追加しました"
 
 msgid "Addition in progress..."
-msgstr "追加の処理中..."
+msgstr ""
 
 msgid "Additional data"
 msgstr "追加データ"
@@ -958,36 +966,29 @@ msgid "Alternative URL to reach your website"
 msgstr "代替URLはあなたのWebサイトへのアクセス"
 
 msgid "An email addresse is not valid in mail forward list."
-msgstr "Eメールアドレスは、Eメールフォワードリストでは有効ではありません。"
+msgstr ""
 
-msgid "An entry is defined twice below."
-msgstr "以下にエントリが２回定義されています。"
+msgid "An entry is defined twice."
+msgstr ""
 
 msgid "An error occurred during authentication."
 msgstr "認証中にエラーが発生した。"
 
-msgid "An unexpected error occured"
-msgstr "予期しないエラーが発生しました"
-
-msgid ""
-"An unexpected error occured. Go to the debugger interface for more details."
-msgstr "予期しないエラーが発生しました。詳細については、デバッガインタフェースに進んでください。"
-
-msgid "An unexpected error occured. Please contact your administrator."
-msgstr "予期しないエラーが発生しました。管理者に連絡してください。"
-
-msgid "An unexpected error occured. Please contact your reseller."
-msgstr "予期しないエラーが発生しました。代理店にお問い合わせください。"
-
-#, php-format
-msgid "An unexpected error occured: %s"
-msgstr "予期しないエラーが発生しました：%s"
+msgid "An unexpected error occurred"
+msgstr ""
 
 msgid "An unexpected error occurred."
-msgstr "予期しないエラーが発生しました。"
+msgstr ""
+
+msgid ""
+"An unexpected error occurred. Go to the debugger interface for more details."
+msgstr ""
 
 msgid "An unexpected error occurred. Please contact your administrator."
-msgstr "予期せぬエラーが発生致しました。管理者に連絡してください。"
+msgstr ""
+
+msgid "An unexpected error occurred. Please contact your reseller."
+msgstr ""
 
 #, php-format
 msgid "An unexpected error occurred: %s"
@@ -999,6 +1000,9 @@ msgstr "原因不明のエラーは、ファイルアップロードの間に発
 
 msgid "Anti-Rootkits Logs"
 msgstr "アンチルートキットログ"
+
+msgid "Any"
+msgstr ""
 
 msgid "Application installer"
 msgstr "アプリケーションインストーラー"
@@ -1115,10 +1119,10 @@ msgid "At first you must create a database which have at least one SQL user."
 msgstr "最初に、少なくとも1つのSQLユーザを持つデータベースを作成する必要があります。"
 
 msgid "At least one intermediate certificate is invalid or missing."
-msgstr "少なくとも一つの中間証明書が無効か、または存在しません。"
+msgstr ""
 
 msgid "Auto (Browser language)"
-msgstr "自動（ブラウザの言語）"
+msgstr ""
 
 msgid "Auto email template data updated!"
 msgstr "自動送信Eメールのテンプレート情報が更新されました！"
@@ -1148,7 +1152,7 @@ msgid "Awaiting activation"
 msgstr "アクティベーション待ち"
 
 msgid "Awaiting for approval"
-msgstr "承認待ち"
+msgstr ""
 
 msgid "B"
 msgstr "B"
@@ -1169,7 +1173,7 @@ msgid "Bad password."
 msgstr "パスワードが間違っています。"
 
 msgid "Bad request."
-msgstr "不正な要求。"
+msgstr ""
 
 msgid "Behind"
 msgstr "ビハインド"
@@ -1235,9 +1239,6 @@ msgstr "レコードを検証することはできません：%s"
 msgid "Canonical name"
 msgstr "正式な名前"
 
-msgid "Captcha fontfile not found."
-msgstr "キャプチャフォントファイルが見つかりません。"
-
 msgid "Catch all"
 msgstr "全て対象"
 
@@ -1258,9 +1259,6 @@ msgstr "証明書データ"
 
 msgid "Change"
 msgstr "変更"
-
-msgid "Change in progress..."
-msgstr "変更処理中..."
 
 msgid "Change personal data"
 msgstr "個人情報変更"
@@ -1331,10 +1329,10 @@ msgid ""
 msgstr "復元ボタンをクリックすると、その日の最後にバックアップした状態にシステムを復元します。"
 
 msgid "Click to activate"
-msgstr "有効にするためにクリック"
+msgstr ""
 
 msgid "Click to deactivate"
-msgstr "無効にするためにクリック"
+msgstr ""
 
 msgid "Client / Choose Directory"
 msgstr "クライアント / ディレクトリ選択"
@@ -1488,7 +1486,7 @@ msgid "Client / Webtools / Software"
 msgstr "クライアント / Webツール / ソフトウェア"
 
 msgid "Client / Webtools / Software / Software Installation"
-msgstr "クライアント / Webツール / ソフトウェア / ソフトウェアインストール"
+msgstr ""
 
 msgid "Client / Webtools / Software / View"
 msgstr "クライアント / Webツール / ソフトウェア / 表示"
@@ -1565,6 +1563,9 @@ msgstr "現在のパスワード"
 msgid "Current password is invalid."
 msgstr "現在のパスワードは無効です。"
 
+msgid "Custom DNS errors"
+msgstr ""
+
 msgid "Custom DNS record"
 msgstr "カスタムDNSレコード"
 
@@ -1572,7 +1573,7 @@ msgid "Custom DNS record successfully scheduled for addition."
 msgstr "カスタムDNSレコードの追加が予定されました。"
 
 msgid "Custom DNS record successfully scheduled for deletion."
-msgstr "カスタムDNSレコードの削除が予定されました。"
+msgstr ""
 
 msgid "Custom DNS record successfully scheduled for update."
 msgstr "カスタムDNSレコードのアップデートが予定されました。"
@@ -1644,7 +1645,7 @@ msgid "Customer statistics"
 msgstr "顧客の統計情報"
 
 msgid "Customer successfully scheduled for addition."
-msgstr "顧客の追加が予定されました。"
+msgstr ""
 
 msgid "Customer successfully scheduled for deletion."
 msgstr "顧客の削除が予定されました。"
@@ -1728,7 +1729,7 @@ msgid "Database users"
 msgstr "データベースユーザー"
 
 msgid "Database with comma(s) in name is not accepted."
-msgstr "名前にカンマを持つデータベースは受け付けられません。"
+msgstr ""
 
 msgid "Databases"
 msgstr "データベース"
@@ -1860,7 +1861,7 @@ msgid "Deletion in progress"
 msgstr "削除中"
 
 msgid "Deletion in progress..."
-msgstr "削除中..."
+msgstr ""
 
 msgid "Depot import"
 msgstr "デポットのインポート"
@@ -1987,17 +1988,17 @@ msgstr "削除しようとしたドメインエイリアスは、カスタムDNS
 msgid ""
 "Domain alias you are trying to remove has subdomains. Please remove them "
 "first."
-msgstr "削除しようとしているドメインエイリアスは、サブドメインを持っています。最初にそれらを削除してください。"
+msgstr ""
 
 msgid ""
 "Domain alias you are trying to remove still has FTP accounts. Please remove "
 "them first."
-msgstr "削除しようとしているドメインエイリアスはFTPアカウントを持っています。最初にそれらを削除してください。"
+msgstr ""
 
 msgid ""
 "Domain alias you are trying to remove still has email accounts. Please "
 "remove them first."
-msgstr "削除しようとしているドメインエイリアスは、Eメールアカウントを持っています。最初にそれらを削除してください。"
+msgstr ""
 
 msgid "Domain aliases"
 msgstr "ドメインエイリアス"
@@ -2083,6 +2084,9 @@ msgid ""
 "Domain: Setup a DNS MX record to relay mail of your entire domain, including"
 " subdomains."
 msgstr "ドメイン：DNSのMXレコードに、サブドメインを含むドメイン全体のメールを中継を設定します。"
+
+msgid "Domain: Setup an external MX host to relay mail of your entire domain."
+msgstr ""
 
 msgid "Domains"
 msgstr "ドメイン"
@@ -2211,7 +2215,7 @@ msgid "Email address"
 msgstr "Eメールアドレス"
 
 msgid "Email address with comma(s) are not accepted."
-msgstr "カンマがあるＥメールアドレスは受付けられません。"
+msgstr ""
 
 msgid "Email forward"
 msgstr "Email forward"
@@ -2249,7 +2253,7 @@ msgid "Email setup"
 msgstr "Eメール設定"
 
 msgid "Email successfully updated."
-msgstr "Eメールが更新されました。"
+msgstr ""
 
 msgid "Emails"
 msgstr "Eメール"
@@ -2312,6 +2316,9 @@ msgstr "Excl. デフォルトメール"
 
 msgid "Execute requests"
 msgstr "リクエスト実行"
+
+msgid "Expiration date"
+msgstr ""
 
 msgid "Expire date"
 msgstr "失効日"
@@ -2391,10 +2398,6 @@ msgstr "ファイル%sが存在しないか、到達できません！"
 
 #, php-format
 msgid "File %s doesn't look like a migration file."
-msgstr ""
-
-#, php-format
-msgid "File %s has not been found in plugin archive."
 msgstr ""
 
 #, php-format
@@ -2515,7 +2518,7 @@ msgid "Generate"
 msgstr "生成する"
 
 msgid "Generate a self-signed certificate"
-msgstr "自己署名証明書を生成します"
+msgstr ""
 
 msgid "Get a new image"
 msgstr "新しいイメージを取得"
@@ -2734,7 +2737,7 @@ msgid "Incorrect email length or syntax."
 msgstr "Eメールの長さか構文が誤っています。"
 
 msgid "Incorrect email quota."
-msgstr "間違ったEメール容量です。"
+msgstr ""
 
 #, php-format
 msgid "Incorrect limit for %s."
@@ -2798,7 +2801,7 @@ msgid "Instructions to download today's backup"
 msgstr "今日のバックアップをダウンロードする指示"
 
 msgid "Intermediate certificate(s)"
-msgstr "中間証明書"
+msgstr ""
 
 msgid "Internal Server Error"
 msgstr "内部サーバエラー"
@@ -2835,16 +2838,16 @@ msgid "Invalid URL."
 msgstr "無効なURL。"
 
 msgid "Invalid certificate."
-msgstr "証明書が無効です。"
+msgstr ""
 
 msgid "Invalid domain name."
 msgstr "無効なドメイン名。"
 
 msgid "Invalid email address."
-msgstr "無効なメールアドレスです。"
+msgstr ""
 
 msgid "Invalid email username."
-msgstr "無効なEメールユーザ名です。"
+msgstr ""
 
 msgid "Invalid expiration date."
 msgstr "無効な有効期限。"
@@ -2864,8 +2867,11 @@ msgstr "無効なメニューの順序。"
 msgid "Invalid name."
 msgstr "名前が無効です。"
 
+msgid "Invalid payload received from GitHub"
+msgstr ""
+
 msgid "Invalid private key or passphrase."
-msgstr "秘密鍵もしくはパスフレーズに誤りがあります。"
+msgstr ""
 
 msgid "Invalid target."
 msgstr "ターゲットが無効です。"
@@ -2874,15 +2880,7 @@ msgid "Invalid type given. String expected"
 msgstr "無効な型の文字列が指定された。"
 
 msgid "Invalid username."
-msgstr "無効なユーザ名です。"
-
-#, php-format
-msgid "Ip %s is blocked for %s minutes."
-msgstr "IPアドレス %s は %s 分間ブロックされます。"
-
-#, php-format
-msgid "Ip %s is waiting %s seconds."
-msgstr "IPアドレス %s は %s 秒間待っています。"
+msgstr ""
 
 msgid "Kernel Version"
 msgstr "カーネルバージョン"
@@ -2960,7 +2958,7 @@ msgid "Load (1 Min, 5 Min, 15 Min)"
 msgstr "ロードアベレージ (1 秒, 5 秒, 15秒)"
 
 msgid "Loading data..."
-msgstr "データのロード中..."
+msgstr ""
 
 msgid "Log entries successfully deleted."
 msgstr "ログエントリを削除しました。"
@@ -3000,7 +2998,7 @@ msgid "Logo successfully updated."
 msgstr "ロゴは更新されました。"
 
 msgid "Logout"
-msgstr "ログアウト"
+msgstr ""
 
 msgid "Lost password"
 msgstr "パスワードを忘れた"
@@ -3161,7 +3159,7 @@ msgid "Model"
 msgstr "モデル"
 
 msgid "Modification in progress..."
-msgstr "修正中..."
+msgstr ""
 
 msgid "Month"
 msgstr "月"
@@ -3319,9 +3317,6 @@ msgstr "割当てられていないユーザーがデータベース内に見つ
 msgid "No update available"
 msgstr "利用可能なアップデートがありません"
 
-msgid "No update info available"
-msgstr "利用可能なアップデート情報がありません"
-
 msgid "No used yet"
 msgstr "まだ使用されていません"
 
@@ -3363,6 +3358,9 @@ msgstr "提供されていません"
 
 msgid "Not used"
 msgstr "使用しない"
+
+msgid "Note: You cannot mix 'Spam Filter' and 'Domain' options"
+msgstr ""
 
 msgid "Note: You cannot mix Spam filter and domain options"
 msgstr "注：スパムフィルタやドメインオプションを混在させることはできません"
@@ -3601,7 +3599,7 @@ msgid "Password successfully updated."
 msgstr "パスワードは更新されました。"
 
 msgid "Password with comma(s) are not accepted."
-msgstr "カンマがあるパスワードは受け付けられません。"
+msgstr ""
 
 msgid "Passwords do not match"
 msgstr "パスワードが一致しません"
@@ -3717,16 +3715,12 @@ msgid "Plugin %s cannot be activated."
 msgstr ""
 
 #, php-format
-msgid "Plugin %s cannot be changed."
-msgstr "プラグイン%sは変更することはできません。"
-
-#, php-format
 msgid "Plugin %s cannot be deactivated."
 msgstr ""
 
 #, php-format
 msgid "Plugin %s cannot be deleted."
-msgstr "プラグイン%sは削除することはできません。"
+msgstr ""
 
 #, php-format
 msgid "Plugin %s cannot be installed."
@@ -3737,16 +3731,16 @@ msgid "Plugin %s cannot be protected."
 msgstr ""
 
 #, php-format
+msgid "Plugin %s cannot be reconfigured."
+msgstr ""
+
+#, php-format
 msgid "Plugin %s cannot be uninstalled."
 msgstr ""
 
 #, php-format
 msgid "Plugin %s cannot be updated."
 msgstr "プラグイン%sは更新することはできません。"
-
-#, php-format
-msgid "Plugin %s changed."
-msgstr "プラグイン%sは変更されました。"
 
 #, php-format
 msgid "Plugin %s deactivated."
@@ -3767,6 +3761,10 @@ msgstr "%sプラグインは、保護されています。"
 #, php-format
 msgid "Plugin %s protected."
 msgstr "プラグイン%sは保護されています。"
+
+#, php-format
+msgid "Plugin %s reconfigured."
+msgstr ""
 
 #, php-format
 msgid "Plugin %s scheduled for activation."
@@ -3801,10 +3799,8 @@ msgid "Plugin %s updated."
 msgstr "プラグイン%sを更新しました。"
 
 #, php-format
-msgid ""
-"Plugin Manager: Downgrade of plugin is not supported. You must update the %s"
-" plugin."
-msgstr "プラグイン管理：プラグインのダウングレードはサポートされていません。%sのプラグインを更新する必要があります。"
+msgid "Plugin Manager: Downgrade of %s plugin is not allowed."
+msgstr ""
 
 #, php-format
 msgid "Plugin Manager: Unable to change the %s plugin: %s"
@@ -3812,15 +3808,15 @@ msgstr "プラグインマネージャ：%sのプラグインを変更できま�
 
 #, php-format
 msgid ""
-"Plugin Manager: Unable to delete the %s plugin files. Please, remove them "
-"manually."
-msgstr "プラグインマネージャ：%sのプラグインファイルを削除できません。 手動で削除してください。"
+"Plugin Manager: Unable to delete %s plugin files. You should run the set-"
+"gui-permissions.pl script and try again."
+msgstr ""
 
 #, php-format
 msgid ""
 "Plugin Manager: Unable to delete the %s plugin. Plugin has been locked by "
 "another plugin."
-msgstr "プラグインマネージャー：%sプラグインを削除することができません。プラグインは別のプラグインによってロックされています。"
+msgstr ""
 
 #, php-format
 msgid "Plugin Manager: Unable to load plugin %s"
@@ -3845,8 +3841,8 @@ msgstr "プラグインのアーカイブは、最大アップロードサイズ
 msgid "Plugin errors"
 msgstr "プラグインエラー"
 
-msgid "Plugin has been uploaded."
-msgstr "プラグインがアップロードされた。"
+msgid "Plugin has been successfully uploaded."
+msgstr ""
 
 msgid "Plugin item errors"
 msgstr "プラグイン項目エラー"
@@ -3871,8 +3867,8 @@ msgstr "プラグインは、カスタム機能によりi-MSCPの機能を拡張
 #, php-format
 msgid ""
 "Plugins list has been updated: %s new plugin(s) found, %s plugin(s) updated,"
-" %s plugin(s) changed, and %s plugin(s) deleted."
-msgstr "プラグインのリストが更新されました：%sの新しいプラグインが見つかりました、%sのプラグイン更新済み、%sのプラグインを変更、%sのプラグインを削除。"
+" %s plugin(s) reconfigured, and %s plugin(s) deleted."
+msgstr ""
 
 msgid "Port"
 msgstr "ポート番号"
@@ -3976,6 +3972,9 @@ msgstr "チケットを読む"
 msgid "Rebuild languages index"
 msgstr "言語のインデックスを再構築"
 
+msgid "Reconfiguration in progress..."
+msgstr ""
+
 msgid "Record data"
 msgstr "レコードデータ"
 
@@ -4034,7 +4033,7 @@ msgid "Reply"
 msgstr "返信"
 
 msgid "Request Timeout: The server took too long to send the data."
-msgstr "リクエストタイムアウト：サーバーはデータを送信するにはあまりにも時間がかかった。"
+msgstr ""
 
 msgid "Request from foreign host was blocked."
 msgstr "外部ホストからの要求がブロックされました。"
@@ -4305,7 +4304,7 @@ msgid "SQL user successfully added."
 msgstr "SQLユーザーを追加しました。"
 
 msgid "SQL user with comma(s) in name is not accepted."
-msgstr "名前にカンマを持つSQLユーザは受け付けません。"
+msgstr ""
 
 msgid "SQL users"
 msgstr "SQLユーザー"
@@ -4314,13 +4313,13 @@ msgid "SSL certificate"
 msgstr "SSL証明書"
 
 msgid "SSL certificate successfully scheduled for addition."
-msgstr "SSL証明書の追加が予定されました。"
+msgstr ""
 
 msgid "SSL certificate successfully scheduled for deletion."
-msgstr "SSL証明書の削除が予定されました。"
+msgstr ""
 
 msgid "SSL certificate successfully scheduled for update."
-msgstr "SSL証明書の変更が予定されました。"
+msgstr ""
 
 msgid "SSL feature is not available. You can only view your certificate."
 msgstr "SSL機能は使用できません。あなたは証明書を表示することができます。"
@@ -4543,7 +4542,7 @@ msgid "Software installer requires PHP support."
 msgstr "ソフトウェアのインストーラは、PHPのサポートが必要です。"
 
 msgid "Software instance has been scheduled for installation"
-msgstr "ソフトウェアのインスタンスは、インストールのために予定されています"
+msgstr ""
 
 msgid "Software management"
 msgstr "ソフトウェア管理"
@@ -4567,7 +4566,7 @@ msgid "Software status"
 msgstr "ソフトウェアステータス"
 
 msgid "Software successfully scheduled for deletion."
-msgstr "ソフトウェアの削除が予定されました。"
+msgstr ""
 
 msgid "Software total"
 msgstr "ソフトウェア合計"
@@ -4597,6 +4596,11 @@ msgid ""
 "Spam Filter: Setup a DNS MX record to relay mail of your entire domain, "
 "including subdomains, but retains our server as final mailhost."
 msgstr "スパムフィルタ：サブドメインを含むドメイン全体のメールを中継にDNSのMXレコードを設定しますが、最終的なメールホストとして私たちのサーバーを保持します。"
+
+msgid ""
+"Spam Filter: Setup an external MX host to relay mail of your entire domain "
+"but retains our server as final mailhost."
+msgstr ""
 
 msgid "Sql user successfully deleted."
 msgstr "SQLユーザが正常に削除されました。"
@@ -4651,7 +4655,7 @@ msgstr "サブドメインエイリアスの削除が予定されました。"
 msgid ""
 "Subdomain alias you are trying to remove has Ftp accounts. Please remove "
 "them first."
-msgstr "削除しようとしているサブドメインエイリアスがFTPアカウントを持っています。最初にそれらを削除してください。"
+msgstr ""
 
 msgid "Subdomain errors"
 msgstr "サブドメインエラー"
@@ -4682,16 +4686,16 @@ msgstr "サブドメインの更新が予定されました"
 
 msgid ""
 "Subdomain you are trying to remove has Ftp accounts. Remove them first."
-msgstr "削除しようとしているサブドメインは、FTPアカウントを持っています。最初にそれらを削除します。"
+msgstr "削除しようとしているサブドメインは、FTPアカウントを持っています。それを最初に削除します。"
 
 msgid ""
 "Subdomain you are trying to remove has email accounts. Please remove them "
 "first."
-msgstr "削除しようとしているサブドメインは、Eメールアカウントを持っています。最初にそれらを削除してください。"
+msgstr ""
 
 msgid ""
 "Subdomain you are trying to remove has email accounts. Remove them first."
-msgstr "削除しようとしているサブドメインは、Eメールアカウントを持っています。最初にそれらを削除します。"
+msgstr "削除しようとしているサブドメインは、Eメールアカウントを持っています。それを最初に削除します。"
 
 msgid "Subdomains"
 msgstr "サブドメイン"
@@ -4727,7 +4731,7 @@ msgid "Switch to user interface"
 msgstr "ユーザーインターフェースを変更"
 
 msgid "Syntax error found in mail forward list."
-msgstr "メール転送リストで見つかった構文エラー。"
+msgstr ""
 
 msgid "System"
 msgstr "システム"
@@ -4770,7 +4774,7 @@ msgid "Target"
 msgstr "ターゲット"
 
 msgid "Target domain"
-msgstr "ターゲットドメイン"
+msgstr ""
 
 msgid "Target host"
 msgstr "ターゲットホスト"
@@ -4821,6 +4825,10 @@ msgid ""
 msgstr "顧客のための %s 制限は、サービスのために制限されているので無制限とすることはできません。"
 
 #, php-format
+msgid "The %s plugin version %s is not compatible with your i-MSCP version."
+msgstr ""
+
+#, php-format
 msgid "The %s translation file has been ignored: Translation table is empty."
 msgstr " %sの翻訳ファイルは無視されました：変換テーブルは空です。"
 
@@ -4834,7 +4842,7 @@ msgstr "`Enter`キーは、パフォーマンス理由のために無効です�
 msgid ""
 "The directory %s doesn't exists. Please create that directory using your "
 "file manager."
-msgstr "ディレクトリ%sは存在しません。ファイルマネージャを使用してディレクトリを作成してください。"
+msgstr ""
 
 msgid ""
 "The domain is currently deactivated. The modification of some of its "
@@ -4868,7 +4876,7 @@ msgid "The password field is empty."
 msgstr "パスワードの項目が空です。"
 
 msgid "The private key doesn't belong to the provided certificate."
-msgstr "秘密鍵は、提供された証明書に属していません。"
+msgstr ""
 
 #, php-format
 msgid "The remote filesize (%s) is lower than 1 Byte. Please check the URL."
@@ -4880,7 +4888,7 @@ msgstr "編集しようとしている代理店アカウントが見つかりま
 msgid ""
 "The reseller you want to remove has one or more customers "
 "accounts.<br>Remove them first."
-msgstr "削除する代理店は、1つ又は複数の顧客アカウントを持っています。<br/>それを最初に削除します。"
+msgstr ""
 
 msgid "The software installer feature requires PHP."
 msgstr "ソフトウェアのインストーラの機能は、PHPが必要です。"
@@ -4950,7 +4958,7 @@ msgid ""
 "This is the host from which this SQL user must be allowed to connect to the "
 "SQL server. Enter the %s wildcard character to allow this SQL user to "
 "connect from any host."
-msgstr "このSQLユーザーがSQLサーバに接続しなければならないホストです。このSQLユーザーがどんなホストからでも接続を許すために %sワイルドカード文字を入力してください。"
+msgstr ""
 
 msgid "This package already exists in the administrator software repository."
 msgstr "パッケージには、管理者のソフトウェアリポジトリに既に存在しています。"
@@ -5075,16 +5083,12 @@ msgid "URL to this admin panel"
 msgstr "管理パネルへのURL"
 
 #, php-format
-msgid "Unable to activate the %s plugin: %s"
-msgstr "%sプラグインを有効にすることができません：%s"
+msgid "Unable to %s the %s plugin: %s"
+msgstr ""
 
 #, php-format
 msgid "Unable to backup %s plugin directory."
 msgstr "%sプラグインディレクトリをバックアップすることができません。"
-
-#, php-format
-msgid "Unable to change the %s plugin: %s"
-msgstr "%sプラグインを変更することができません：%s"
 
 #, php-format
 msgid "Unable to close the ticket with Id '%s'."
@@ -5092,7 +5096,7 @@ msgstr "ID '%s'のチケットをクローズできません。"
 
 msgid ""
 "Unable to connect to the selected database using the selected SQL user."
-msgstr "選択したSQLユーザを使用して、選択されたデータベースに接続することができません。"
+msgstr ""
 
 #, php-format
 msgid "Unable to create '%s' directory for language file."
@@ -5101,13 +5105,11 @@ msgstr "言語ファイルのための'%s' ディレクトリを作成できま�
 msgid "Unable to create 'LC_MESSAGES' directory for language file."
 msgstr "言語ファイルのための\"LC_MESSAGES\"ディレクトリを作成できません。"
 
-#, php-format
-msgid "Unable to deactivate the %s plugin: %s"
-msgstr "%sプラグインを無効にすることができません：%s"
+msgid "Unable to delete i-MSCP info file."
+msgstr ""
 
-#, php-format
-msgid "Unable to delete the %s plugin: %s"
-msgstr "%sプラグインを削除することができません：%s"
+msgid "Unable to extract info.php file"
+msgstr ""
 
 msgid "Unable to extract plugin archive."
 msgstr "プラグインのアーカイブを解凍することができません。"
@@ -5120,7 +5122,7 @@ msgid "Unable to find any network interface. You cannot add new IP address."
 msgstr "ネットワークインターフェイスが見つかりません。新しいIPアドレスを追加することはできません。"
 
 msgid "Unable to find plugin root directory withing archive."
-msgstr "アーカイブ内のプラグインのルートディレクトリが見つかりません。"
+msgstr ""
 
 #, php-format
 msgid "Unable to get stats for file %s."
@@ -5132,25 +5134,20 @@ msgstr "IPアドレスリストを取得できません。この問題を修正�
 msgid "Unable to get update info from Github"
 msgstr "GitHubからの更新情報を取得できません"
 
-#, php-format
-msgid "Unable to install the %s plugin: %s"
-msgstr "%sプラグインをインストールすることができません：%s"
+msgid "Unable to load i-MSCP info file."
+msgstr ""
 
 msgid "Unable to move file."
 msgstr "ファイルを移動することができません。"
 
 msgid "Unable to open plugin archive."
-msgstr "プラグインアーカイブを開くことができません。"
-
-#, php-format
-msgid "Unable to protect the %s plugin: %s"
-msgstr "%sプラグインを保護することができません：%s"
+msgstr ""
 
 msgid "Unable to read Web software repository index file."
 msgstr "Webソフトウェアリポジトリのインデックスファイルを読み込むことができません。"
 
 #, php-format
-msgid "Unable to read the $%s file. Please, check file permissions"
+msgid "Unable to read the %s file."
 msgstr ""
 
 #, php-format
@@ -5193,14 +5190,6 @@ msgid "Unable to set sslverifypeer option"
 msgstr "SSL verifypeerオプションを設定することができません"
 
 #, php-format
-msgid "Unable to uninstall the %s plugin: %s"
-msgstr "%sプラグインをアンインストールすることができません：%s"
-
-#, php-format
-msgid "Unable to update the %s plugin: %s"
-msgstr "%sプラグインを更新することができません：%s"
-
-#, php-format
 msgid "Unable to upload file. Max. upload filesize (%1$d MB) reached?"
 msgstr "ファイルをアップロードすることができません。最大アップロードファイルサイズ（％1 $ dのMB）に達しましたか？"
 
@@ -5211,7 +5200,7 @@ msgid "Unavailable"
 msgstr "使用禁止"
 
 msgid "Unexpected error"
-msgstr "予期しないエラー"
+msgstr ""
 
 msgid "Uninstall"
 msgstr "アンインストール"
@@ -5244,6 +5233,10 @@ msgstr "不明のアクションが要求された。"
 msgid "Unknown action: %s"
 msgstr "不明のアクション： %s"
 
+#, php-format
+msgid "Unknown bruteforce detection type: %s"
+msgstr ""
+
 msgid "Unknown language name."
 msgstr "不明な言語名が指定されました。"
 
@@ -5264,7 +5257,7 @@ msgid "Unknown type."
 msgstr "不明な種別が指定されました。"
 
 msgid "Unknown user type"
-msgstr "未知のユーザタイプ"
+msgstr ""
 
 msgid "Unknown username."
 msgstr "未知のユーザー名。"
@@ -5449,7 +5442,7 @@ msgid "View"
 msgstr "表示"
 
 msgid "View SSL certificate"
-msgstr "SSL証明書を表示する"
+msgstr ""
 
 msgid "View Support Ticket"
 msgstr "サポートチケット表示"
@@ -5527,9 +5520,16 @@ msgid ""
 "needed by many applications but can cause some security issues"
 msgstr "許可されている場合は、スクリプトはPHPのexec（）関数を呼び出すことができます。この関数は、多くのアプリケーションで必要とされていますが、いくつかのセキュリティ問題を引き起こす可能性があります"
 
+msgid "Wildcard"
+msgstr ""
+
 msgid ""
 "Wildcard: Setup a DNS MX record to relay mail for inexistent subdomains."
 msgstr "ワイルドカード：存在しないサブドメインのメールをリレーするDNSのMXレコードを設定。"
+
+msgid ""
+"Wildcard: Setup an external MX host to relay mail for inexistent subdomains."
+msgstr ""
 
 #, php-format
 msgid "Wildcards such as '%s' and '%s' are not allowed in username."
@@ -5636,12 +5636,12 @@ msgstr "イメージをアップロードすることができるだけです。
 msgid ""
 "You can't install the software outside the htdocs directory of the selected "
 "domain."
-msgstr "選択したドメインのhtdocsディレクトリ外にソフトウェアをインストールすることはできません。"
+msgstr ""
 
 msgid ""
 "You cannot add new email account. You have already assigned all your email "
 "quota to other mailboxes. Please first, review your quota assignments."
-msgstr "新しいEメールアカウントを追加することはできません。既に他のメールボックスに全てのEメールの容量を割り当てている。まず、あなたの容量の割り当てを確認してください。"
+msgstr ""
 
 msgid "You cannot delete a reseller that has customer accounts."
 msgstr "顧客アカウントを持っている代理店は削除できません。"
@@ -5783,7 +5783,7 @@ msgstr "サブスクリプションによって許可されたドメインエイ
 msgid ""
 "You have reached the maximum number of email accounts allowed by your "
 "subscription."
-msgstr "サブスクリプションで許可されたEメールアカウントの最大数に達しました。"
+msgstr ""
 
 msgid ""
 "You have reached the maximum number of subdomains allowed by your "
@@ -5819,7 +5819,7 @@ msgid "You must enter a subdomain name."
 msgstr "サブドメイン名を入力する必要があります。"
 
 msgid "You must first generate a password by clicking on the generate button."
-msgstr "最初に生成ボタンをクリックしてパスワードを生成する必要があります。"
+msgstr ""
 
 msgid "You must omit 'www'. It will be added automatically."
 msgstr "'WWW'を省略してください。自動的に追加されます。"
@@ -5846,7 +5846,7 @@ msgid "You must select a network interface."
 msgstr "ネットワークインターフェイスを選択する必要があります。"
 
 msgid "You must select at least one plugin."
-msgstr "少なくとも一つのプラグインを選択する必要があります。"
+msgstr ""
 
 msgid "You must specify a message."
 msgstr "メッセージを指定する必要があります。"
@@ -5878,7 +5878,7 @@ msgstr "あなたの消費量"
 msgid ""
 "Your i-MSCP version is not compatible with this plugin. Try with a newer "
 "version."
-msgstr "あなたのi-MSCPバージョンは、このプラグインと互換性がありません。新しいバージョンでお試しください。"
+msgstr ""
 
 msgid "Your message"
 msgstr "本文"
@@ -5890,7 +5890,7 @@ msgid "Your new i-MSCP login"
 msgstr "新しい i-MSCPログイン"
 
 msgid "Your new password"
-msgstr "新しいパスワード"
+msgstr ""
 
 msgid "Your new password has been sent. Check your email."
 msgstr "新しいパスワードが送られました。Eメールをチェックしてください。"
@@ -5939,6 +5939,9 @@ msgstr "有効化されました"
 
 msgid "activated (Softwaredepot)"
 msgstr "有効 (ソフトウェアデポット)"
+
+msgid "addition"
+msgstr ""
 
 msgid "and"
 msgstr "と"
@@ -6124,6 +6127,9 @@ msgstr "udp"
 msgid "unlimited"
 msgstr "無制限"
 
+msgid "update"
+msgstr ""
+
 msgid "view aliases"
 msgstr "エイリアス確認"
 
@@ -6143,4 +6149,4 @@ msgid "{RESELLER} uploaded a new software package"
 msgstr "{RESELLER} 新しいソフトウェアパッケージをアップロード"
 
 msgid "© 2010-2015 i-MSCP Team<br/>All Rights Reserved"
-msgstr "© 2010-2015 i-MSCP Team<br/>All Rights Reserved"
+msgstr ""

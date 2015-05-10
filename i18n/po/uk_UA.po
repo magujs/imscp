@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-05-04 23:43+0200\n"
-"PO-Revision-Date: 2015-05-04 21:45+0000\n"
+"POT-Creation-Date: 2015-05-04 23:39+0200\n"
+"PO-Revision-Date: 2015-05-04 21:42+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/projects/p/i-MSCP/language/uk_UA/)\n"
 "MIME-Version: 1.0\n"
@@ -1071,6 +1071,12 @@ msgid "Are you sure you want to delete the %s domain alias?"
 msgstr ""
 
 #, php-format
+msgid ""
+"Are you sure you want to delete the %s domain alias? Be aware that any "
+"related entity will be also removed."
+msgstr ""
+
+#, php-format
 msgid "Are you sure you want to delete the %s hosting plan?"
 msgstr "Вы уверены, что хотите удалить хостинг-план %s ?"
 
@@ -1863,7 +1869,7 @@ msgid "Deletion in progress"
 msgstr "Удаление в процессе"
 
 msgid "Deletion in progress..."
-msgstr ""
+msgstr "Удаление в процессе..."
 
 msgid "Depot import"
 msgstr "Импорт репозитория"
@@ -1980,26 +1986,6 @@ msgid "Domain alias successfully scheduled for deletion."
 msgstr "Алиас домена успешно помечен для удаления."
 
 msgid "Domain alias successfully scheduled for update."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove has custom DNS records. Remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove has subdomains. Please remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has FTP accounts. Please remove "
-"them first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has email accounts. Please "
-"remove them first."
 msgstr ""
 
 msgid "Domain aliases"
@@ -2318,9 +2304,6 @@ msgstr ""
 
 msgid "Execute requests"
 msgstr "Виконати запити"
-
-msgid "Expiration date"
-msgstr ""
 
 msgid "Expire date"
 msgstr "Дата закінчення терміну дії"
@@ -2840,7 +2823,7 @@ msgid "Invalid URL."
 msgstr "Неверный URL"
 
 msgid "Invalid certificate."
-msgstr ""
+msgstr "Неверный сертификат."
 
 msgid "Invalid domain name."
 msgstr ""
@@ -3000,7 +2983,7 @@ msgid "Logo successfully updated."
 msgstr "Логотип успешно обновлен."
 
 msgid "Logout"
-msgstr ""
+msgstr "Вийти"
 
 msgid "Lost password"
 msgstr "Відновлення пароля"
@@ -5444,7 +5427,7 @@ msgid "View"
 msgstr "Перегляд"
 
 msgid "View SSL certificate"
-msgstr ""
+msgstr "Просмотреть SSL сертификат"
 
 msgid "View Support Ticket"
 msgstr "Просмотреть тикет службы поддержки"

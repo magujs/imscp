@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-05-04 23:43+0200\n"
-"PO-Revision-Date: 2015-05-04 21:45+0000\n"
+"POT-Creation-Date: 2015-05-04 23:39+0200\n"
+"PO-Revision-Date: 2015-05-04 21:42+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Portuguese (Portugal) (http://www.transifex.com/projects/p/i-MSCP/language/pt_PT/)\n"
 "MIME-Version: 1.0\n"
@@ -1067,6 +1067,12 @@ msgid "Are you sure you want to delete the %s domain alias?"
 msgstr ""
 
 #, php-format
+msgid ""
+"Are you sure you want to delete the %s domain alias? Be aware that any "
+"related entity will be also removed."
+msgstr ""
+
+#, php-format
 msgid "Are you sure you want to delete the %s hosting plan?"
 msgstr ""
 
@@ -1978,26 +1984,6 @@ msgstr ""
 msgid "Domain alias successfully scheduled for update."
 msgstr ""
 
-msgid ""
-"Domain alias you are trying to remove has custom DNS records. Remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove has subdomains. Please remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has FTP accounts. Please remove "
-"them first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has email accounts. Please "
-"remove them first."
-msgstr ""
-
 msgid "Domain aliases"
 msgstr "Aliases de Domínios"
 
@@ -2314,9 +2300,6 @@ msgstr ""
 
 msgid "Execute requests"
 msgstr "Executar pedidos"
-
-msgid "Expiration date"
-msgstr ""
 
 msgid "Expire date"
 msgstr "Data de expiração"
@@ -2996,7 +2979,7 @@ msgid "Logo successfully updated."
 msgstr ""
 
 msgid "Logout"
-msgstr ""
+msgstr "Terminar Sessão"
 
 msgid "Lost password"
 msgstr "Palavra-chave perdida"

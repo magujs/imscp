@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP <version>\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-05-04 23:43+0200\n"
+"POT-Creation-Date: 2015-05-04 23:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1070,6 +1070,12 @@ msgid "Are you sure you want to delete the %s domain alias?"
 msgstr ""
 
 #, php-format
+msgid ""
+"Are you sure you want to delete the %s domain alias? Be aware that any "
+"related entity will be also removed."
+msgstr ""
+
+#, php-format
 msgid "Are you sure you want to delete the %s hosting plan?"
 msgstr ""
 
@@ -1981,26 +1987,6 @@ msgstr ""
 msgid "Domain alias successfully scheduled for update."
 msgstr ""
 
-msgid ""
-"Domain alias you are trying to remove has custom DNS records. Remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove has subdomains. Please remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has FTP accounts. Please remove "
-"them first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has email accounts. Please "
-"remove them first."
-msgstr ""
-
 msgid "Domain aliases"
 msgstr ""
 
@@ -2316,9 +2302,6 @@ msgid "Excl. default mails"
 msgstr ""
 
 msgid "Execute requests"
-msgstr ""
-
-msgid "Expiration date"
 msgstr ""
 
 msgid "Expire date"

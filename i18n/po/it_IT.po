@@ -4,6 +4,7 @@
 # 
 # Translators:
 # DrPan <giuseppe.pannullo@gmail.com>, 2013
+# Stefano, 2011,2013-2014
 # Stefano, 2015
 # theprincy <powerpcweb@gmail.com>, 2014
 # Tommaso, 2013
@@ -12,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-05-04 23:43+0200\n"
-"PO-Revision-Date: 2015-05-04 21:45+0000\n"
+"POT-Creation-Date: 2015-05-04 23:39+0200\n"
+"PO-Revision-Date: 2015-05-04 21:42+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Italian (Italy) (http://www.transifex.com/projects/p/i-MSCP/language/it_IT/)\n"
 "MIME-Version: 1.0\n"
@@ -587,7 +588,7 @@ msgid "Add"
 msgstr "Aggiungi"
 
 msgid "Add / Edit SSL certificate"
-msgstr ""
+msgstr "Aggiungi / Modifica certificato SSL"
 
 msgid "Add FTP account"
 msgstr "Aggiungi account FTP"
@@ -946,7 +947,7 @@ msgid ""
 "Allows to forward any request made to this domain alias to a specific URL. "
 "Be aware that when this option is in use, no Web folder is created for the "
 "domain alias."
-msgstr ""
+msgstr "Inoltra qualsiasi richiesta fatta a questo alias di dominio ad un URL specifico. Attivando questa opzione, nessua directory web viene creata per questo alias di dominio."
 
 msgid ""
 "Allows to forward any request made to this subdomain to a specific URL."
@@ -980,14 +981,14 @@ msgid "An unexpected error occurred"
 msgstr ""
 
 msgid "An unexpected error occurred."
-msgstr ""
+msgstr "Si è verificato un errore inaspettato."
 
 msgid ""
 "An unexpected error occurred. Go to the debugger interface for more details."
 msgstr ""
 
 msgid "An unexpected error occurred. Please contact your administrator."
-msgstr ""
+msgstr "Si è verificato un errore inaspettato. Contatta, per favore, il tuo amministratore."
 
 msgid "An unexpected error occurred. Please contact your reseller."
 msgstr ""
@@ -1026,7 +1027,7 @@ msgstr "Sicuro di voler rimuovere questi permessi?"
 
 #, php-format
 msgid "Are you sure you want delete the %s SQL user?"
-msgstr ""
+msgstr "Sicuro di voler eliminare l'utente SQL '%s'?"
 
 msgid "Are you sure you want to activate this package?"
 msgstr "Sei certo di voler attivare questo pacchetto?"
@@ -1068,6 +1069,12 @@ msgstr ""
 
 #, php-format
 msgid "Are you sure you want to delete the %s domain alias?"
+msgstr ""
+
+#, php-format
+msgid ""
+"Are you sure you want to delete the %s domain alias? Be aware that any "
+"related entity will be also removed."
 msgstr ""
 
 #, php-format
@@ -1175,7 +1182,7 @@ msgid "Bad password."
 msgstr "Password errata."
 
 msgid "Bad request."
-msgstr ""
+msgstr "Richiesta errata."
 
 msgid "Behind"
 msgstr "Dietro"
@@ -1575,7 +1582,7 @@ msgid "Custom DNS record successfully scheduled for addition."
 msgstr "Il record personalizzato DNS è stato schedulato per l'aggiunta."
 
 msgid "Custom DNS record successfully scheduled for deletion."
-msgstr ""
+msgstr "Il record DNS personalizzato è stato schedulato per l'eliminazione."
 
 msgid "Custom DNS record successfully scheduled for update."
 msgstr "Il record personalizzato DNS è stato schedulato per l'aggiornamento."
@@ -1647,7 +1654,7 @@ msgid "Customer statistics"
 msgstr "Statistiche Cliente"
 
 msgid "Customer successfully scheduled for addition."
-msgstr ""
+msgstr "L'account cliente è stato correttamente programmato per l'eliminazione."
 
 msgid "Customer successfully scheduled for deletion."
 msgstr "L'account cliente è stato schedulato per l'eliminazione."
@@ -1863,7 +1870,7 @@ msgid "Deletion in progress"
 msgstr "Eliminazione in corso"
 
 msgid "Deletion in progress..."
-msgstr ""
+msgstr "Eliminazione in corso..."
 
 msgid "Depot import"
 msgstr "Importa deposito"
@@ -1927,7 +1934,7 @@ msgstr "Non mostrare alcun errore"
 msgid ""
 "Do you really want to delete the entire %s customer account? This operation "
 "cannot be undone."
-msgstr ""
+msgstr "Sei sicuro di voler eliminare l'intero account del cliente %s? Questa operazione non può essere annullata."
 
 msgid "Domain"
 msgstr "Dominio"
@@ -1982,26 +1989,6 @@ msgstr "Alias di dominio in attesa di eliminazione."
 msgid "Domain alias successfully scheduled for update."
 msgstr "Alias dominio schedulato con successo per aggiornamento."
 
-msgid ""
-"Domain alias you are trying to remove has custom DNS records. Remove them "
-"first."
-msgstr "L'alias di Dominio che stai provando a rimuovere ha dei record DNS personalizzati. Eliminali prima."
-
-msgid ""
-"Domain alias you are trying to remove has subdomains. Please remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has FTP accounts. Please remove "
-"them first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has email accounts. Please "
-"remove them first."
-msgstr ""
-
 msgid "Domain aliases"
 msgstr "Alias di dominio"
 
@@ -2039,7 +2026,7 @@ msgid "Domain name cannot be empty."
 msgstr "Nome dominio non può essere vuoto."
 
 msgid "Domain name cannot start nor end with dot."
-msgstr ""
+msgstr "Il nome di dominio non può iniziare o terminare con un punto."
 
 #, php-format
 msgid "Domain name contains an invalid character: %s"
@@ -2050,7 +2037,7 @@ msgid "Domain name label '%s' contain an invalid character: %s"
 msgstr ""
 
 msgid "Domain name labels cannot be greater than 63 characters."
-msgstr ""
+msgstr "Il nome di dominio non può essere lungo più di 63 caratteri."
 
 msgid "Domain name labels cannot start nor end with hyphen."
 msgstr ""
@@ -2243,7 +2230,7 @@ msgstr ""
 
 #, php-format
 msgid "Email quota cannot be unlimited. Max value is %d MiB."
-msgstr ""
+msgstr "Il valore della quota email non può essere illimitato. Il valore massimo è di %d MiB."
 
 msgid "Email quota must be a number."
 msgstr "La quota email deve essere un numero."
@@ -2318,9 +2305,6 @@ msgstr "Escludi email di default"
 
 msgid "Execute requests"
 msgstr "Esegui richieste"
-
-msgid "Expiration date"
-msgstr ""
 
 msgid "Expire date"
 msgstr "Data scadenza"
@@ -2840,7 +2824,7 @@ msgid "Invalid URL."
 msgstr "URL non valida."
 
 msgid "Invalid certificate."
-msgstr ""
+msgstr "Certificato non valido."
 
 msgid "Invalid domain name."
 msgstr "Nome dominio non valido."
@@ -2882,7 +2866,7 @@ msgid "Invalid type given. String expected"
 msgstr "Rilevato tipo non valido. Atteso String"
 
 msgid "Invalid username."
-msgstr ""
+msgstr "Nome utente non valido."
 
 msgid "Kernel Version"
 msgstr "Versione del kernel"
@@ -2960,7 +2944,7 @@ msgid "Load (1 Min, 5 Min, 15 Min)"
 msgstr "Carico (1 Min, 5 Min, 15 Min)"
 
 msgid "Loading data..."
-msgstr ""
+msgstr "Caricamento dati..."
 
 msgid "Log entries successfully deleted."
 msgstr "Voci di registro eliminate con successo."
@@ -3000,7 +2984,7 @@ msgid "Logo successfully updated."
 msgstr "Il logo é stato aggiornato correttamente."
 
 msgid "Logout"
-msgstr ""
+msgstr "Logout"
 
 msgid "Lost password"
 msgstr "Password dimenticata"
@@ -3652,7 +3636,7 @@ msgid "Please choose htaccess user or htaccess group."
 msgstr "Scegliere un utente htaccess o un gruppo htaccess."
 
 msgid "Please confirm the password."
-msgstr ""
+msgstr "Conferma, per favore, la password."
 
 msgid ""
 "Please contact the administrator!<br />Ask him for the permissions to use "
@@ -3782,7 +3766,7 @@ msgstr ""
 
 #, php-format
 msgid "Plugin %s scheduled for installation."
-msgstr ""
+msgstr "Il plugin %s è stato programmato correttamente per l'installazione."
 
 #, php-format
 msgid "Plugin %s scheduled for uninstallation."
@@ -4276,7 +4260,7 @@ msgstr "Utente SQL"
 
 #, php-format
 msgid "SQL user %s already exits."
-msgstr ""
+msgstr "L'utente SQL %s è già esistente."
 
 msgid "SQL user host"
 msgstr "Utente SQL"
@@ -5202,7 +5186,7 @@ msgid "Unavailable"
 msgstr "Non disponibile"
 
 msgid "Unexpected error"
-msgstr ""
+msgstr "Si è verificato un errore inaspettato"
 
 msgid "Uninstall"
 msgstr "Disintallata"
@@ -5259,7 +5243,7 @@ msgid "Unknown type."
 msgstr "Tipo sconosciuto."
 
 msgid "Unknown user type"
-msgstr ""
+msgstr "Tipologia di utente  sconosciuto."
 
 msgid "Unknown username."
 msgstr "Username sconosciuto."
@@ -5444,7 +5428,7 @@ msgid "View"
 msgstr "Visualizza"
 
 msgid "View SSL certificate"
-msgstr ""
+msgstr "Visualizza Certificato SSL"
 
 msgid "View Support Ticket"
 msgstr "Visualizza Supporto Ticket"
@@ -5821,7 +5805,7 @@ msgid "You must enter a subdomain name."
 msgstr "È necessario inserire un sottodominio."
 
 msgid "You must first generate a password by clicking on the generate button."
-msgstr ""
+msgstr "Devi prima generare una password cliccando sul bottone apposito."
 
 msgid "You must omit 'www'. It will be added automatically."
 msgstr "Non mettere 'www'. Verrà aggiunto automaticamente"
@@ -5880,7 +5864,7 @@ msgstr "Il consumo di"
 msgid ""
 "Your i-MSCP version is not compatible with this plugin. Try with a newer "
 "version."
-msgstr ""
+msgstr "La tua versione di i-MSCP  non è compatibile con questo plugin. Prova con una nuova versione."
 
 msgid "Your message"
 msgstr "Il tuo messaggio"

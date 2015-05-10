@@ -6,13 +6,15 @@
 # adriangam <adriangam@gmail.com>, 2012
 # alfauno <vh.rodriguez.a@gmail.com>, 2012
 # killerbender0temp <reachme@mailinator.com>, 2013
+# RAF, 2015
 # Sagi Roca <sagi@canbasis.com>, 2012
+# victor <victor53134@gmail.com>, 2012-2013
 msgid ""
 msgstr ""
 "Project-Id-Version: i-MSCP\n"
 "Report-Msgid-Bugs-To: i18n@i-mscp.net\n"
-"POT-Creation-Date: 2015-05-04 23:43+0200\n"
-"PO-Revision-Date: 2015-05-04 21:45+0000\n"
+"POT-Creation-Date: 2015-05-04 23:39+0200\n"
+"PO-Revision-Date: 2015-05-04 21:42+0000\n"
 "Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/projects/p/i-MSCP/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -1070,6 +1072,12 @@ msgid "Are you sure you want to delete the %s domain alias?"
 msgstr ""
 
 #, php-format
+msgid ""
+"Are you sure you want to delete the %s domain alias? Be aware that any "
+"related entity will be also removed."
+msgstr ""
+
+#, php-format
 msgid "Are you sure you want to delete the %s hosting plan?"
 msgstr "¿Desea realmente eliminar el plan de alojamiento %s ?"
 
@@ -1574,7 +1582,7 @@ msgid "Custom DNS record successfully scheduled for addition."
 msgstr "El Registro DNS personalizado ha sido programado con éxito para añadirlo."
 
 msgid "Custom DNS record successfully scheduled for deletion."
-msgstr ""
+msgstr "El Registro DNS personalizado ha sido programado con éxito para eliminarlo."
 
 msgid "Custom DNS record successfully scheduled for update."
 msgstr "Registro DNS personalizado programado con éxito para la actualización."
@@ -1862,7 +1870,7 @@ msgid "Deletion in progress"
 msgstr "Eliminación en progreso"
 
 msgid "Deletion in progress..."
-msgstr ""
+msgstr "Eliminación en progreso..."
 
 msgid "Depot import"
 msgstr "Repositorio de importación "
@@ -1980,26 +1988,6 @@ msgstr "Álias de dominio programado para ser eliminado."
 
 msgid "Domain alias successfully scheduled for update."
 msgstr "Alias de Dominio programado correctamente para actualización."
-
-msgid ""
-"Domain alias you are trying to remove has custom DNS records. Remove them "
-"first."
-msgstr "El alias de dominio que está intentando eliminar tiene registros DNS personalizados. Elimínelos primero."
-
-msgid ""
-"Domain alias you are trying to remove has subdomains. Please remove them "
-"first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has FTP accounts. Please remove "
-"them first."
-msgstr ""
-
-msgid ""
-"Domain alias you are trying to remove still has email accounts. Please "
-"remove them first."
-msgstr ""
 
 msgid "Domain aliases"
 msgstr "Los Alias de dominio"
@@ -2317,9 +2305,6 @@ msgstr "Excluir correos por defecto"
 
 msgid "Execute requests"
 msgstr "Ejecutar solicitudes"
-
-msgid "Expiration date"
-msgstr ""
 
 msgid "Expire date"
 msgstr "Fecha de expiración"
@@ -2839,7 +2824,7 @@ msgid "Invalid URL."
 msgstr "URL inválida"
 
 msgid "Invalid certificate."
-msgstr ""
+msgstr "Certificado inválido"
 
 msgid "Invalid domain name."
 msgstr "Nombre de dominio inválido."
@@ -2878,7 +2863,7 @@ msgid "Invalid target."
 msgstr "Destino no válido."
 
 msgid "Invalid type given. String expected"
-msgstr "Tipo dado inválido. Se esperaba un string."
+msgstr "Tipo dado no válido. Se esperaba un String."
 
 msgid "Invalid username."
 msgstr ""
@@ -2999,7 +2984,7 @@ msgid "Logo successfully updated."
 msgstr "Logo subido correctamente."
 
 msgid "Logout"
-msgstr ""
+msgstr "Cerrar sesión"
 
 msgid "Lost password"
 msgstr "Recuperar contraseña"
@@ -3181,7 +3166,7 @@ msgid "More Details"
 msgstr "Mas Detalles"
 
 msgid "Mount"
-msgstr "Punto de montaje"
+msgstr "Montaje"
 
 msgid "Mount point"
 msgstr "Punto de montaje"
@@ -3202,7 +3187,7 @@ msgid "Name"
 msgstr "Nombre"
 
 msgid "Name cannot be empty."
-msgstr "El nombre no puede estar vacíoi."
+msgstr "El nombre no puede estar vacío."
 
 msgid "Network interface"
 msgstr "Interfaz de red"
@@ -3433,7 +3418,7 @@ msgid "Optional"
 msgstr "Opcional"
 
 msgid "Order"
-msgstr "Pedido"
+msgstr "Orden"
 
 msgid "Order successfully deleted."
 msgstr "Orden eliminada correctamente."
@@ -5443,7 +5428,7 @@ msgid "View"
 msgstr "Ver"
 
 msgid "View SSL certificate"
-msgstr ""
+msgstr "Ver certificado SSL"
 
 msgid "View Support Ticket"
 msgstr "Ver Ticket de Soporte"
@@ -5762,7 +5747,7 @@ msgstr "Te has desconectado correctamente."
 msgid ""
 "You have disabled SQL databases for this user.<br />You cannot have SQL "
 "users here."
-msgstr "Tienes desactivado bases de datos SQL para este usuario. <br /> No se puede tener usuarios SQL aquí."
+msgstr "Tienes desactivado las bases de datos SQL para este usuario. <br /> No puedes tener usuarios SQL aquí."
 
 msgid "You have no closed tickets."
 msgstr "No tienes tickets cerrados."
@@ -5779,7 +5764,7 @@ msgstr "No ha definido los puertos de servicio."
 msgid ""
 "You have reached the maximum number of domain aliasses allowed by your "
 "subscription."
-msgstr "Has alcanzado el número máximo de alias de dominio permitidos por tu suscripción."
+msgstr "Has alcanzado el número máximo de alias de dominio permitidos para tu suscripción."
 
 msgid ""
 "You have reached the maximum number of email accounts allowed by your "
@@ -5789,7 +5774,7 @@ msgstr ""
 msgid ""
 "You have reached the maximum number of subdomains allowed by your "
 "subscription."
-msgstr "Has alcanzado el número máximo de subdominios permitidos por tu suscripción."
+msgstr "Has alcanzado el número máximo de subdominios permitidos para tu suscripción."
 
 msgid "You have reached your domain limit.<br />You cannot add more domains."
 msgstr "Has alcanzado el límite de dominios.<br />No puedes agregar más dominios."
@@ -5888,7 +5873,7 @@ msgid "Your message has been successfully sent."
 msgstr "Tu mensaje ha sido enviado correctamente."
 
 msgid "Your new i-MSCP login"
-msgstr "Tu nuevo inicio de sesión i_MSCP"
+msgstr "Tu nuevo inicio de sesión i-MSCP"
 
 msgid "Your new password"
 msgstr ""
@@ -5969,7 +5954,7 @@ msgid "domain alias"
 msgstr "Alias del dominio"
 
 msgid "domain aliases"
-msgstr "Los álias de dominio"
+msgstr "Los álias de los dominios"
 
 msgid "domains"
 msgstr "Dominios"
@@ -6023,7 +6008,7 @@ msgid "i-MSCP Daemon tools"
 msgstr "i-MSCP - Herramientas del Demonio"
 
 msgid "i-MSCP Notice"
-msgstr "i-MSCP Notificación"
+msgstr "Notificación i-MSCP"
 
 msgid "i-MSCP Software installer / Web software repository"
 msgstr "Instalador de Software i-MSCP / Repositorio de Software Web"
@@ -6096,10 +6081,10 @@ msgid "or remote file (Max: %s)"
 msgstr "o un archivo remoto (Max: %s)"
 
 msgid "order"
-msgstr "pedido"
+msgstr "orden"
 
 msgid "orders"
-msgstr "pedidos"
+msgstr "ordenes"
 
 msgid "orphan entry"
 msgstr "entrada huerfana"
@@ -6150,4 +6135,4 @@ msgid "{RESELLER} uploaded a new software package"
 msgstr "{RESELLER} ha subido un nuevo paquete de software"
 
 msgid "© 2010-2015 i-MSCP Team<br/>All Rights Reserved"
-msgstr ""
+msgstr "© 2010-2015 i-MSCP Team<br/>Todos los Derechos Reservados"

@@ -1,27 +1,33 @@
 <packages>
 	<frontend default="nginx">
-		<nginx repository_uri="http://download.opensuse.org/repositories/server:/http/openSUSE_13.2/server:http.repo">
+		<nginx
+				repository_uri="http://download.opensuse.org/repositories/server:/http/openSUSE_13.2/server:http.repo"
+				repository_alias="server_http"
+				>
 			<package>nginx</package>
-			<package>spawn-fcgi</package>
 			<package>php5-fastcgi</package>
+			<package>spawn-fcgi</package>
 		</nginx>
 	</frontend>
 	<httpd default="apache_php_fpm">
 		<apache_fcgid>
 			<package>apache2</package>
-			<package>apache2-worker</package>
 			<package>apache2-mod_fcgid</package>
+			<package>apache2-worker</package>
 			<package>php5-fastcgi</package>
 		</apache_fcgid>
 		<apache_php_fpm>
 			<package>apache2</package>
-			<package>apache2-worker</package>
 			<package>apache2-devel</package>
+			<package>apache2-worker</package>
 			<package>php5-fpm</package>
 		</apache_php_fpm>
 	</httpd>
 	<po default="dovecot">
-		<courier repository_uri="http://download.opensuse.org/repositories/server:/mail/openSUSE_13.2/server:mail.repo">
+		<courier
+				repository_uri="http://download.opensuse.org/repositories/server:/mail/openSUSE_13.2/server:mail.repo"
+				repository_alias="server_mail"
+				>
 			<package>courier-authlib-mysql</package>
 			<package>courier-imap</package>
 			<package>libfam0-gamin</package>
@@ -34,13 +40,13 @@
 	</po>
 	<mta default="postfix">
 		<postfix>
-			<package>postfix</package>
 			<package>cyrus-sasl</package>
 			<package>cyrus-sasl-crammd5</package>
 			<package>cyrus-sasl-digestmd5</package>
 			<package>cyrus-sasl-plain</package>
 			<package>cyrus-sasl-sqlauxprop</package>
 			<package>libsasl2-3</package>
+			<package>postfix</package>
 		</postfix>
 	</mta>
 	<ftpd default="proftpd">
@@ -51,8 +57,8 @@
 	</ftpd>
 	<named default="bind">
 		<bind>
-			<package>sysconfig-netconfig</package>
 			<package>bind</package>
+			<package>sysconfig-netconfig</package>
 		</bind>
 		<external_server/>
 	</named>
@@ -72,7 +78,6 @@
 	<php>
 		<package>php5</package>
 		<package>php5-curl</package>
-		<package>php5-pear</package>
 		<package>php5-gd</package>
 		<package>php5-gettext</package>
 		<package>php5-imap</package>
@@ -80,9 +85,13 @@
 		<package>php5-json</package>
 		<package>php5-mcrypt</package>
 		<package>php5-mysql</package>
+		<package>php5-pear</package>
 		<package>php5-suhosin</package>
 	</php>
-	<perl repository_uri="http://download.opensuse.org/repositories/devel:/languages:/perl/openSUSE_13.2/devel:languages:perl.repo">
+	<perl
+			repository_uri="http://download.opensuse.org/repositories/devel:/languages:/perl/openSUSE_13.2/devel:languages:perl.repo"
+			repository_alias="devel_languages_perl"
+			>
 		<package>perl</package>
 		<package>perl-Crypt-Blowfish</package>
 		<package>perl-Crypt-CBC</package>
@@ -123,9 +132,9 @@
 		<package>liblzma5</package>
 		<package>make</package>
 		<package>openssl</package>
-		<package>pbzip2</package>
-		<package>pigz</package>
 		<package>openssh</package>
+		<package>pigz</package>
+		<package>pbzip2</package>
 		<package>tar</package>
 	</other>
 </packages>

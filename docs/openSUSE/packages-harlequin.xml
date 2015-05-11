@@ -1,9 +1,6 @@
 <packages>
 	<frontend default="nginx">
-		<nginx
-				repository_uri="http://download.opensuse.org/repositories/server:/http/openSUSE_13.2/server:http.repo"
-				>
-			<repository alias="imscp_nginx">http://download.opensuse.org/repositories/server:/http/openSUSE_13.2</repository>
+		<nginx repository_uri="http://download.opensuse.org/repositories/server:/http/openSUSE_13.2/server:http.repo">
 			<package>nginx</package>
 			<package>spawn-fcgi</package>
 			<package>php5-fastcgi</package>
@@ -24,9 +21,7 @@
 		</apache_php_fpm>
 	</httpd>
 	<po default="dovecot">
-		<courier
-				repository_uri="http://download.opensuse.org/repositories/server:/mail/openSUSE_13.2/server:mail.repo"
-				>
+		<courier repository_uri="http://download.opensuse.org/repositories/server:/mail/openSUSE_13.2/server:mail.repo">
 			<package>courier-authlib-mysql</package>
 			<package>courier-imap</package>
 			<package>libfam0-gamin</package>
@@ -87,9 +82,7 @@
 		<package>php5-mysql</package>
 		<package>php5-suhosin</package>
 	</php>
-	<perl
-			repository_uri="http://download.opensuse.org/repositories/devel:/languages:/perl/openSUSE_13.2/devel:languages:perl.repo"
-			>
+	<perl repository_uri="http://download.opensuse.org/repositories/devel:/languages:/perl/openSUSE_13.2/devel:languages:perl.repo">
 		<package>perl</package>
 		<package>perl-Crypt-Blowfish</package>
 		<package>perl-Crypt-CBC</package>

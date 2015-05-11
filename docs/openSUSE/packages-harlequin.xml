@@ -7,7 +7,6 @@
 			<package>nginx</package>
 			<package>spawn-fcgi</package>
 			<package>php5-fastcgi</package>
-			<package_conflict>nginx</package_conflict>
 		</nginx>
 	</frontend>
 	<httpd default="apache_php_fpm">

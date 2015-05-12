@@ -23,13 +23,6 @@
 
 package iMSCP::Provider::PkgManager::Ubuntu;
 
-use strict;
-use warnings;
-use iMSCP::Debug;
-use iMSCP::Dialog;
-use iMSCP::Execute;
-use iMSCP::Getopt;
-use iMSCP::ProgramFinder;
 use parent 'iMSCP::Provider::PkgManager::Debian';
 
 =head1 DESCRIPTION

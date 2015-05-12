@@ -1,6 +1,6 @@
 =head1 NAME
 
- autoinstaller::Adapter::DebianAdapter - Debian autoinstaller adapter class
+ autoinstaller::Adapter::Debian - Debian autoinstaller adapter class
 
 =cut
 
@@ -21,7 +21,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-package autoinstaller::Adapter::DebianAdapter;
+package autoinstaller::Adapter::Debian;
 
 use strict;
 use warnings;
@@ -36,7 +36,7 @@ use iMSCP::PkgManager;
 use iMSCP::ProgramFinder;
 use iMSCP::Stepper;
 use File::Temp;
-use parent 'autoinstaller::Adapter::AbstractAdapter';
+use parent 'autoinstaller::Adapter::Abstract';
 
 =head1 DESCRIPTION
 

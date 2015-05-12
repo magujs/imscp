@@ -1,6 +1,6 @@
 =head1 NAME
 
-autoinstaller::Adapter::AbstractAdapter - Abstract class for autoinstaller distro adapters
+autoinstaller::Adapter::Abstract - Abstract class for autoinstaller distro adapters
 
 =cut
 
@@ -27,7 +27,7 @@ autoinstaller::Adapter::AbstractAdapter - Abstract class for autoinstaller distr
 # @link        http://i-mscp.net i-MSCP Home Site
 # @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
-package autoinstaller::Adapter::AbstractAdapter;
+package autoinstaller::Adapter::Abstract;
 
 use strict;
 use warnings;

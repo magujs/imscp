@@ -1310,11 +1310,11 @@ sub _chmodFile
 sub _getDistroAdapter
 {
 	unless(defined $autoinstallerAdapterInstance) {
-		my $distribution = iMSCP::LsbRelease->getInstance()->getId(1);
+		my $distribution = iMSCP::LsbRelease->getInstance()->getId('short');
 
 		eval {
-			my $file = "$FindBin::Bin/autoinstaller/Adapter/${distribution}Adapter.pm";
-			my $adapterClass = "autoinstaller::Adapter::${distribution}Adapter";
+			my $file = "$FindBin::Bin/autoinstaller/Adapter/$distribution.pm";
+			my $adapterClass = "autoinstaller::Adapter::$distribution";
 
 			require $file;
 			$autoinstallerAdapterInstance = $adapterClass->getInstance()

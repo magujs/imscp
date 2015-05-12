@@ -27,10 +27,8 @@ use strict;
 use warnings;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 use iMSCP::Debug;
-use iMSCP::Dialog;
 use iMSCP::Dir;
-use iMSCP::Execute;
-use iMSCP::Getopt;
+use iMSCP::PkgManager;
 use iMSCP::ProgramFinder;
 use parent 'Common::SingletonClass';
 
@@ -360,31 +358,7 @@ sub _installPackages
 {
 	my ($self, $packages) = @_;
 
-	my $preseed = iMSCP::Getopt->preseed;
-	my @command = ();
-
-	unless ($preseed || $main::noprompt || !iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-		iMSCP::Dialog->getInstance()->endGauge();
-		push @command, 'debconf-apt-progress --logstderr --';
-	}
-
-	unshift @command, 'UCF_FORCE_CONFFMISS=1 '; # Force installation of missing conffiles which are managed by UCF
-
-	if($main::forcereinstall) {
-		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' " .
-			"--reinstall --auto-remove --purge --no-install-recommends install @{$packages}";
-	} else {
-		push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' " .
-			"--auto-remove --purge --no-install-recommends install @{$packages}";
-	}
-
-	my ($stdout, $stderr);
-	my $rs = execute("@command", ($preseed || $main::noprompt) ? \$stdout : undef, \$stderr);
-	debug($stdout) if $stdout;
-	error($stderr) if $stderr && $rs;
-	error('Unable to install anti-rootkits distro packages') if $rs && !$stderr;
-
-	$rs;
+	iMSCP::PkgManager->getInstance()->installPackages(@{$packages});
 }
 
 =item _removePackages(\@packages)
@@ -400,33 +374,7 @@ sub _removePackages
 {
 	my ($self, $packages) = @_;
 
-	# Do not try to remove packages which are no longer available on the system or not installed
-	my ($stdout, $stderr);
-	my $rs = execute("LANG=C dpkg-query -W -f='\${Package}/\${Status}\n' @{$packages}", \$stdout, \$stderr);
-	error($stderr) if $stderr && $rs > 1;
-	return $rs if $rs > 1;
-
-	@{$packages} = grep { m%^(.*?)/install% && ($_ =  $1) } split /\n/, $stdout;
-
-	if(@{$packages}) {
-		my $preseed = iMSCP::Getopt->preseed;
-		my @command = ();
-
-		unless ($preseed || $main::noprompt || !iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-			iMSCP::Dialog->getInstance()->endGauge();
-			push @command, 'debconf-apt-progress --logstderr -- ';
-		}
-
-		push @command, "apt-get -y --auto-remove --purge --no-install-recommends remove @{$packages}";
-
-		my $rs = execute("@command", ($preseed || $main::noprompt) ? \$stdout : undef, \$stderr);
-		debug($stdout) if $stdout;
-		error($stderr) if $stderr && $rs;
-		error('Unable to remove anti-rootkits distro packages') if $rs && !$stderr;
-		return $rs if $rs;
-	}
-
-	0;
+	iMSCP::PkgManager->getInstance()->uninstallPackages(@{$packages});
 }
 
 =back

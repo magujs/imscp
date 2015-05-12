@@ -33,8 +33,9 @@ use strict;
 use warnings;
 use iMSCP::Debug;
 use iMSCP::EventManager;
-use iMSCP::LsbRelease;
 use iMSCP::Execute;
+use iMSCP::LsbRelease;
+use iMSCP::PkgManager;
 use version;
 use parent 'autoinstaller::Adapter::DebianAdapter';
 
@@ -84,6 +85,8 @@ sub _init
 	$self->{'packagesToInstallDelayed'} = [];
 	$self->{'packagesToPreUninstall'} = [];
 	$self->{'packagesToUninstall'} = [];
+
+	$self->{'package_manager'} = iMSCP::PkgManager->getInstance();
 
 	unless($main::skippackages) {
 		($self->_setupInitScriptPolicyLayer('enable') == 0) or die('Unable to setup initscript policy layer');

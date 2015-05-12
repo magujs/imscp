@@ -20,12 +20,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# @category    i-MSCP
-# @copyright   2010-2015 by i-MSCP | http://i-mscp.net
-# @author      Laurent Declercq <l.declercq@nuxwin.com>
-# @link        http://i-mscp.net i-MSCP Home Site
-# @license     http://www.gnu.org/licenses/gpl-2.0.html GPL v2
 
 package autoinstaller::Adapter::DebianAdapter;
 
@@ -33,13 +27,14 @@ use strict;
 use warnings;
 no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 use iMSCP::Debug;
+use iMSCP::Dialog;
 use iMSCP::EventManager;
 use iMSCP::Execute;
-use iMSCP::Dialog;
 use iMSCP::File;
-use iMSCP::Stepper;
 use iMSCP::Getopt;
+use iMSCP::PkgManager;
 use iMSCP::ProgramFinder;
+use iMSCP::Stepper;
 use File::Temp;
 use parent 'autoinstaller::Adapter::AbstractAdapter';
 
@@ -61,32 +56,15 @@ use parent 'autoinstaller::Adapter::AbstractAdapter';
 
 sub installPreRequiredPackages
 {
-	my $self = $_[0];
+	my $self = shift;
 
-	$self->{'eventManager'}->trigger('beforeInstallPreRequiredPackages', $self->{'preRequiredPackages'});
-
-	my $command = 'apt-get';
-	my $preseed = iMSCP::Getopt->preseed;
-
-	fatal('Not a Debian like system') unless iMSCP::ProgramFinder::find($command);
-
-	# Ensure packages index is up to date
-	my $rs = $self->_updatePackagesIndex();
+	my $rs = $self->{'eventManager'}->trigger('beforeInstallPreRequiredPackages', $self->{'preRequiredPackages'});
 	return $rs if $rs;
 
-	unless($preseed || $main::noprompt || ! iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-		$command = 'debconf-apt-progress --logstderr -- ' . $command;
-	}
+	$rs = $self->{'package_manager'}->updateIndex();
+	return $rs if $rs;
 
-	my ($stdout, $stderr);
-	$rs = execute(
-		"$command -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' --auto-remove --purge " .
-			"--no-install-recommends install @{$self->{'preRequiredPackages'}}",
-		($preseed || $main::noprompt) ? \$stdout : undef, \$stderr
-	);
-	debug($stdout) if $stdout;
-	error($stderr) if $stderr && $rs;
-	error('Unable to install pre-required packages') if $rs && ! $stderr;
+	$rs = $self->{'package_manager'}->installPackages(@{$self->{'preRequiredPackages'}});
 	return $rs if $rs;
 
 	$self->{'eventManager'}->trigger('afterInstallPreRequiredPackages');
@@ -113,11 +91,11 @@ sub preBuild
 		}
 
 		my @steps = (
-			[ sub { $self->_buildPackageList(); },       'Building list of packages to install/uninstall' ],
-			[ sub { $self->_prefillDebconfDatabase(); }, 'Pre-fill debconf database' ],
-			[ sub { $self->_processAptRepositories(); }, 'Processing APT repositories if any' ],
-			[ sub { $self->_processAptPreferences(); },  'Processing APT preferences if any' ],
-			[ sub { $self->_updatePackagesIndex(); },    'Updating packages index' ]
+			[ sub { $self->_buildPackageList(); },                 'Building list of packages to install/uninstall' ],
+			[ sub { $self->_prefillDebconfDatabase(); },           'Pre-fill debconf database' ],
+			[ sub { $self->_processAptRepositories(); },           'Processing APT repositories if any' ],
+			[ sub { $self->_processAptPreferences(); },            'Processing APT preferences if any' ],
+			[ sub { $self->{'package_manager'}->updateIndex(); },  'Updating packages index' ]
 		);
 
 		my $step = 1;
@@ -145,9 +123,6 @@ sub installPackages
 {
 	my $self = $_[0];
 
-	iMSCP::Dialog->getInstance()->endGauge();
-
-	# Remove packages which must be pre-removed
 	my $rs = $self->uninstallPackages($self->{'packagesToPreUninstall'});
 	return $rs if $rs;
 
@@ -156,31 +131,9 @@ sub installPackages
 	);
 	return $rs if $rs;
 
-	my $preseed = iMSCP::Getopt->preseed;
-
 	for my $packages($self->{'packagesToInstall'}, $self->{'packagesToInstallDelayed'}) {
 		if(@{$packages}) {
-			my @command = ();
-
-			unless($preseed || $main::noprompt || ! iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-				push @command, 'debconf-apt-progress --logstderr --';
-			}
-
-			unshift @command, 'UCF_FORCE_CONFFMISS=1 '; # Force installation of missing conffiles which are managed by UCF
-
-			if($main::forcereinstall) {
-				push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' " .
-					"--reinstall --auto-remove --purge --no-install-recommends --force-yes install @{$packages}";
-			} else {
-				push @command, "apt-get -y -o DPkg::Options::='--force-confnew' -o DPkg::Options::='--force-confmiss' " .
-					"--auto-remove --purge --no-install-recommends --force-yes install @{$packages}";
-			}
-
-			my ($stdout, $stderr);
-			$rs = execute("@command", ($preseed || $main::noprompt) ? \$stdout : undef, \$stderr);
-			debug($stdout) if $stdout;
-			error($stderr) if $stderr && $rs;
-			error('Unable to install packages') if $rs && ! $stderr;
+			$rs = $self->{'package_manager'}->installPackages(@{$packages});
 			return $rs if $rs;
 		}
 	}
@@ -212,37 +165,11 @@ sub uninstallPackages
 		not $_ ~~ [ @{$self->{'packagesToInstall'}}, @{$self->{'packagesToInstallDelayed'}} ]
 	} uniq(@{$packages});
 
-	# Do not try to remove packages which are no longer available
-	if(@{$packages}) {
-		my ($stdout, $stderr);
-		my $rs = execute("LANG=C dpkg-query -W -f='\${Package}\n' @{$packages} 2>/dev/null", \$stdout, \$stderr);
-		error($stderr) if $stderr && $rs > 1;
-		return $rs if $rs > 1;
-
-		@{$packages} = split /\n/, $stdout;
-	}
-
-	my $rs = $self->{'eventManager'}->trigger('beforeUninstallPackages', @{$packages});
+	my $rs = $self->{'eventManager'}->trigger('beforeUninstallPackages', $packages);
 	return $rs if $rs;
 
-	if(@{$packages}) {
-		my $preseed = iMSCP::Getopt->preseed;
-		my @command = ();
-
-		unless($preseed || $main::noprompt || ! iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-			iMSCP::Dialog->getInstance()->endGauge();
-			push @command, 'debconf-apt-progress --logstderr --';
-		}
-
-		push @command, "apt-get -y --auto-remove --purge --no-install-recommends remove @{$packages}";
-
-		my ($stdout, $stderr);
-		my $rs = execute("@command", ($preseed || $main::noprompt) ? \$stdout : undef, \$stderr);
-		debug($stdout) if $stdout;
-		error($stderr) if $stderr && $rs;
-		error('Unable to uninstall packages') if $rs && ! $stderr;
-		return $rs if $rs;
-	}
+	$rs = $self->{'package_manager'}->uninstallPackages(@{$packages});
+	return $rs if $rs;
 
 	$self->{'eventManager'}->trigger('afterUninstallPackages');
 }
@@ -329,6 +256,8 @@ sub _init
 	$self->{'packagesToInstallDelayed'} = [];
 	$self->{'packagesToPreUninstall'} = [];
 	$self->{'packagesToUninstall'} = [];
+
+	$self->{'package_manager'} = iMSCP::PkgManager->getInstance();
 
 	unless($main::skippackages) {
 		($self->_setupInitScriptPolicyLayer('enable') == 0 ) or die('Unable to setup initscript policy layer');
@@ -731,35 +660,6 @@ sub _processAptPreferences
 	}
 
 	0;
-}
-
-=item _updatePackagesIndex()
-
- Update Debian packages index
-
- Return int 0 on success, other on failure
-
-=cut
-
-sub _updatePackagesIndex
-{
-	my $self = $_[0];
-
-	my $command = 'apt-get';
-	my ($stdout, $stderr);
-	my $preseed = iMSCP::Getopt->preseed;
-
-	unless($preseed || $main::noprompt || ! iMSCP::ProgramFinder::find('debconf-apt-progress')) {
-		iMSCP::Dialog->getInstance()->endGauge() if iMSCP::ProgramFinder::find('dialog');
-		$command = 'debconf-apt-progress --logstderr -- ' . $command;
-	}
-
-	my $rs = execute("$command -y update", ($preseed || $main::noprompt) ? \$stdout : undef, \$stderr);
-	debug($stdout) if $stdout;
-	error($stderr) if $stderr && $rs;
-	error('Unable to update package index from remote repository') if $rs && ! $stderr;
-
-	$rs
 }
 
 =item _prefillDebconfDatabase()

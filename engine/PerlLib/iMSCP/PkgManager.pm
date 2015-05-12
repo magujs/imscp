@@ -26,13 +26,10 @@ package iMSCP::PkgManager;
 use strict;
 use warnings;
 use iMSCP::LsbRelease;
-use Module::Load::Conditional qw/check_install can_load/;
-use Scalar::Defer;
+use Module::Load::Conditional qw/can_load/;
 use parent 'Common::SingletonClass';
 
 $Module::Load::Conditional::FIND_VERSION = 0;
-
-my $distro = lazy { iMSCP::LsbRelease->getInstance->getId('short') };
 
 =head1 DESCRIPTION
 
@@ -55,7 +52,7 @@ sub getProvider
 	my $self = shift;
 
 	unless($self->{'provider'}) {
-		my $provider = "iMSCP::Provider::PkgManager::$distro";
+		my $provider = "iMSCP::Provider::PkgManager::" . iMSCP::LsbRelease->getInstance->getId('short');
 
 		can_load(modules => { $provider => undef }) or die(
 			sprintf("Unable to load %s: %s", $provider, $Module::Load::Conditional::ERROR)

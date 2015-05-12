@@ -116,7 +116,7 @@ sub uninstallPackages
 
 		# Do not try to remove packages which are not installed
 		my ($stdout, $stderr);
-		my $rs = execute("LANG=C rpm -qa --qf '%{NAME}\n' 2>/dev/null", \$stdout, \$stderr);
+		my $rs = execute("LANG=C rpm -qa --qf '%{NAME}\n'", \$stdout, \$stderr);
 		error($stderr) if $stderr && $rs;
 		return $rs if $rs;
 

@@ -58,7 +58,7 @@ sub updateIndex
 
 sub installPackages
 {
-	fatal(sprintf('%s must implements the updateIndex() method.', ref shift));
+	fatal(sprintf('%s must implements the installPackages() method.', ref shift));
 }
 
 =item uninstallPackages(@packages)
@@ -72,7 +72,7 @@ sub installPackages
 
 sub uninstallPackages
 {
-	fatal(sprintf('%s must implements the updateIndex() method.', ref shift));
+	fatal(sprintf('%s must implements the uninstallPackages() method.', ref shift));
 }
 
 =back

@@ -214,12 +214,18 @@ sub getDistroInformation
 {
 	my $self = $_[0];
 
-	# Try to retrieve information from /etc/lsb-release first
 	my %lsbInfo = $self->_getLsbInformation();
 
 	for ('ID', 'RELEASE', 'CODENAME', 'DESCRIPTION') {
 		unless(exists $lsbInfo{$_}) {
-			my %distInfo = $self->_guessDebianRelease();
+			my %distInfo;
+
+			if(-f '/etc/os-release') {
+				%distInfo = $self->_guessOpenSUSErelease();
+			} else {
+				%distInfo = $self->_guessDebianRelease();
+			}
+
 			%lsbInfo = (%distInfo, %lsbInfo);
 			last;
 		}
@@ -396,6 +402,49 @@ sub _guessReleaseFromApt
 	%{$releases[0]->[1]};
 }
 
+=item _guessOpenSUSErelease()
+
+ Return openSUSE distribution-specific information
+
+ Return hash
+
+=cut
+
+sub _guessOpenSUSErelease
+{
+	my $self = $_[0];
+
+	my %distInfo = ( 'ID' => 'openSUSE' );
+
+	if(open my $fh, '<', '/etc/os-release') {
+		while (my $line = <$fh>) {
+			$line =~ s/^\s+|\s+$//g; # Remove trailing and leading whitespaces
+
+			next unless $line && index($line, '=') != -1; # Skip invalid lines
+
+			my ($var, $arg) = split '=', $line, 2;
+
+			if($var eq 'PRETTY_NAME') {
+				$var = 'DESCRIPTION';
+			} elsif($var eq 'VERSION_ID') {
+				$var = 'RELEASE';
+			} elsif($var eq 'VERSION') {
+				$var = 'CODENAME';
+				$arg =~ s/.*\((.*)\)/$1/;
+			} else {
+				next;
+			}
+
+			$arg = substr($arg, 1, -1) if $arg =~ /^".*?"$/;
+			$distInfo{$var} = $arg if $arg; # Ignore empty arguments
+		}
+	} else {
+		warn("Unable to open /etc/os-release: $!");
+	}
+
+	%distInfo;
+}
+
 =item _guessDebianRelease()
 
  Return Debian distribution-specific information
@@ -562,16 +611,6 @@ sub _getLsbInformation
 
 	%distInfo;
 }
-
-=back
-
-=head1 NOTE
-
- This is a rewrite for i-MSCP of the lsb_release command as provided by the lsb-release Debian package.
-
- Detection of systems using a mix of packages from various distributions or releases is something of a black art; the
-current heuristic tends to assume that the installation is of the earliest distribution which is still being used by apt
-but that heuristic is subject to error.
 
 =back
 

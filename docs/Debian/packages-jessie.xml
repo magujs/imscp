@@ -132,6 +132,7 @@
         <package>libxml-parser-perl</package>
         <package>libxml-simple-perl</package>
         <package>libjson-perl</package>
+        <pachage>libemail-simple-perl</pachage>
     </perl>
     <other>
         <package>at</package>

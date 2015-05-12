@@ -48,11 +48,11 @@ use parent 'iMSCP::Provider::PkgManager::Abstract';
 
 =cut
 
-sub updateIndexs
+sub updateIndex
 {
 	my $self = shift;
 
-	iMSCP::Dialog->getInstance()->endGauge();
+	iMSCP::Dialog->getInstance()->endGauge() if iMSCP::ProgramFinder::find('dialog');
 
 	my $command = 'apt-get';
 
@@ -85,7 +85,7 @@ sub installPackages
 	my ($self, @packages) = @_;
 
 	if(@packages) {
-		iMSCP::Dialog->getInstance()->endGauge();
+		iMSCP::Dialog->getInstance()->endGauge() if iMSCP::ProgramFinder::find('dialog');
 
 		my $preseed = iMSCP::Getopt->preseed;
 		my @command = ();
@@ -129,7 +129,8 @@ sub uninstallPackages
 	my ($self, @packages) = @_;
 
 	if(@packages) {
-		iMSCP::Dialog->getInstance()->endGauge();
+		iMSCP::Dialog->getInstance()->endGauge() if iMSCP::ProgramFinder::find('dialog');
+
 
 		# Do not try to remove packages which are no longer available
 		my ($stdout, $stderr);

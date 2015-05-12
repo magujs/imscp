@@ -30,7 +30,7 @@ use iMSCP::Dialog;
 use iMSCP::Execute;
 use iMSCP::Getopt;
 use iMSCP::ProgramFinder;
-use parent 'Common::SingletonClass';
+use parent 'iMSCP::Provider::PkgManager::Abstract';
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,7 @@ use parent 'Common::SingletonClass';
 
 =cut
 
-sub updateIndex
+sub updateIndexs
 {
 	my $self = shift;
 
